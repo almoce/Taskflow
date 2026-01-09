@@ -16,7 +16,7 @@ A sleek, modern, and highly functional task and project management application b
   - **Rich Visualizations**: Interactive Area, Bar, and Bubble charts detailing task completion trends, creation rates, and distribution analysis by status, priority, or tags.
 - **Smart Features**:
   - **Global Task Search**: Instantly find any task across all projects using a powerful search interface.
-  - **Automated Workflows**: Intelligent task handling including auto-archiving features.
+  - **Smart Automation**: Automatically archives completed tasks once they are past their due date to keep your board clutter-free.
   - **Persistent Storage**: Robust data persistence using LocalStorage, ensuring your workflow remains uninterrupted.
 - **Premium UI/UX**:
   - **Glassmorphism Design**: Modern, translucent interfaces with smooth transitions.
@@ -27,8 +27,11 @@ A sleek, modern, and highly functional task and project management application b
 - **Core**: [React 18](https://reactjs.org/) & [TypeScript](https://www.typescriptlang.org/)
 - **Build Tool**: [Vite](https://vitejs.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) with Custom Design Tokens
+- **Routing**: [React Router](https://reactrouter.com/)
+- **State Management**: Custom React Hooks with LocalStorage Persistence
 - **UI Architecture**: [Shadcn UI](https://ui.shadcn.com/) (Radix UI Adaptations)
-- **Data Visualization**: [Recharts](https://recharts.org/) for advanced analytical charts
+- **Data Visualization**: [D3.js](https://d3js.org/) for custom, high-performance charts
+- **Async State**: [TanStack Query](https://tanstack.com/query/latest)
 - **Utility Libraries**:
   - [date-fns](https://date-fns.org/) for precise time manipulation
   - [lucide-react](https://lucide.dev/) for high-quality iconography
