@@ -1,5 +1,7 @@
 # TaskFlow
 
+![Project Preview](public/preview.png)
+
 A sleek, modern, and highly functional task and project management application built with React, Vite, and Shadcn UI. This tool helps you organize your projects, track tasks with multiple views, and monitor your productivity with advanced data visualizations.
 
 ## ✨ Key Features
