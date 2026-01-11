@@ -30,7 +30,11 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
       tasks: state.tasks.map((t) => {
         if (t.id !== id) return t;
         const updated = { ...t, ...updates };
-        if (updates.status === "done" && t.status !== "done") {
+        if (
+          updates.status === "done" && 
+          t.status !== "done" && 
+          !updates.completedAt // Only set if not provided
+        ) {
           updated.completedAt = new Date().toISOString();
         }
         return updated;
