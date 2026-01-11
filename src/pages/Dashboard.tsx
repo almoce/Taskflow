@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useTaskStore } from "@/hooks/useTaskStore";
+import { useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
 import { downloadJson } from "@/utils/exportUtils";
 
@@ -36,17 +36,17 @@ const DashboardPage = () => {
 
   const {
     projects,
-    tasks,
-    selectedProject,
     selectedProjectId,
-    activeView,
-    projectTasks,
-    stats,
     addProject,
     updateProject,
     deleteProject,
     selectProject,
-    setActiveView,
+    importProject,
+    getProjectExportData,
+  } = useProjects();
+
+  const {
+    tasks,
     addTask,
     updateTask,
     deleteTask,
@@ -54,12 +54,47 @@ const DashboardPage = () => {
     archiveTask,
     unarchiveTask,
     checkAutoArchive,
-    getProjectProgress,
-    getProjectTaskCounts,
-    archivedTasks,
-    importProject,
-    getProjectExportData,
-  } = useTaskStore();
+  } = useTasks();
+
+  const { activeView, setActiveView } = useUI();
+
+  // Computed values (formerly in useTaskStore)
+  const selectedProject = projects.find((p) => p.id === selectedProjectId) || null;
+  const projectTasks = tasks.filter(
+    (t) => t.projectId === selectedProjectId && !t.isArchived,
+  );
+  const archivedTasks = tasks.filter((t) => t.isArchived);
+
+  const getProjectProgress = (projectId: string) => {
+    const projectTasks = tasks.filter((t) => t.projectId === projectId);
+    if (projectTasks.length === 0) return 0;
+    const completed = projectTasks.filter((t) => t.status === "done").length;
+    return Math.round((completed / projectTasks.length) * 100);
+  };
+
+  const getProjectTaskCounts = (projectId: string) => {
+    const projectTasks = tasks.filter((t) => t.projectId === projectId);
+    return {
+      total: projectTasks.length,
+      todo: projectTasks.filter((t) => t.status === "todo").length,
+      inProgress: projectTasks.filter((t) => t.status === "in-progress").length,
+      done: projectTasks.filter((t) => t.status === "done").length,
+    };
+  };
+
+  const stats = {
+    totalProjects: projects.length,
+    totalTasks: tasks.length,
+    completedToday: tasks.filter((t) => {
+      if (!t.completedAt) return false;
+      const today = new Date().toDateString();
+      return new Date(t.completedAt).toDateString() === today;
+    }).length,
+    overdue: tasks.filter((t) => {
+      if (!t.dueDate || t.status === "done") return false;
+      return new Date(t.dueDate) < new Date();
+    }).length,
+  };
 
   useEffect(() => {
     checkAutoArchive();
