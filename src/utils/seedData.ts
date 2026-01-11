@@ -1,4 +1,4 @@
-import { taskStore } from "../hooks/useTaskStore";
+import { useStore } from "@/store/useStore";
 import {
   PROJECT_COLORS,
   type Priority,
@@ -57,7 +57,7 @@ function getRandomDate(start: Date, end: Date) {
 }
 
 export const generateSeedData = () => {
-  const store = taskStore.getState();
+  const store = useStore.getState();
 
   // 1. Clear existing data
   store.reset();
