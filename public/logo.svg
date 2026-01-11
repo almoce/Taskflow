@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#9333ea" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Main Container (Optional Background) -->
+  <rect width="512" height="512" rx="128" fill="url(#logo-gradient)" opacity="0.1" />
+  
+  <!-- Symbol: Stylized T / Flow -->
+  <path fill="url(#logo-gradient)" 
+        d="M140 120 C140 108.954 148.954 100 160 100 H352 C363.046 100 372 108.954 372 120 V160 C372 171.046 363.046 180 352 180 H296 V392 C296 403.046 287.046 412 276 412 H236 C224.954 412 216 403.046 216 392 V180 H160 C148.954 180 140 171.046 140 160 V120 Z" />
+        
+  <!-- Accent: Flow Dot -->
+  <circle cx="352" cy="140" r="20" fill="white" fill-opacity="0.3" />
+</svg>

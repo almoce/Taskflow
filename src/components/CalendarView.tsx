@@ -35,6 +35,7 @@ interface CalendarViewProps {
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onDeleteTask: (id: string) => void;
   onAddTask?: () => void;
+  onArchiveTask: (id: string) => void;
 }
 
 interface DraggableTaskProps {
@@ -50,10 +51,10 @@ function DraggableTask({ task, children }: DraggableTaskProps) {
 
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        opacity: isDragging ? 0.5 : 1,
-        cursor: 'grab',
-      }
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      opacity: isDragging ? 0.5 : 1,
+      cursor: 'grab',
+    }
     : { cursor: 'grab' };
 
   return (
@@ -90,7 +91,7 @@ function DroppableDay({ day, children, className, isActive }: DroppableDayProps)
   );
 }
 
-export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAddTask }: CalendarViewProps) {
+export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAddTask, onArchiveTask }: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -136,10 +137,34 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
     const dropDate = new Date(dropId);
     if (!isNaN(dropDate.getTime())) {
       onUpdateTask(taskId, { dueDate: dropId });
+    } else if (dropId === 'unscheduled') {
+      onUpdateTask(taskId, { dueDate: undefined });
     }
   };
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  // Droppable Unscheduled Area
+  function UnscheduledDropZone({ children, className }: { children: React.ReactNode, className?: string }) {
+    const { setNodeRef, isOver } = useDroppable({
+      id: 'unscheduled',
+    });
+
+    return (
+      <div
+        ref={setNodeRef}
+        className={cn(
+          "rounded-xl transition-all duration-200 border-2 border-transparent",
+          className,
+          isOver && 'border-primary/30 bg-primary/5 shadow-inner'
+        )}
+      >
+        <div className={cn("h-full w-full transition-transform duration-200", isOver && "scale-[0.98]")}>
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <DndContext
@@ -147,163 +172,190 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {project.icon ? (
-              <span className="text-lg">{project.icon}</span>
-            ) : (
-              <div
-                className="w-3 h-3 rounded-sm"
-                style={{ backgroundColor: project.color }}
-              />
-            )}
-            <h2 className="text-xl font-semibold">{project.name}</h2>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="text-sm font-medium min-w-[120px] text-center">
-              {format(currentMonth, 'MMMM yyyy')}
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-xs"
-              onClick={() => setCurrentMonth(new Date())}
-            >
-              Today
-            </Button>
-            {onAddTask && (
-              <Button onClick={onAddTask} size="sm" className="h-8">
-                <Plus className="h-3.5 w-3.5 mr-1.5" />
-                Add Task
-              </Button>
-            )}
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-border bg-card overflow-hidden">
-          {/* Week day headers */}
-          <div className="grid grid-cols-7 border-b border-border">
-            {weekDays.map(day => (
-              <div
-                key={day}
-                className="py-3 text-center text-sm font-medium text-muted-foreground"
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3 space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {project.icon ? (
+                <span className="text-lg">{project.icon}</span>
+              ) : (
+                <div
+                  className="w-3 h-3 rounded-sm"
+                  style={{ backgroundColor: project.color }}
+                />
+              )}
+              <h2 className="text-xl font-semibold">{project.name}</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
               >
-                {day}
-              </div>
-            ))}
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm font-medium min-w-[120px] text-center">
+                {format(currentMonth, 'MMMM yyyy')}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => setCurrentMonth(new Date())}
+              >
+                Today
+              </Button>
+              {onAddTask && (
+                <Button onClick={onAddTask} size="sm" className="h-8">
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
+                  Add Task
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Calendar grid */}
-          <div className="grid grid-cols-7">
-            {days.map((day, index) => {
-              const dayTasks = getTasksForDay(day);
-              const isCurrentMonth = isSameMonth(day, currentMonth);
-              const isCurrentDay = isToday(day);
-
-              return (
-                <DroppableDay
-                  key={day.toISOString()}
-                  day={day}
-                  isActive={!!activeTask}
-                  className={cn(
-                    'min-h-[120px] border-b border-r border-border p-2 transition-colors',
-                    !isCurrentMonth && 'bg-muted/30',
-                    index % 7 === 6 && 'border-r-0',
-                    index >= days.length - 7 && 'border-b-0'
-                  )}
+          <div className="rounded-lg border border-border bg-card overflow-hidden">
+            {/* Week day headers */}
+            <div className="grid grid-cols-7 border-b border-border">
+              {weekDays.map(day => (
+                <div
+                  key={day}
+                  className="py-3 text-center text-sm font-medium text-muted-foreground"
                 >
-                  <div
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            <div className="grid grid-cols-7">
+              {days.map((day, index) => {
+                const dayTasks = getTasksForDay(day);
+                const isCurrentMonth = isSameMonth(day, currentMonth);
+                const isCurrentDay = isToday(day);
+
+                return (
+                  <DroppableDay
+                    key={day.toISOString()}
+                    day={day}
+                    isActive={!!activeTask}
                     className={cn(
-                      'text-sm font-medium mb-2 w-7 h-7 flex items-center justify-center rounded-full',
-                      !isCurrentMonth && 'text-muted-foreground',
-                      isCurrentDay && 'bg-primary text-primary-foreground'
+                      'min-h-[120px] border-b border-r border-border p-2 transition-colors',
+                      !isCurrentMonth && 'bg-muted/30',
+                      index % 7 === 6 && 'border-r-0',
+                      index >= days.length - 7 && 'border-b-0'
                     )}
                   >
-                    {format(day, 'd')}
-                  </div>
-                  <div className="space-y-1">
-                    {dayTasks.slice(0, 3).map(task => (
-                      <DraggableTask key={task.id} task={task}>
-                        <div
-                          className={cn(
-                            'text-xs px-2 py-1 rounded truncate transition-all',
-                            task.status === 'done' && 'opacity-50 line-through',
-                            task.priority === 'high' && 'bg-[hsl(var(--priority-high)/0.2)] text-[hsl(var(--priority-high))]',
-                            task.priority === 'medium' && 'bg-[hsl(var(--priority-medium)/0.2)] text-[hsl(var(--priority-medium))]',
-                            task.priority === 'low' && 'bg-[hsl(var(--priority-low)/0.2)] text-[hsl(var(--priority-low))]'
-                          )}
-                          onClick={() => onUpdateTask(task.id, { 
-                            status: task.status === 'done' ? 'todo' : 'done' 
-                          })}
-                          title={`${task.title} - Drag to reschedule`}
-                        >
-                          {task.title}
+                    <div
+                      className={cn(
+                        'text-sm font-medium mb-2 w-7 h-7 flex items-center justify-center rounded-full',
+                        !isCurrentMonth && 'text-muted-foreground',
+                        isCurrentDay && 'bg-primary text-primary-foreground'
+                      )}
+                    >
+                      {format(day, 'd')}
+                    </div>
+                    <div className="space-y-1">
+                      {dayTasks.slice(0, 3).map(task => (
+                        <DraggableTask key={task.id} task={task}>
+                          <div
+                            className={cn(
+                              'text-xs px-2 py-1 rounded truncate transition-all',
+                              task.status === 'done' && 'opacity-50 line-through',
+                              task.priority === 'high' && 'bg-[hsl(var(--priority-high)/0.2)] text-[hsl(var(--priority-high))]',
+                              task.priority === 'medium' && 'bg-[hsl(var(--priority-medium)/0.2)] text-[hsl(var(--priority-medium))]',
+                              task.priority === 'low' && 'bg-[hsl(var(--priority-low)/0.2)] text-[hsl(var(--priority-low))]'
+                            )}
+                            onClick={() => onUpdateTask(task.id, {
+                              status: task.status === 'done' ? 'todo' : 'done'
+                            })}
+                            title={`${task.title} - Drag to reschedule`}
+                          >
+                            {task.title}
+                          </div>
+                        </DraggableTask>
+                      ))}
+                      {dayTasks.length > 3 && (
+                        <div className="text-xs text-muted-foreground px-2">
+                          +{dayTasks.length - 3} more
                         </div>
-                      </DraggableTask>
-                    ))}
-                    {dayTasks.length > 3 && (
-                      <div className="text-xs text-muted-foreground px-2">
-                        +{dayTasks.length - 3} more
-                      </div>
-                    )}
-                  </div>
-                </DroppableDay>
-              );
-            })}
+                      )}
+                    </div>
+                  </DroppableDay>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Tasks without due dates */}
-        {tasks.filter(t => !t.dueDate).length > 0 && (
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Tasks without due date - drag to calendar to schedule ({tasks.filter(t => !t.dueDate).length})
+        <div className="lg:col-span-1 lg:border-l lg:border-border/50 lg:pl-6">
+          <div className="flex flex-col h-full space-y-3 sticky top-6">
+            <h3 className="text-sm font-medium text-muted-foreground px-2">
+              Unscheduled ({tasks.filter(t => !t.dueDate).length})
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {tasks.filter(t => !t.dueDate).map(task => (
-                <DraggableTask key={task.id} task={task}>
-                  <TaskCard
-                    task={task}
-                    onUpdate={(updates) => onUpdateTask(task.id, updates)}
-                    onDelete={() => onDeleteTask(task.id)}
-                  />
-                </DraggableTask>
-              ))}
-            </div>
+            <UnscheduledDropZone className="flex-1 min-h-[300px]">
+              <div className="p-2 space-y-3">
+                {tasks.filter(t => !t.dueDate).length > 0 ? (
+                  <div className="grid grid-cols-1 gap-3">
+                    {tasks.filter(t => !t.dueDate).map(task => (
+                      <DraggableTask key={task.id} task={task}>
+                        <TaskCard
+                          task={task}
+                          onUpdate={(updates) => onUpdateTask(task.id, updates)}
+                          onDelete={() => onDeleteTask(task.id)}
+                          onArchive={() => onArchiveTask(task.id)}
+                        />
+                      </DraggableTask>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-[200px] flex flex-col items-center justify-center border-2 border-dashed border-border/50 rounded-lg p-6 text-center text-muted-foreground text-sm">
+                    <Plus className="h-8 w-8 mb-2 opacity-20" />
+                    <p>Drag tasks here to unschedule</p>
+                  </div>
+                )}
+              </div>
+            </UnscheduledDropZone>
           </div>
-        )}
+        </div>
       </div>
 
       <DragOverlay>
         {activeTask ? (
-          <div className="opacity-90 rotate-2 scale-105 shadow-lg">
-            <div
-              className={cn(
-                'text-xs px-3 py-2 rounded bg-card border border-border',
-                activeTask.priority === 'high' && 'border-[hsl(var(--priority-high))]',
-                activeTask.priority === 'medium' && 'border-[hsl(var(--priority-medium))]',
-                activeTask.priority === 'low' && 'border-[hsl(var(--priority-low))]'
-              )}
-            >
-              {activeTask.title}
-            </div>
+          <div className="cursor-grabbing">
+            {activeTask.dueDate ? (
+              <div className="opacity-90 rotate-2 scale-105 shadow-lg">
+                <div
+                  className={cn(
+                    'text-xs px-2 py-1 rounded truncate w-[140px]',
+                    activeTask.status === 'done' && 'opacity-50 line-through',
+                    activeTask.priority === 'high' && 'bg-[hsl(var(--priority-high)/0.2)] text-[hsl(var(--priority-high))]',
+                    activeTask.priority === 'medium' && 'bg-[hsl(var(--priority-medium)/0.2)] text-[hsl(var(--priority-medium))]',
+                    activeTask.priority === 'low' && 'bg-[hsl(var(--priority-low)/0.2)] text-[hsl(var(--priority-low))]'
+                  )}
+                >
+                  {activeTask.title}
+                </div>
+              </div>
+            ) : (
+              <div className="opacity-90 rotate-1 scale-105 shadow-xl w-[280px]">
+                <TaskCard
+                  task={activeTask}
+                  onUpdate={() => { }}
+                  onDelete={() => { }}
+                />
+              </div>
+            )}
           </div>
         ) : null}
       </DragOverlay>

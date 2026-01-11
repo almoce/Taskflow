@@ -37,7 +37,7 @@ export function TaskCard({ task, onUpdate, onDelete, onEdit, onArchive }: TaskCa
   return (
     <div className={`p-3 rounded-md border border-border bg-card group transition-colors hover:border-muted-foreground/20 ${isDone ? 'opacity-50' : ''}`}>
       <div className="flex items-start justify-between gap-2">
-        <p className={`text-sm font-medium leading-snug ${isDone ? 'line-through text-muted-foreground' : ''}`}>
+        <p className={`text-sm font-medium leading-snug line-clamp-2 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
           {task.title}
         </p>
         <DropdownMenu>

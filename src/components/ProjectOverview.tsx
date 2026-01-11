@@ -10,6 +10,7 @@ interface ProjectOverviewProps {
   onEditProject: (project: Project) => void;
   onDeleteProject: (id: string) => void;
   onNewProject: () => void;
+  onExport: (id: string) => void;
   getProgress: (id: string) => number;
   getTaskCounts: (id: string) => {
     total: number;
@@ -26,6 +27,7 @@ export function ProjectOverview({
   onEditProject,
   onDeleteProject,
   onNewProject,
+  onExport,
   getProgress,
   getTaskCounts,
 }: ProjectOverviewProps) {
@@ -53,6 +55,7 @@ export function ProjectOverview({
               onClick={() => onSelectProject(project.id)}
               onEdit={() => onEditProject(project)}
               onDelete={() => onDeleteProject(project.id)}
+              onExport={() => onExport(project.id)}
             />
           </div>
         ))}

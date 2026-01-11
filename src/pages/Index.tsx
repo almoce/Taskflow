@@ -1,215 +1,62 @@
-import { useState, useEffect } from 'react';
-import { LayoutGrid, Calendar, Archive } from 'lucide-react';
-import { useTaskStore } from '@/hooks/useTaskStore';
-import { ProjectSidebar } from '@/components/ProjectSidebar';
-import { Dashboard } from '@/components/Dashboard';
-import { KanbanBoard } from '@/components/KanbanBoard';
-import { CalendarView } from '@/components/CalendarView';
-import { ProjectOverview } from '@/components/ProjectOverview';
-import { TaskSearch } from '@/components/TaskSearch';
-import { ProductivityCharts } from '@/components/ProductivityCharts';
-import { ArchivedView } from '@/components/ArchivedView';
-import { ProjectDialog } from '@/components/ProjectDialog';
-import { NewTaskDialog } from '@/components/NewTaskDialog';
-import { Button } from '@/components/ui/button';
-import { Priority, Task, Project } from '@/types/task';
-
-type ViewMode = 'kanban' | 'calendar' | 'archived';
+import { CallToAction } from "@/components/landing/CallToAction";
+import { FeaturesGrid } from "@/components/landing/FeaturesGrid";
+import { Footer } from "@/components/landing/Footer";
+import { HeroBackground } from "@/components/landing/HeroBackground";
+import { Navbar } from "@/components/landing/Navbar";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
-  const [showNewProject, setShowNewProject] = useState(false);
-  const [showNewTask, setShowNewTask] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('kanban');
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+	return (
+		<div className="min-h-screen bg-black text-white selection:bg-purple-500/30">
+			<Navbar />
 
-  const {
-    projects,
-    tasks,
-    selectedProject,
-    selectedProjectId,
-    activeView,
-    projectTasks,
-    stats,
-    addProject,
-    updateProject,
-    deleteProject,
-    selectProject,
-    setActiveView,
-    addTask,
-    updateTask,
-    deleteTask,
-    moveTask,
-    archiveTask,
-    unarchiveTask,
-    checkAutoArchive,
-    getProjectProgress,
-    getProjectTaskCounts,
-    archivedTasks,
-  } = useTaskStore();
+			{/* Hero Section */}
+			<section className="relative flex flex-col items-center justify-end pb-20 pt-80">
+				{/* Background Gradients */}
+				<div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(ellipse_at_top,rgba(120,119,198,0.15),transparent_50%)] z-10" />
 
-  useEffect(() => {
-    checkAutoArchive();
-  }, [checkAutoArchive]);
+				<HeroBackground />
 
-  const handleSaveProject = (name: string, description?: string, color?: string, icon?: string) => {
-    if (editingProject) {
-      updateProject(editingProject.id, { name, description, color, icon });
-      setEditingProject(null);
-    } else {
-      addProject(name, description, color, icon);
-      setShowNewProject(false);
-    }
-  };
+				{/* Content */}
+				<div className="container mx-auto px-6 relative z-20 text-center">
+					<div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-black/60 mb-8 animate-fade-in-up backdrop-blur-md">
+						<span className="flex h-2 w-2 rounded-full bg-purple-500"></span>
+						<span className="text-xs font-medium text-zinc-300">
+							Project & Task
+						</span>
+					</div>
 
-  const handleAddTask = (title: string, description?: string, priority?: Priority, dueDate?: string, tag?: Task['tag']) => {
-    if (selectedProjectId) {
-      const task = addTask(selectedProjectId, title, priority, tag);
-      if (description || dueDate) {
-        updateTask(task.id, { description, dueDate });
-      }
-    }
-  };
+					<h1 className="text-5xl md:text-8xl font-bold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 pb-2 drop-shadow-2xl animate-fade-in-up [animation-delay:200ms] opacity-0">
+						Plan and Build
+						<br />
+						<span className="text-5xl block mt-2">your product</span>
+					</h1>
 
-  return (
-    <div className="flex h-screen bg-background">
-      <ProjectSidebar
-        projects={projects}
-        selectedProjectId={selectedProjectId}
-        activeView={activeView}
-        onSelectProject={selectProject}
-        onSetActiveView={setActiveView}
-        onEditProject={(project) => setEditingProject(project)}
-        onDeleteProject={deleteProject}
-        onNewProject={() => setShowNewProject(true)}
-        getProgress={getProjectProgress}
-      />
+					<p className="text-lg md:text-xl text-zinc-300 max-w-4xl mx-auto mb-10 leading-relaxed drop-shadow-lg animate-fade-in-up [animation-delay:400ms] opacity-0">
+						Taskflow is a purpose-built tool for modern software development.
+						Streamline issues, sprints, and product roadmaps with a tool
+						designed for speed.
+					</p>
 
-      <main className="flex-1 overflow-auto">
-        <div className="p-8 max-w-5xl mx-auto">
-          {activeView === 'analytics' ? (
-            <div className="space-y-6">
-              <div className="mb-6">
-                <h1 className="text-xl font-semibold">Analytics</h1>
-                <p className="text-sm text-muted-foreground mt-1">Track your productivity</p>
-              </div>
-              <ProductivityCharts tasks={tasks} />
-            </div>
-          ) : selectedProject ? (
-            <div className="space-y-6">
-              <div className="flex justify-end">
-                <div className="flex items-center gap-0.5 p-0.5 bg-secondary rounded-md">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setViewMode('kanban')}
-                    className={`h-7 px-2 text-xs ${viewMode === 'kanban' ? 'bg-background' : ''}`}
-                  >
-                    <LayoutGrid className="h-3.5 w-3.5 mr-1" />
-                    Board
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setViewMode('calendar')}
-                    className={`h-7 px-2 text-xs ${viewMode === 'calendar' ? 'bg-background' : ''}`}
-                  >
-                    <Calendar className="h-3.5 w-3.5 mr-1" />
-                    Calendar
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setViewMode('archived')}
-                    className={`h-7 px-2 text-xs ${viewMode === 'archived' ? 'bg-background' : ''}`}
-                  >
-                    <Archive className="h-3.5 w-3.5 mr-1" />
-                    Archived
-                  </Button>
-                </div>
-              </div>
+					<div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up [animation-delay:600ms] opacity-0">
+						<Link to="/app">
+							<div className="relative inline-flex h-12 overflow-hidden rounded-full p-[2px] focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-slate-50 group">
+								<span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#9333ea_0%,#e9d5ff_50%,#9333ea_100%)]" />
+								<span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-all group-hover:bg-slate-900">
+									Start building
+								</span>
+							</div>
+						</Link>
+					</div>
+				</div>
+			</section>
 
-              {viewMode === 'kanban' ? (
-                <KanbanBoard
-                  project={selectedProject}
-                  tasks={projectTasks}
-                  onAddTask={() => setShowNewTask(true)}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onMoveTask={moveTask}
-                  onArchiveTask={archiveTask}
-                  onEditTask={(task) => {
-                    setEditingTask(task);
-                    setShowNewTask(true);
-                  }}
-                />
-              ) : viewMode === 'calendar' ? (
-                <CalendarView
-                  project={selectedProject}
-                  tasks={projectTasks}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onAddTask={() => setShowNewTask(true)}
-                />
-              ) : (
-                <ArchivedView
-                  tasks={archivedTasks.filter(t => t.projectId === selectedProjectId)}
-                  projects={projects}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onUnarchiveTask={unarchiveTask}
-                />
-              )}
-            </div>
-          ) : (
-            <div className="space-y-8">
-              <Dashboard stats={stats} onNewProject={() => setShowNewProject(true)} />
-              <TaskSearch
-                tasks={tasks}
-                projects={projects}
-                onUpdateTask={updateTask}
-                onDeleteTask={deleteTask}
-                onSelectProject={selectProject}
-              />
-              <ProjectOverview
-                projects={projects}
-                selectedProjectId={selectedProjectId}
-                onSelectProject={selectProject}
-                onEditProject={(project) => setEditingProject(project)}
-                onDeleteProject={deleteProject}
-                onNewProject={() => setShowNewProject(true)}
-                getProgress={getProjectProgress}
-                getTaskCounts={getProjectTaskCounts}
-              />
-            </div>
-          )}
-        </div>
-      </main>
-
-      <ProjectDialog
-        open={showNewProject || !!editingProject}
-        onOpenChange={(open) => {
-          if (!open) {
-            setShowNewProject(false);
-            setEditingProject(null);
-          }
-        }}
-        project={editingProject}
-        onSubmit={handleSaveProject}
-      />
-
-      <NewTaskDialog
-        open={showNewTask}
-        onOpenChange={(open) => {
-          setShowNewTask(open);
-          if (!open) setEditingTask(null);
-        }}
-        onSubmit={handleAddTask}
-        editTask={editingTask}
-        onEditSubmit={updateTask}
-      />
-    </div>
-  );
+			<FeaturesGrid />
+			<CallToAction />
+			<Footer />
+		</div>
+	);
 };
 
 export default Index;

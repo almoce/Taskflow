@@ -5,16 +5,30 @@ import { Task } from '@/types/task';
 import { AreaChart } from '@/components/charts/AreaChart';
 import { BarChart } from '@/components/charts/BarChart';
 import { BubbleChart } from '@/components/charts/BubbleChart';
-import { Activity, AlertCircle, Tag } from 'lucide-react';
+import { Activity, AlertCircle, Tag, TrendingUp, BarChart3 } from 'lucide-react';
 import { format, subDays, startOfDay, eachDayOfInterval, subMonths, eachWeekOfInterval, startOfWeek, endOfWeek } from 'date-fns';
+import { useTaskStore } from '@/hooks/useTaskStore';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ProductivityChartsProps {
   tasks: Task[];
+  selectedProjectId?: string;
 }
 
-export function ProductivityCharts({ tasks }: ProductivityChartsProps) {
+export function ProductivityCharts({ tasks: allTasks, selectedProjectId = 'all' }: ProductivityChartsProps) {
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
   const [distributionMode, setDistributionMode] = useState<'overview' | 'status' | 'priority' | 'tag'>('overview');
+
+  const tasks = useMemo(() => {
+    if (selectedProjectId === 'all') return allTasks;
+    return allTasks.filter(t => t.projectId === selectedProjectId);
+  }, [allTasks, selectedProjectId]);
 
   const completionData = useMemo(() => {
     const today = startOfDay(new Date());
@@ -128,7 +142,10 @@ export function ProductivityCharts({ tasks }: ProductivityChartsProps) {
         {/* Completion Trend Area Chart */}
         <Card className="bg-card/50 backdrop-blur-sm border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium">Task Completion Trend</CardTitle>
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-emerald-500" />
+              Task Completion Trend
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <AreaChart data={completionData} height={200} />
@@ -148,7 +165,8 @@ export function ProductivityCharts({ tasks }: ProductivityChartsProps) {
         {/* Daily/Weekly Breakdown Bar Chart */}
         <Card className="bg-card/50 backdrop-blur-sm border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-medium">
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
               {timeRange === 'week' ? 'Daily' : 'Weekly'} Breakdown
             </CardTitle>
           </CardHeader>

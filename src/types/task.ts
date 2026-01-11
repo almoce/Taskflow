@@ -50,3 +50,9 @@ export const PROJECT_COLORS = [
   '#3B82F6', // Blue
   '#84CC16', // Lime
 ];
+
+export interface ProjectExportData {
+  project: Project;
+  tasks: Task[];
+  version: number;
+}

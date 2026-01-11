@@ -1,4 +1,4 @@
-import { MoreHorizontal, Trash2, Pencil } from 'lucide-react';
+import { MoreHorizontal, Trash2, Pencil, Download } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,14 +23,14 @@ interface ProjectCardProps {
   onClick: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onExport: () => void;
 }
 
-export function ProjectCard({ project, progress, taskCounts, isSelected, onClick, onEdit, onDelete }: ProjectCardProps) {
+export function ProjectCard({ project, progress, taskCounts, isSelected, onClick, onEdit, onDelete, onExport }: ProjectCardProps) {
   return (
     <div
-      className={`p-4 rounded-lg border bg-card cursor-pointer transition-colors group ${
-        isSelected ? 'border-primary' : 'border-border hover:border-muted-foreground/30'
-      }`}
+      className={`p-4 rounded-lg border bg-card cursor-pointer transition-colors group ${isSelected ? 'border-primary' : 'border-border hover:border-muted-foreground/30'
+        }`}
       onClick={onClick}
     >
       <div className="flex items-start justify-between mb-3">
@@ -76,6 +76,17 @@ export function ProjectCard({ project, progress, taskCounts, isSelected, onClick
             >
               <Trash2 className="h-3.5 w-3.5 mr-2" />
               Delete
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                onExport();
+              }}
+              className="text-sm"
+            >
+              <Download className="h-3.5 w-3.5 mr-2" />
+              Export
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
