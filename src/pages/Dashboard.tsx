@@ -11,6 +11,8 @@ import { ProjectDialog } from "@/components/ProjectDialog";
 import { ProjectOverview } from "@/components/ProjectOverview";
 import { ProjectSidebar } from "@/components/ProjectSidebar";
 import { TaskSearch } from "@/components/TaskSearch";
+import { ProjectStatsCard } from "@/components/ProjectStatsCard";
+import { ProjectMiniChart } from "@/components/ProjectMiniChart";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -156,6 +158,20 @@ const DashboardPage = () => {
             </div>
           ) : selectedProject ? (
             <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+                <div className="md:col-span-2">
+                  <ProjectStatsCard
+                    projectId={selectedProject.id}
+                    projectName={selectedProject.name}
+                    projectIcon={selectedProject.icon}
+                    projectColor={selectedProject.color}
+                  />
+                </div>
+                <div>
+                  <ProjectMiniChart projectId={selectedProject.id} />
+                </div>
+              </div>
+
               <div className="flex justify-end">
                 <div className="flex items-center gap-0.5 p-0.5 bg-secondary rounded-md">
                   <Button
