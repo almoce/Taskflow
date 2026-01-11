@@ -11,8 +11,7 @@ import { ProjectDialog } from "@/components/ProjectDialog";
 import { ProjectOverview } from "@/components/ProjectOverview";
 import { ProjectSidebar } from "@/components/ProjectSidebar";
 import { TaskSearch } from "@/components/TaskSearch";
-import { ProjectStatsCard } from "@/components/ProjectStatsCard";
-import { ProjectMiniChart } from "@/components/ProjectMiniChart";
+import { ProjectSummary } from "@/components/ProjectSummary";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -158,53 +157,57 @@ const DashboardPage = () => {
             </div>
           ) : selectedProject ? (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
-                <div className="md:col-span-2">
-                  <ProjectStatsCard
-                    projectId={selectedProject.id}
-                    projectName={selectedProject.name}
-                    projectIcon={selectedProject.icon}
-                    projectColor={selectedProject.color}
-                  />
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  {selectedProject.icon && (
+                    <span className="text-2xl" role="img" aria-label="Project icon">
+                      {selectedProject.icon}
+                    </span>
+                  )}
+                  <div>
+                    <h1 className="text-xl font-semibold tracking-tight">{selectedProject.name}</h1>
+                    <p className="text-xs text-muted-foreground mt-0.5">Project Overview & Tasks</p>
+                  </div>
                 </div>
-                <div>
-                  <ProjectMiniChart projectId={selectedProject.id} />
-                </div>
-              </div>
 
-              <div className="flex justify-end">
-                <div className="flex items-center gap-0.5 p-0.5 bg-secondary rounded-md">
+                <div className="flex items-center gap-0.5 p-0.5 bg-secondary/50 backdrop-blur-sm rounded-md self-end sm:self-auto">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setViewMode("kanban")}
-                    className={`h-7 px-2 text-xs ${viewMode === "kanban" ? "bg-background" : ""}`}
+                    className={`h-7 px-3 text-xs font-medium transition-all ${viewMode === "kanban" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                   >
-                    <LayoutGrid className="h-3.5 w-3.5 mr-1" />
+                    <LayoutGrid className="h-3.5 w-3.5 mr-1.5" />
                     Board
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setViewMode("calendar")}
-                    className={`h-7 px-2 text-xs ${viewMode === "calendar" ? "bg-background" : ""}`}
+                    className={`h-7 px-3 text-xs font-medium transition-all ${viewMode === "calendar" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                   >
-                    <Calendar className="h-3.5 w-3.5 mr-1" />
+                    <Calendar className="h-3.5 w-3.5 mr-1.5" />
                     Calendar
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setViewMode("archived")}
-                    className={`h-7 px-2 text-xs ${viewMode === "archived" ? "bg-background" : ""}`}
+                    className={`h-7 px-3 text-xs font-medium transition-all ${viewMode === "archived" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                   >
-                    <Archive className="h-3.5 w-3.5 mr-1" />
+                    <Archive className="h-3.5 w-3.5 mr-1.5" />
                     Archived
                   </Button>
                 </div>
               </div>
 
-              {viewMode === "kanban" ? (
+              <ProjectSummary 
+                projectId={selectedProject.id} 
+                projectColor={selectedProject.color} 
+              />
+
+              <div className="pt-2">
+                {viewMode === "kanban" ? (
                 <KanbanBoard
                   project={selectedProject}
                   tasks={projectTasks}
@@ -236,6 +239,7 @@ const DashboardPage = () => {
                   onUnarchiveTask={unarchiveTask}
                 />
               )}
+            </div>
             </div>
           ) : (
             <div className="space-y-8">

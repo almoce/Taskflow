@@ -251,15 +251,6 @@ export function KanbanBoard({
       <div className="space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {project.icon ? (
-              <span className="text-lg">{project.icon}</span>
-            ) : (
-              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: project.color }} />
-            )}
-            <h2 className="text-xl font-semibold">{project.name}</h2>
-          </div>
-
-          <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -354,14 +345,12 @@ export function KanbanBoard({
                 Clear
               </Button>
             )}
-
-            <div className="w-px h-4 bg-border mx-1" />
-
-            <Button onClick={onAddTask} size="sm" className="h-8">
-              <Plus className="h-3.5 w-3.5 mr-1.5" />
-              Add Task
-            </Button>
           </div>
+
+          <Button onClick={onAddTask} size="sm" className="h-8">
+            <Plus className="h-3.5 w-3.5 mr-1.5" />
+            Add Task
+          </Button>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
@@ -384,7 +373,7 @@ export function KanbanBoard({
       <DragOverlay>
         {activeTask ? (
           <div className="opacity-90 rotate-3 scale-105">
-            <TaskCard task={activeTask} onUpdate={() => { }} onDelete={() => { }} />
+            <TaskCard task={activeTask} onUpdate={() => {}} onDelete={() => {}} />
           </div>
         ) : null}
       </DragOverlay>

@@ -18,9 +18,9 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const height = 100;
+    const height = 80;
     const width = svgRef.current.clientWidth;
-    const margin = { top: 5, right: 5, bottom: 5, left: 5 };
+    const margin = { top: 5, right: 0, bottom: 0, left: 0 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -96,16 +96,16 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
   }, [data]);
 
   return (
-    <Card className="bg-card/50 backdrop-blur-md border-border/50 overflow-hidden">
-      <CardHeader className="p-4 pb-0">
-        <CardTitle className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-          <TrendingUp className="w-3 h-3 text-emerald-500" />
-          7-Day Activity
+    <Card className="bg-card/40 backdrop-blur-md border-border/40 overflow-hidden">
+      <CardHeader className="p-3 pb-0">
+        <CardTitle className="text-[10px] uppercase tracking-wider font-bold flex items-center gap-1.5 text-muted-foreground/70">
+          <TrendingUp className="w-3 h-3 text-emerald-500/70" />
+          Activity
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-0 pt-2">
-        <div className="h-[100px] w-full">
-          <svg ref={svgRef} width="100%" height="100" />
+      <CardContent className="p-0 pt-1">
+        <div className="h-[80px] w-full">
+          <svg ref={svgRef} width="100%" height="80" />
         </div>
       </CardContent>
     </Card>
