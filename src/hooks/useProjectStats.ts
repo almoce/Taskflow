@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { taskStore } from "./useTaskStore";
+import { useStore } from "@/store/useStore";
 
 export function useProjectStats(projectId: string | null) {
-  const store = taskStore();
+  const tasks = useStore((state) => state.tasks);
 
   return useMemo(() => {
     if (!projectId) {
@@ -15,8 +15,8 @@ export function useProjectStats(projectId: string | null) {
       };
     }
 
-    const tasks = store.tasks.filter((t) => t.projectId === projectId && !t.isArchived);
-    const total = tasks.length;
+    const projectTasks = tasks.filter((t) => t.projectId === projectId && !t.isArchived);
+    const total = projectTasks.length;
 
     if (total === 0) {
       return {
@@ -28,9 +28,9 @@ export function useProjectStats(projectId: string | null) {
       };
     }
 
-    const todo = tasks.filter((t) => t.status === "todo").length;
-    const inProgress = tasks.filter((t) => t.status === "in-progress").length;
-    const done = tasks.filter((t) => t.status === "done").length;
+    const todo = projectTasks.filter((t) => t.status === "todo").length;
+    const inProgress = projectTasks.filter((t) => t.status === "in-progress").length;
+    const done = projectTasks.filter((t) => t.status === "done").length;
     const progress = Math.round((done / total) * 100);
 
     return {
@@ -40,5 +40,5 @@ export function useProjectStats(projectId: string | null) {
       done,
       progress,
     };
-  }, [store.tasks, projectId]);
+  }, [tasks, projectId]);
 }

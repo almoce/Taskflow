@@ -9,18 +9,18 @@ import {
   subDays,
   subMonths,
 } from "date-fns";
-import { taskStore } from "./useTaskStore";
+import { useStore } from "@/store/useStore";
 
 export function useProjectChartData(
   projectId: string | null,
   timeRange: "week" | "month" = "week"
 ) {
-  const store = taskStore();
+  const tasks = useStore((state) => state.tasks);
 
   return useMemo(() => {
     if (!projectId) return [];
 
-    const tasks = store.tasks.filter((t) => t.projectId === projectId);
+    const projectTasks = tasks.filter((t) => t.projectId === projectId);
     const today = startOfDay(new Date());
 
     if (timeRange === "week") {
@@ -30,13 +30,13 @@ export function useProjectChartData(
       });
 
       return days.map((day) => {
-        const completed = tasks.filter((task) => {
+        const completed = projectTasks.filter((task) => {
           if (!task.completedAt) return false;
           const completedDate = startOfDay(new Date(task.completedAt));
           return completedDate.getTime() === day.getTime();
         }).length;
 
-        const created = tasks.filter((task) => {
+        const created = projectTasks.filter((task) => {
           const createdDate = startOfDay(new Date(task.createdAt));
           return createdDate.getTime() === day.getTime();
         }).length;
@@ -57,13 +57,13 @@ export function useProjectChartData(
       return weeks.map((weekStart) => {
         const weekEnd = endOfWeek(weekStart);
 
-        const completed = tasks.filter((task) => {
+        const completed = projectTasks.filter((task) => {
           if (!task.completedAt) return false;
           const completedDate = new Date(task.completedAt);
           return completedDate >= weekStart && completedDate <= weekEnd;
         }).length;
 
-        const created = tasks.filter((task) => {
+        const created = projectTasks.filter((task) => {
           const createdDate = new Date(task.createdAt);
           return createdDate >= weekStart && createdDate <= weekEnd;
         }).length;
@@ -76,5 +76,5 @@ export function useProjectChartData(
         };
       });
     }
-  }, [store.tasks, projectId, timeRange]);
+  }, [tasks, projectId, timeRange]);
 }
