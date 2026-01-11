@@ -14,7 +14,7 @@ describe("ProjectMiniChart", () => {
 
     render(<ProjectMiniChart projectId="p1" />);
 
-    expect(screen.getByText("Activity")).toBeInTheDocument();
+    expect(screen.getByText("Week Activity")).toBeInTheDocument();
     // SVG is rendered
     expect(document.querySelector("svg")).toBeInTheDocument();
   });

@@ -8,30 +8,24 @@ import {
 } from "../types/task";
 
 const PROJECT_TEMPLATES = [
-  {
-    name: "Website Redesign",
-    description: "Overhaul the company website with modern design",
-    icon: "🎨",
-  },
+  { name: "Website Redesign", description: "Overhaul the company website with modern design", icon: "🎨" },
   { name: "Mobile App", description: "Develop iOS and Android applications", icon: "📱" },
   { name: "Marketing Campaign", description: "Q4 Marketing push", icon: "🚀" },
   { name: "Backend Migration", description: "Migrate legacy backend to Node.js", icon: "🔧" },
   { name: "Team Offsite", description: "Plan the annual team retreat", icon: "🌴" },
+  { name: "Customer Support", description: "Track and resolve user tickets", icon: "🎧" },
+  { name: "Q1 Hiring", description: "Recruit top talent for engineering", icon: "🤝" },
+  { name: "Brand Identity", description: "Refresh logo and brand guidelines", icon: "✨" },
+  { name: "Security Audit", description: "Annual security compliance check", icon: "🔒" },
+  { name: "Product Launch", description: "Launch the new flagship feature", icon: "📣" },
 ];
 
 const TASK_TITLES = [
-  "Design Homepage",
-  "Implement Login",
-  "Fix Navigation Bug",
-  "Write Documentation",
-  "Setup Database",
-  "Create API Endpoints",
-  "Test Payment Gateway",
-  "Optimize Images",
-  "Code Review",
-  "Deploy to Staging",
-  "User Interview",
-  "Analyze Metrics",
+  "Design Homepage", "Implement Login", "Fix Navigation Bug", "Write Documentation",
+  "Setup Database", "Create API Endpoints", "Test Payment Gateway", "Optimize Images",
+  "Code Review", "Deploy to Staging", "User Interview", "Analyze Metrics",
+  "Refactor Auth", "Update Dependencies", "Fix CSS Glitch", "Write Unit Tests",
+  "Configure CI/CD", "Design Icon Set", "Draft Blog Post", "Record Demo Video",
 ];
 
 const DESCRIPTIONS = [
@@ -40,6 +34,8 @@ const DESCRIPTIONS = [
   "Critical priority, affects all users.",
   "Take your time but ensure high quality.",
   "Coordinate with the design team.",
+  "Check existing patterns before starting.",
+  "Make sure to handle edge cases.",
 ];
 
 const TAGS: TaskTag[] = ["Feature", "Bug", "Improvement"];
@@ -56,20 +52,26 @@ function getRandomDate(start: Date, end: Date) {
   ).toISOString();
 }
 
+function subDays(date: Date, days: number) {
+  const result = new Date(date);
+  result.setDate(result.getDate() - days);
+  return result;
+}
+
 export const generateSeedData = () => {
   const store = useStore.getState();
 
   // 1. Clear existing data
   store.reset();
 
+  const now = new Date();
+  const sixtyDaysAgo = subDays(now, 60);
+
   // 2. Generate Projects
   PROJECT_TEMPLATES.forEach((tmpl, index) => {
-    // some projects use icon, some modify color
     const color = PROJECT_COLORS[index % PROJECT_COLORS.length];
-    // Randomize if we look for icon or color
-    const useIcon = Math.random() > 0.3;
+    const useIcon = Math.random() > 0.2; // 80% chance of icon
 
-    // addProject automatically generates ID and sets it as selected
     const project = store.addProject(
       tmpl.name,
       tmpl.description,
@@ -77,8 +79,8 @@ export const generateSeedData = () => {
       useIcon ? tmpl.icon : undefined,
     );
 
-    // 3. Generate Tasks for this project
-    const numTasks = Math.floor(Math.random() * 5) + 3; // 3 to 7 tasks
+    // 3. Generate Tasks for this project (15-25 tasks)
+    const numTasks = Math.floor(Math.random() * 11) + 15;
 
     for (let i = 0; i < numTasks; i++) {
       const title = getRandomItem(TASK_TITLES);
@@ -87,27 +89,55 @@ export const generateSeedData = () => {
 
       const task = store.addTask(project.id, title, priority, tag);
 
-      // Update task with more details
-      const status = getRandomItem(STATUSES);
+      // Determine Status & Dates
+      const statusRoll = Math.random();
+      let status: TaskStatus = "todo";
+      let createdAt = getRandomDate(sixtyDaysAgo, now);
+      let completedAt: string | undefined;
+      let isArchived = false;
+
+      // ~40% Done, ~30% In Progress, ~30% Todo
+      if (statusRoll < 0.4) {
+        status = "done";
+        // Completion date must be after creation
+        const createdDate = new Date(createdAt);
+        // Ensure completion is within range (after created, before now)
+        completedAt = getRandomDate(createdDate, now);
+        
+        // 20% chance to archive completed tasks
+        if (Math.random() < 0.2) {
+          isArchived = true;
+        }
+      } else if (statusRoll < 0.7) {
+        status = "in-progress";
+      } else {
+        status = "todo";
+      }
+
       const description = getRandomItem(DESCRIPTIONS);
       const dueDate =
-        Math.random() > 0.3
-          ? getRandomDate(new Date(), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
-          : undefined; // Next 7 days
+        Math.random() > 0.4
+          ? getRandomDate(now, new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000)) // Next 14 days
+          : undefined;
 
       const updates: Partial<Task> = {
         description,
         status,
         dueDate,
+        createdAt, // Overwrite with historical date
       };
 
       if (status === "done") {
-        updates.completedAt = new Date().toISOString();
+        updates.completedAt = completedAt;
+      }
+      
+      if (isArchived) {
+        updates.isArchived = true;
       }
 
       store.updateTask(task.id, updates);
     }
   });
 
-  console.log("Seed data generated successfully");
+  console.log("Enhanced seed data generated successfully");
 };
