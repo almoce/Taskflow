@@ -1,59 +1,156 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-priority-high: var(--priority-high);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-low: var(--priority-low);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.15s ease-out;
+  --animate-fade-in-up: fade-in-up 0.8s ease-out forwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-subtle: pulse-subtle 3s ease-in-out infinite;
+  --animate-scale-in: scale-in 0.5s ease-out forwards;
+  --animate-shimmer: shimmer 8s linear infinite;
+  --animate-tooltip-expand: expand-width 0.2s ease-out;
+  --animate-tooltip-collapse: collapse-width 0.2s ease-out;
+
+  @keyframes expand-width {
+    from { opacity: 0; width: 0% }
+    to { opacity: 1; width: 100%; }
+  }
+  @keyframes collapse-width {
+    from { opacity: 1; width: 100%; }
+    to { opacity: 0; width: 0%; }
+  }
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+}
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    --background: hsl(0 0% 7%);
+    --foreground: hsl(0 0% 95%);
 
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 95%;
+    --card: hsl(0 0% 9%);
+    --card-foreground: hsl(0 0% 95%);
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 95%;
+    --popover: hsl(0 0% 10%);
+    --popover-foreground: hsl(0 0% 95%);
 
-    --primary: 258 90% 66%;
-    --primary-foreground: 0 0% 100%;
+    --primary: hsl(258 90% 66%);
+    --primary-foreground: hsl(0 0% 100%);
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: hsl(0 0% 12%);
+    --secondary-foreground: hsl(0 0% 95%);
 
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 45%;
+    --muted: hsl(0 0% 14%);
+    --muted-foreground: hsl(0 0% 45%);
 
-    --accent: 0 0% 14%;
-    --accent-foreground: 0 0% 95%;
+    --accent: hsl(0 0% 14%);
+    --accent-foreground: hsl(0 0% 95%);
 
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: hsl(0 70% 55%);
+    --destructive-foreground: hsl(0 0% 100%);
 
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 258 90% 66%;
+    --border: hsl(0 0% 14%);
+    --input: hsl(0 0% 14%);
+    --ring: hsl(258 90% 66%);
 
     --radius: 0.5rem;
 
-    --success: 145 65% 42%;
-    --success-foreground: 0 0% 100%;
+    --success: hsl(145 65% 42%);
+    --success-foreground: hsl(0 0% 100%);
 
-    --warning: 38 90% 50%;
-    --warning-foreground: 0 0% 7%;
+    --warning: hsl(38 90% 50%);
+    --warning-foreground: hsl(0 0% 7%);
 
-    --priority-high: 0 70% 55%;
-    --priority-medium: 38 90% 50%;
-    --priority-low: 145 65% 42%;
+    --priority-high: hsl(0 70% 55%);
+    --priority-medium: hsl(38 90% 50%);
+    --priority-low: hsl(145 65% 42%);
 
-    --sidebar-background: 0 0% 7%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 258 90% 66%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 258 90% 66%;
+    --sidebar-background: hsl(0 0% 7%);
+    --sidebar-foreground: hsl(0 0% 95%);
+    --sidebar-primary: hsl(258 90% 66%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(0 0% 12%);
+    --sidebar-accent-foreground: hsl(0 0% 95%);
+    --sidebar-border: hsl(0 0% 14%);
+    --sidebar-ring: hsl(258 90% 66%);
   }
 }
 
@@ -79,14 +176,14 @@
 
 @layer components {
   .priority-high {
-    @apply text-[hsl(var(--priority-high))] bg-[hsl(var(--priority-high)/0.1)];
+    @apply text-priority-high bg-priority-high/10;
   }
 
   .priority-medium {
-    @apply text-[hsl(var(--priority-medium))] bg-[hsl(var(--priority-medium)/0.1)];
+    @apply text-priority-medium bg-priority-medium/10;
   }
 
   .priority-low {
-    @apply text-[hsl(var(--priority-low))] bg-[hsl(var(--priority-low)/0.1)];
+    @apply text-priority-low bg-priority-low/10;
   }
 }

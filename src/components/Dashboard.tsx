@@ -1,5 +1,5 @@
-import { FolderKanban, CheckCircle2, Clock, AlertTriangle, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { AlertTriangle, CheckCircle2, Clock, FolderKanban, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface DashboardProps {
   stats: {
@@ -14,32 +14,32 @@ interface DashboardProps {
 export function Dashboard({ stats, onNewProject }: DashboardProps) {
   const statCards = [
     {
-      label: 'Projects',
+      label: "Projects",
       value: stats.totalProjects,
       icon: FolderKanban,
-      color: 'text-primary',
-      bgColor: 'bg-primary/10',
+      color: "text-primary",
+      bgColor: "bg-primary/10",
     },
     {
-      label: 'Tasks',
+      label: "Tasks",
       value: stats.totalTasks,
       icon: Clock,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-400/10',
+      color: "text-blue-400",
+      bgColor: "bg-blue-400/10",
     },
     {
-      label: 'Completed',
+      label: "Completed",
       value: stats.completedToday,
       icon: CheckCircle2,
-      color: 'text-success',
-      bgColor: 'bg-success/10',
+      color: "text-success",
+      bgColor: "bg-success/10",
     },
     {
-      label: 'Overdue',
+      label: "Overdue",
       value: stats.overdue,
       icon: AlertTriangle,
-      color: 'text-destructive',
-      bgColor: 'bg-destructive/10',
+      color: "text-destructive",
+      bgColor: "bg-destructive/10",
     },
   ];
 
@@ -47,18 +47,11 @@ export function Dashboard({ stats, onNewProject }: DashboardProps) {
     <div className="space-y-8 animate-fade-in">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Dashboard</h1>
-        <Button onClick={onNewProject} size="sm" className="h-8">
-          <Plus className="h-3.5 w-3.5 mr-1.5" />
-          New Project
-        </Button>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
         {statCards.map((stat) => (
-          <div
-            key={stat.label}
-            className="p-4 rounded-lg border border-border bg-card"
-          >
+          <div key={stat.label} className="p-4 rounded-lg border border-border bg-card">
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-lg ${stat.bgColor}`}>
                 <stat.icon className={`h-4 w-4 ${stat.color}`} />

@@ -23,13 +23,14 @@ A sleek, modern, and highly functional task and project management application b
   - **Glassmorphism Design**: Modern, translucent interfaces with smooth transitions.
   - **Emoji Integration**: Choose from a wide range of emojis for project icons using `frimousse`.
   - **Responsive Layout**: Fully optimized for desktop and mobile experiences.
+  - **Premium Landing Page**: A visually stunning introduction to the tool at the root url, with the main dashboard accessible at `/app`.
 
 ## 🚀 Tech Stack
 
-- **Core**: [React 18](https://reactjs.org/) & [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with Custom Design Tokens
-- **Routing**: [React Router](https://reactrouter.com/)
+- **Core**: [React 19](https://reactjs.org/) & [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool**: [Vite 7](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Routing**: [React Router 7](https://reactrouter.com/)
 - **State Management**: [Zustand](https://zustand.js.org/) with LocalStorage Persistence
 - **UI Architecture**: [Shadcn UI](https://ui.shadcn.com/) (Radix UI Adaptations)
 - **Data Visualization**: [D3.js](https://d3js.org/) for custom, high-performance charts

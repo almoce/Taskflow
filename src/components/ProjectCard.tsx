@@ -1,14 +1,14 @@
-import { MoreHorizontal, Trash2, Pencil, Download } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
+import { Download, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Project } from '@/types/task';
+} from "@/components/ui/dropdown-menu";
+import { Progress } from "@/components/ui/progress";
+import type { Project } from "@/types/task";
 
 interface ProjectCardProps {
   project: Project;
@@ -26,10 +26,19 @@ interface ProjectCardProps {
   onExport: () => void;
 }
 
-export function ProjectCard({ project, progress, taskCounts, isSelected, onClick, onEdit, onDelete, onExport }: ProjectCardProps) {
+export function ProjectCard({
+  project,
+  progress,
+  taskCounts,
+  isSelected,
+  onClick,
+  onEdit,
+  onDelete,
+  onExport,
+}: ProjectCardProps) {
   return (
     <div
-      className={`p-4 rounded-lg border bg-card cursor-pointer transition-colors group ${isSelected ? 'border-primary' : 'border-border hover:border-muted-foreground/30'
+      className={`w-full text-left p-4 rounded-lg border bg-card cursor-pointer transition-colors group ${isSelected ? "border-primary" : "border-border hover:border-muted-foreground/30"
         }`}
       onClick={onClick}
     >
@@ -38,10 +47,7 @@ export function ProjectCard({ project, progress, taskCounts, isSelected, onClick
           {project.icon ? (
             <span className="text-base">{project.icon}</span>
           ) : (
-            <div
-              className="w-2.5 h-2.5 rounded-sm"
-              style={{ backgroundColor: project.color }}
-            />
+            <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: project.color }} />
           )}
           <h3 className="font-medium text-sm">{project.name}</h3>
         </div>
@@ -93,7 +99,10 @@ export function ProjectCard({ project, progress, taskCounts, isSelected, onClick
       </div>
 
       {project.description && (
-        <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+        <p
+          className="text-xs text-muted-foreground mb-3 line-clamp-2 overflow-hidden"
+          title={project.description}
+        >
           {project.description}
         </p>
       )}

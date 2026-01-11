@@ -1,54 +1,63 @@
-import { useState, useEffect } from 'react';
+import { format, isValid, parseISO } from "date-fns";
+import { Bug, Calendar as CalendarIcon, TrendingUp, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO, isValid } from 'date-fns';
-import { Calendar as CalendarIcon, Bug, Zap, TrendingUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Priority, Task, TaskTag } from '@/types/task';
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import type { Priority, Task, TaskTag } from "@/types/task";
 
 interface NewTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (title: string, description?: string, priority?: Priority, dueDate?: string, tag?: TaskTag) => void;
+  onSubmit: (
+    title: string,
+    description?: string,
+    priority?: Priority,
+    dueDate?: string,
+    tag?: TaskTag,
+  ) => void;
   editTask?: Task | null;
   onEditSubmit?: (id: string, updates: Partial<Task>) => void;
 }
 
-export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSubmit }: NewTaskDialogProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<Priority>('medium');
+export function NewTaskDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  editTask,
+  onEditSubmit,
+}: NewTaskDialogProps) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState<Priority>("medium");
   const [tag, setTag] = useState<TaskTag | undefined>(undefined);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
 
   const isEditMode = !!editTask;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset form when dialog opens
   useEffect(() => {
     if (editTask) {
       setTitle(editTask.title);
-      setDescription(editTask.description || '');
+      setDescription(editTask.description || "");
       setPriority(editTask.priority);
       setTag(editTask.tag);
       if (editTask.dueDate) {
@@ -58,9 +67,9 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
         setDueDate(undefined);
       }
     } else {
-      setTitle('');
-      setDescription('');
-      setPriority('medium');
+      setTitle("");
+      setDescription("");
+      setPriority("medium");
       setTag(undefined);
       setDueDate(undefined);
     }
@@ -75,14 +84,20 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
           description: description.trim() || undefined,
           priority,
           tag,
-          dueDate: dueDate ? format(dueDate, 'yyyy-MM-dd') : undefined,
+          dueDate: dueDate ? format(dueDate, "yyyy-MM-dd") : undefined,
         });
       } else {
-        onSubmit(title.trim(), description.trim() || undefined, priority, dueDate ? format(dueDate, 'yyyy-MM-dd') : undefined, tag);
+        onSubmit(
+          title.trim(),
+          description.trim() || undefined,
+          priority,
+          dueDate ? format(dueDate, "yyyy-MM-dd") : undefined,
+          tag,
+        );
       }
-      setTitle('');
-      setDescription('');
-      setPriority('medium');
+      setTitle("");
+      setDescription("");
+      setPriority("medium");
       setDueDate(undefined);
       onOpenChange(false);
     }
@@ -92,7 +107,7 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-card border-border">
         <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Task' : 'Add New Task'}</DialogTitle>
+          <DialogTitle>{isEditMode ? "Edit Task" : "Add New Task"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -140,7 +155,7 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
                     variant={"outline"}
                     className={cn(
                       "w-full justify-start text-left font-normal",
-                      !dueDate && "text-muted-foreground"
+                      !dueDate && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -148,12 +163,7 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="end">
-                  <Calendar
-                    mode="single"
-                    selected={dueDate}
-                    onSelect={setDueDate}
-                    initialFocus
-                  />
+                  <Calendar mode="single" selected={dueDate} onSelect={setDueDate} initialFocus />
                 </PopoverContent>
               </Popover>
             </div>
@@ -162,8 +172,8 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
           <div className="space-y-2">
             <Label>Tag (optional)</Label>
             <div className="flex gap-2">
-              {(['Bug', 'Feature', 'Improvement'] as TaskTag[]).map((t) => {
-                const Icon = t === 'Bug' ? Bug : t === 'Feature' ? Zap : TrendingUp;
+              {(["Bug", "Feature", "Improvement"] as TaskTag[]).map((t) => {
+                const Icon = t === "Bug" ? Bug : t === "Feature" ? Zap : TrendingUp;
                 return (
                   <Button
                     key={t}
@@ -173,9 +183,13 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
                     onClick={() => setTag(tag === t ? undefined : t)}
                     className={cn(
                       "flex-1 gap-2",
-                      tag === t && t === 'Bug' && "bg-rose-500 hover:bg-rose-600 text-white",
-                      tag === t && t === 'Feature' && "bg-indigo-500 hover:bg-indigo-600 text-white",
-                      tag === t && t === 'Improvement' && "bg-cyan-500 hover:bg-cyan-600 text-white"
+                      tag === t && t === "Bug" && "bg-rose-500 hover:bg-rose-600 text-white",
+                      tag === t &&
+                        t === "Feature" &&
+                        "bg-indigo-500 hover:bg-indigo-600 text-white",
+                      tag === t &&
+                        t === "Improvement" &&
+                        "bg-cyan-500 hover:bg-cyan-600 text-white",
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -191,7 +205,7 @@ export function NewTaskDialog({ open, onOpenChange, onSubmit, editTask, onEditSu
               Cancel
             </Button>
             <Button type="submit" disabled={!title.trim()} className="gradient-primary">
-              {isEditMode ? 'Save Changes' : 'Add Task'}
+              {isEditMode ? "Save Changes" : "Add Task"}
             </Button>
           </DialogFooter>
         </form>

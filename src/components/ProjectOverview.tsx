@@ -1,7 +1,7 @@
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ProjectCard } from './ProjectCard';
-import { Project } from '@/types/task';
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { Project } from "@/types/task";
+import { ProjectCard } from "./ProjectCard";
 
 interface ProjectOverviewProps {
   projects: Project[];
@@ -46,7 +46,9 @@ export function ProjectOverview({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map((project, index) => (
-          <div key={project.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.05}s` }}>
+          <div
+            key={project.id}
+          >
             <ProjectCard
               project={project}
               progress={getProgress(project.id)}

@@ -1,33 +1,38 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { TaskCard } from './TaskCard';
-import { Task, Project } from '@/types/task';
-import { cn } from '@/lib/utils';
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  addMonths,
-  subMonths,
-  eachDayOfInterval,
-  isSameMonth,
-  isSameDay,
-  isToday,
-} from 'date-fns';
 import {
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   DragOverlay,
-  DragStartEvent,
+  type DragStartEvent,
   PointerSensor,
+  useDraggable,
+  useDroppable,
   useSensor,
   useSensors,
-  useDroppable,
-} from '@dnd-kit/core';
-import { useDraggable } from '@dnd-kit/core';
+} from "@dnd-kit/core";
+import {
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
+} from "date-fns";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { Project, Task } from "@/types/task";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TaskCard } from "./TaskCard";
 
 interface CalendarViewProps {
   project: Project;
@@ -53,9 +58,9 @@ function DraggableTask({ task, children }: DraggableTaskProps) {
     ? {
       transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       opacity: isDragging ? 0.5 : 1,
-      cursor: 'grab',
+      cursor: "grab",
     }
-    : { cursor: 'grab' };
+    : { cursor: "grab" };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -73,7 +78,7 @@ interface DroppableDayProps {
 
 function DroppableDay({ day, children, className, isActive }: DroppableDayProps) {
   const { setNodeRef, isOver } = useDroppable({
-    id: format(day, 'yyyy-MM-dd'),
+    id: format(day, "yyyy-MM-dd"),
     data: { day },
   });
 
@@ -82,8 +87,8 @@ function DroppableDay({ day, children, className, isActive }: DroppableDayProps)
       ref={setNodeRef}
       className={cn(
         className,
-        isOver && 'bg-primary/10 ring-2 ring-primary/50',
-        isActive && !isOver && 'bg-muted/50'
+        isOver && "bg-primary/10 ring-2 ring-primary/50",
+        isActive && !isOver && "bg-muted/50",
       )}
     >
       {children}
@@ -91,7 +96,14 @@ function DroppableDay({ day, children, className, isActive }: DroppableDayProps)
   );
 }
 
-export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAddTask, onArchiveTask }: CalendarViewProps) {
+export function CalendarView({
+  project,
+  tasks,
+  onUpdateTask,
+  onDeleteTask,
+  onAddTask,
+  onArchiveTask,
+}: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -100,7 +112,7 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
       activationConstraint: {
         distance: 8,
       },
-    })
+    }),
   );
 
   const monthStart = startOfMonth(currentMonth);
@@ -111,14 +123,14 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const getTasksForDay = (day: Date) => {
-    return tasks.filter(task => {
+    return tasks.filter((task) => {
       if (!task.dueDate) return false;
       return isSameDay(new Date(task.dueDate), day);
     });
   };
 
   const handleDragStart = (event: DragStartEvent) => {
-    const task = tasks.find(t => t.id === event.active.id);
+    const task = tasks.find((t) => t.id === event.active.id);
     if (task) {
       setActiveTask(task);
     }
@@ -137,17 +149,23 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
     const dropDate = new Date(dropId);
     if (!isNaN(dropDate.getTime())) {
       onUpdateTask(taskId, { dueDate: dropId });
-    } else if (dropId === 'unscheduled') {
+    } else if (dropId === "unscheduled") {
       onUpdateTask(taskId, { dueDate: undefined });
     }
   };
 
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   // Droppable Unscheduled Area
-  function UnscheduledDropZone({ children, className }: { children: React.ReactNode, className?: string }) {
+  function UnscheduledDropZone({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) {
     const { setNodeRef, isOver } = useDroppable({
-      id: 'unscheduled',
+      id: "unscheduled",
     });
 
     return (
@@ -156,10 +174,15 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
         className={cn(
           "rounded-xl transition-all duration-200 border-2 border-transparent",
           className,
-          isOver && 'border-primary/30 bg-primary/5 shadow-inner'
+          isOver && "border-primary/30 bg-primary/5 shadow-inner",
         )}
       >
-        <div className={cn("h-full w-full transition-transform duration-200", isOver && "scale-[0.98]")}>
+        <div
+          className={cn(
+            "h-full w-full transition-transform duration-200",
+            isOver && "scale-[0.98]",
+          )}
+        >
           {children}
         </div>
       </div>
@@ -167,11 +190,7 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 space-y-6">
           <div className="flex items-center justify-between">
@@ -179,10 +198,7 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
               {project.icon ? (
                 <span className="text-lg">{project.icon}</span>
               ) : (
-                <div
-                  className="w-3 h-3 rounded-sm"
-                  style={{ backgroundColor: project.color }}
-                />
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: project.color }} />
               )}
               <h2 className="text-xl font-semibold">{project.name}</h2>
             </div>
@@ -196,7 +212,7 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="text-sm font-medium min-w-[120px] text-center">
-                {format(currentMonth, 'MMMM yyyy')}
+                {format(currentMonth, "MMMM yyyy")}
               </span>
               <Button
                 variant="outline"
@@ -226,7 +242,7 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
           <div className="rounded-lg border border-border bg-card overflow-hidden">
             {/* Week day headers */}
             <div className="grid grid-cols-7 border-b border-border">
-              {weekDays.map(day => (
+              {weekDays.map((day) => (
                 <div
                   key={day}
                   className="py-3 text-center text-sm font-medium text-muted-foreground"
@@ -249,39 +265,59 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
                     day={day}
                     isActive={!!activeTask}
                     className={cn(
-                      'min-h-[120px] border-b border-r border-border p-2 transition-colors',
-                      !isCurrentMonth && 'bg-muted/30',
-                      index % 7 === 6 && 'border-r-0',
-                      index >= days.length - 7 && 'border-b-0'
+                      "min-h-[120px] border-b border-r border-border p-2 transition-colors",
+                      !isCurrentMonth && "bg-muted/30",
+                      index % 7 === 6 && "border-r-0",
+                      index >= days.length - 7 && "border-b-0",
                     )}
                   >
                     <div
                       className={cn(
-                        'text-sm font-medium mb-2 w-7 h-7 flex items-center justify-center rounded-full',
-                        !isCurrentMonth && 'text-muted-foreground',
-                        isCurrentDay && 'bg-primary text-primary-foreground'
+                        "text-sm font-medium mb-2 w-7 h-7 flex items-center justify-center rounded-full",
+                        !isCurrentMonth && "text-muted-foreground",
+                        isCurrentDay && "bg-primary text-primary-foreground",
                       )}
                     >
-                      {format(day, 'd')}
+                      {format(day, "d")}
                     </div>
                     <div className="space-y-1">
-                      {dayTasks.slice(0, 3).map(task => (
+                      {dayTasks.slice(0, 3).map((task) => (
                         <DraggableTask key={task.id} task={task}>
-                          <div
-                            className={cn(
-                              'text-xs px-2 py-1 rounded truncate transition-all',
-                              task.status === 'done' && 'opacity-50 line-through',
-                              task.priority === 'high' && 'bg-[hsl(var(--priority-high)/0.2)] text-[hsl(var(--priority-high))]',
-                              task.priority === 'medium' && 'bg-[hsl(var(--priority-medium)/0.2)] text-[hsl(var(--priority-medium))]',
-                              task.priority === 'low' && 'bg-[hsl(var(--priority-low)/0.2)] text-[hsl(var(--priority-low))]'
-                            )}
-                            onClick={() => onUpdateTask(task.id, {
-                              status: task.status === 'done' ? 'todo' : 'done'
-                            })}
-                            title={`${task.title} - Drag to reschedule`}
-                          >
-                            {task.title}
-                          </div>
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <button
+                                type="button"
+                                className={cn(
+                                  "w-full text-left text-xs px-2 py-1 rounded truncate transition-all",
+                                  task.status === "done" && "opacity-50 line-through",
+                                  task.priority === "high" &&
+                                  "bg-priority-high/20 text-priority-high",
+                                  task.priority === "medium" &&
+                                  "bg-priority-medium/20 text-priority-medium",
+                                  task.priority === "low" &&
+                                  "bg-priority-low/20 text-priority-low",
+                                )}
+                                onClick={() =>
+                                  onUpdateTask(task.id, {
+                                    status: task.status === "done" ? "todo" : "done",
+                                  })
+                                }
+                              >
+                                {task.title}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="top"
+                              className="origin-bottom max-w-[300px] data-[state=delayed-open]:animate-fade-in data-[state=closed]:animate-fade-out animation-duration-500"
+                            >
+                              <p className="font-medium">{task.title}</p>
+                              {task.description && (
+                                <p className="text-xs text-muted-foreground mt-1 whitespace-normal">
+                                  {task.description}
+                                </p>
+                              )}
+                            </TooltipContent>
+                          </Tooltip>
                         </DraggableTask>
                       ))}
                       {dayTasks.length > 3 && (
@@ -301,22 +337,24 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
         <div className="lg:col-span-1 lg:border-l lg:border-border/50 lg:pl-6">
           <div className="flex flex-col h-full space-y-3 sticky top-6">
             <h3 className="text-sm font-medium text-muted-foreground px-2">
-              Unscheduled ({tasks.filter(t => !t.dueDate).length})
+              Unscheduled ({tasks.filter((t) => !t.dueDate).length})
             </h3>
             <UnscheduledDropZone className="flex-1 min-h-[300px]">
               <div className="p-2 space-y-3">
-                {tasks.filter(t => !t.dueDate).length > 0 ? (
+                {tasks.filter((t) => !t.dueDate).length > 0 ? (
                   <div className="grid grid-cols-1 gap-3">
-                    {tasks.filter(t => !t.dueDate).map(task => (
-                      <DraggableTask key={task.id} task={task}>
-                        <TaskCard
-                          task={task}
-                          onUpdate={(updates) => onUpdateTask(task.id, updates)}
-                          onDelete={() => onDeleteTask(task.id)}
-                          onArchive={() => onArchiveTask(task.id)}
-                        />
-                      </DraggableTask>
-                    ))}
+                    {tasks
+                      .filter((t) => !t.dueDate)
+                      .map((task) => (
+                        <DraggableTask key={task.id} task={task}>
+                          <TaskCard
+                            task={task}
+                            onUpdate={(updates) => onUpdateTask(task.id, updates)}
+                            onDelete={() => onDeleteTask(task.id)}
+                            onArchive={() => onArchiveTask(task.id)}
+                          />
+                        </DraggableTask>
+                      ))}
                   </div>
                 ) : (
                   <div className="h-[200px] flex flex-col items-center justify-center border-2 border-dashed border-border/50 rounded-lg p-6 text-center text-muted-foreground text-sm">
@@ -337,11 +375,14 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
               <div className="opacity-90 rotate-2 scale-105 shadow-lg">
                 <div
                   className={cn(
-                    'text-xs px-2 py-1 rounded truncate w-[140px]',
-                    activeTask.status === 'done' && 'opacity-50 line-through',
-                    activeTask.priority === 'high' && 'bg-[hsl(var(--priority-high)/0.2)] text-[hsl(var(--priority-high))]',
-                    activeTask.priority === 'medium' && 'bg-[hsl(var(--priority-medium)/0.2)] text-[hsl(var(--priority-medium))]',
-                    activeTask.priority === 'low' && 'bg-[hsl(var(--priority-low)/0.2)] text-[hsl(var(--priority-low))]'
+                    "text-xs px-2 py-1 rounded truncate w-[140px]",
+                    activeTask.status === "done" && "opacity-50 line-through",
+                    activeTask.priority === "high" &&
+                    "bg-priority-high/20 text-priority-high",
+                    activeTask.priority === "medium" &&
+                    "bg-priority-medium/20 text-priority-medium",
+                    activeTask.priority === "low" &&
+                    "bg-priority-low/20 text-priority-low",
                   )}
                 >
                   {activeTask.title}
@@ -349,11 +390,7 @@ export function CalendarView({ project, tasks, onUpdateTask, onDeleteTask, onAdd
               </div>
             ) : (
               <div className="opacity-90 rotate-1 scale-105 shadow-xl w-[280px]">
-                <TaskCard
-                  task={activeTask}
-                  onUpdate={() => { }}
-                  onDelete={() => { }}
-                />
+                <TaskCard task={activeTask} onUpdate={() => { }} onDelete={() => { }} />
               </div>
             )}
           </div>

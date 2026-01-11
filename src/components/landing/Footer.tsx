@@ -5,10 +5,12 @@ export const Footer = () => {
     <footer className="py-6 border-t border-white/10 bg-black text-zinc-500 text-sm">
       <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-zinc-800 flex items-center justify-center">
-            <span className="text-zinc-400 text-[10px] font-bold">T</span>
-          </div>
-          <span>© 2026 Taskflow Inc.</span>
+          <img
+            src={`${import.meta.env.BASE_URL}logo_taskflow.png`}
+            alt="TaskFlow"
+            className="w-5 h-5"
+          />
+          <span>© 2026 TaskFlow Inc.</span>
         </div>
         <div className="flex gap-8">
           <a

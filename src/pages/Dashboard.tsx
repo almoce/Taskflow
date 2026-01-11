@@ -1,36 +1,37 @@
-import { useState, useEffect } from 'react';
-import { LayoutGrid, Calendar, Archive } from 'lucide-react';
-import { useTaskStore } from '@/hooks/useTaskStore';
-import { ProjectSidebar } from '@/components/ProjectSidebar';
-import { Dashboard } from '@/components/Dashboard';
-import { KanbanBoard } from '@/components/KanbanBoard';
-import { CalendarView } from '@/components/CalendarView';
-import { ProjectOverview } from '@/components/ProjectOverview';
-import { TaskSearch } from '@/components/TaskSearch';
-import { ProductivityCharts } from '@/components/ProductivityCharts';
-import { ArchivedView } from '@/components/ArchivedView';
-import { ProjectDialog } from '@/components/ProjectDialog';
-import { NewTaskDialog } from '@/components/NewTaskDialog';
-import { Button } from '@/components/ui/button';
-import { Priority, Task, Project, ProjectExportData } from '@/types/task';
-import { downloadJson } from '@/utils/exportUtils';
+import { Archive, Calendar, LayoutGrid } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { ArchivedView } from "@/components/ArchivedView";
+import { CalendarView } from "@/components/CalendarView";
+import { Dashboard } from "@/components/Dashboard";
+import { KanbanBoard } from "@/components/KanbanBoard";
+import { NewTaskDialog } from "@/components/NewTaskDialog";
+import { ProductivityCharts } from "@/components/ProductivityCharts";
+import { ProjectDialog } from "@/components/ProjectDialog";
+import { ProjectOverview } from "@/components/ProjectOverview";
+import { ProjectSidebar } from "@/components/ProjectSidebar";
+import { TaskSearch } from "@/components/TaskSearch";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
+import { useTaskStore } from "@/hooks/useTaskStore";
+import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
+import { downloadJson } from "@/utils/exportUtils";
 
-type ViewMode = 'kanban' | 'calendar' | 'archived';
+type ViewMode = "kanban" | "calendar" | "archived";
 
 const DashboardPage = () => {
   const [showNewProject, setShowNewProject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>('kanban');
+  const [viewMode, setViewMode] = useState<ViewMode>("kanban");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [analyticsProjectId, setAnalyticsProjectId] = useState<string>('all');
+  const [analyticsProjectId, setAnalyticsProjectId] = useState<string>("all");
 
   const {
     projects,
@@ -73,7 +74,13 @@ const DashboardPage = () => {
     }
   };
 
-  const handleAddTask = (title: string, description?: string, priority?: Priority, dueDate?: string, tag?: Task['tag']) => {
+  const handleAddTask = (
+    title: string,
+    description?: string,
+    priority?: Priority,
+    dueDate?: string,
+    tag?: Task["tag"],
+  ) => {
     if (selectedProjectId) {
       const task = addTask(selectedProjectId, title, priority, tag);
       if (description || dueDate) {
@@ -83,15 +90,29 @@ const DashboardPage = () => {
   };
 
   const handleExport = (projectId: string) => {
-    const data = getProjectExportData(projectId);
-    if (data) {
-      downloadJson(data, `TaskFlow-${data.project.name.toLowerCase().replace(/\s+/g, '-')}.json`);
+    try {
+      const data = getProjectExportData(projectId);
+      if (data) {
+        downloadJson(data, `TaskFlow-${data.project.name.toLowerCase().replace(/\s+/g, "-")}.json`);
+        toast.success("Project exported successfully");
+      } else {
+        toast.error("Failed to export project");
+      }
+    } catch (error) {
+      console.error("Failed to export project:", error);
+      toast.error("Failed to export project");
     }
   };
 
   const handleImport = (data: ProjectExportData) => {
-    importProject(data);
-    setShowNewProject(false);
+    try {
+      importProject(data);
+      toast.success("Project imported successfully");
+      setShowNewProject(false);
+    } catch (error) {
+      console.error("Failed to import project:", error);
+      toast.error("Failed to import project");
+    }
   };
 
   return (
@@ -106,12 +127,11 @@ const DashboardPage = () => {
         onDeleteProject={deleteProject}
         onNewProject={() => setShowNewProject(true)}
         onExport={handleExport}
-        getProgress={getProjectProgress}
       />
 
       <main className="flex-1 overflow-auto">
         <div className="p-8 max-w-5xl mx-auto">
-          {activeView === 'analytics' ? (
+          {activeView === "analytics" ? (
             <div className="space-y-6">
               <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -141,8 +161,8 @@ const DashboardPage = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode('kanban')}
-                    className={`h-7 px-2 text-xs ${viewMode === 'kanban' ? 'bg-background' : ''}`}
+                    onClick={() => setViewMode("kanban")}
+                    className={`h-7 px-2 text-xs ${viewMode === "kanban" ? "bg-background" : ""}`}
                   >
                     <LayoutGrid className="h-3.5 w-3.5 mr-1" />
                     Board
@@ -150,8 +170,8 @@ const DashboardPage = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode('calendar')}
-                    className={`h-7 px-2 text-xs ${viewMode === 'calendar' ? 'bg-background' : ''}`}
+                    onClick={() => setViewMode("calendar")}
+                    className={`h-7 px-2 text-xs ${viewMode === "calendar" ? "bg-background" : ""}`}
                   >
                     <Calendar className="h-3.5 w-3.5 mr-1" />
                     Calendar
@@ -159,8 +179,8 @@ const DashboardPage = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode('archived')}
-                    className={`h-7 px-2 text-xs ${viewMode === 'archived' ? 'bg-background' : ''}`}
+                    onClick={() => setViewMode("archived")}
+                    className={`h-7 px-2 text-xs ${viewMode === "archived" ? "bg-background" : ""}`}
                   >
                     <Archive className="h-3.5 w-3.5 mr-1" />
                     Archived
@@ -168,7 +188,7 @@ const DashboardPage = () => {
                 </div>
               </div>
 
-              {viewMode === 'kanban' ? (
+              {viewMode === "kanban" ? (
                 <KanbanBoard
                   project={selectedProject}
                   tasks={projectTasks}
@@ -182,7 +202,7 @@ const DashboardPage = () => {
                     setShowNewTask(true);
                   }}
                 />
-              ) : viewMode === 'calendar' ? (
+              ) : viewMode === "calendar" ? (
                 <CalendarView
                   project={selectedProject}
                   tasks={projectTasks}
@@ -193,7 +213,7 @@ const DashboardPage = () => {
                 />
               ) : (
                 <ArchivedView
-                  tasks={archivedTasks.filter(t => t.projectId === selectedProjectId)}
+                  tasks={archivedTasks.filter((t) => t.projectId === selectedProjectId)}
                   projects={projects}
                   onUpdateTask={updateTask}
                   onDeleteTask={deleteTask}
