@@ -384,7 +384,11 @@ export function TaskSearch({
                 filteredTasks.map((task) => {
                   const project = getProjectById(task.projectId);
                   return (
-                    <div key={task.id} className="relative" onClick={() => onSelectProject(task.projectId)}>
+                    <div
+                      key={task.id}
+                      className="relative"
+                      onClick={() => onSelectProject(task.projectId)}
+                    >
                       <TaskCard
                         task={task}
                         onUpdate={(updates) => onUpdateTask(task.id, updates)}

@@ -200,7 +200,7 @@ const DashboardPage = () => {
                     </span>
                   ) : (
                     <div
-                      className="h-8 w-8 rounded-full flex-shrink-0"
+                      className="h-8 w-8 rounded-full shrink-0"
                       style={{ backgroundColor: selectedProject.color }}
                     />
                   )}
@@ -243,45 +243,45 @@ const DashboardPage = () => {
                 </div>
               </div>
 
-              <ProjectSummary 
-                projectId={selectedProject.id} 
-                projectColor={selectedProject.color} 
+              <ProjectSummary
+                projectId={selectedProject.id}
+                projectColor={selectedProject.color}
               />
 
               <div className="pt-2">
                 {viewMode === "kanban" ? (
-                <KanbanBoard
-                  project={selectedProject}
-                  tasks={projectTasks}
-                  onAddTask={() => setShowNewTask(true)}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onMoveTask={moveTask}
-                  onArchiveTask={archiveTask}
-                  onEditTask={(task) => {
-                    setEditingTask(task);
-                    setShowNewTask(true);
-                  }}
-                />
-              ) : viewMode === "calendar" ? (
-                <CalendarView
-                  project={selectedProject}
-                  tasks={projectTasks}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onAddTask={() => setShowNewTask(true)}
-                  onArchiveTask={archiveTask}
-                />
-              ) : (
-                <ArchivedView
-                  tasks={archivedTasks.filter((t) => t.projectId === selectedProjectId)}
-                  projects={projects}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onUnarchiveTask={unarchiveTask}
-                />
-              )}
-            </div>
+                  <KanbanBoard
+                    project={selectedProject}
+                    tasks={projectTasks}
+                    onAddTask={() => setShowNewTask(true)}
+                    onUpdateTask={updateTask}
+                    onDeleteTask={deleteTask}
+                    onMoveTask={moveTask}
+                    onArchiveTask={archiveTask}
+                    onEditTask={(task) => {
+                      setEditingTask(task);
+                      setShowNewTask(true);
+                    }}
+                  />
+                ) : viewMode === "calendar" ? (
+                  <CalendarView
+                    project={selectedProject}
+                    tasks={projectTasks}
+                    onUpdateTask={updateTask}
+                    onDeleteTask={deleteTask}
+                    onAddTask={() => setShowNewTask(true)}
+                    onArchiveTask={archiveTask}
+                  />
+                ) : (
+                  <ArchivedView
+                    tasks={archivedTasks.filter((t) => t.projectId === selectedProjectId)}
+                    projects={projects}
+                    onUpdateTask={updateTask}
+                    onDeleteTask={deleteTask}
+                    onUnarchiveTask={unarchiveTask}
+                  />
+                )}
+              </div>
             </div>
           ) : (
             <div className="space-y-8">

@@ -69,10 +69,7 @@ export function AreaChart({ data, height = 200 }: AreaChartProps) {
       .call((g) => g.select(".domain").attr("stroke", "var(--border)"))
       .call((g) => g.selectAll(".tick line").attr("stroke", "var(--border)"))
       .call((g) =>
-        g
-          .selectAll(".tick text")
-          .attr("fill", "var(--muted-foreground)")
-          .attr("font-size", "12px"),
+        g.selectAll(".tick text").attr("fill", "var(--muted-foreground)").attr("font-size", "12px"),
       );
 
     g.append("g")
@@ -80,10 +77,7 @@ export function AreaChart({ data, height = 200 }: AreaChartProps) {
       .call((g) => g.select(".domain").attr("stroke", "var(--border)"))
       .call((g) => g.selectAll(".tick line").attr("stroke", "var(--border)"))
       .call((g) =>
-        g
-          .selectAll(".tick text")
-          .attr("fill", "var(--muted-foreground)")
-          .attr("font-size", "12px"),
+        g.selectAll(".tick text").attr("fill", "var(--muted-foreground)").attr("font-size", "12px"),
       );
 
     // Define gradients

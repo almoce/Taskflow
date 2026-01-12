@@ -1,11 +1,11 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, beforeEach } from "vitest";
 import { useProjectStats } from "@/hooks/useProjectStats";
-import { taskStore } from "@/hooks/useTaskStore";
+import { useStore } from "@/store/useStore";
 
 describe("useProjectStats", () => {
   beforeEach(() => {
-    taskStore.getState().reset();
+    useStore.getState().reset();
   });
 
   it("should return empty stats when no project is provided", () => {
@@ -20,18 +20,18 @@ describe("useProjectStats", () => {
   });
 
   it("should return correct stats for a specific project", () => {
-    const project = taskStore.getState().addProject("Test Project");
+    const project = useStore.getState().addProject("Test Project");
     const projectId = project.id;
 
-    taskStore.getState().addTask(projectId, "Task 1", "medium"); // todo
-    taskStore.getState().addTask(projectId, "Task 2", "medium");
-    taskStore.getState().updateTask(taskStore.getState().tasks[1].id, { status: "in-progress" });
-    taskStore.getState().addTask(projectId, "Task 3", "medium");
-    taskStore.getState().updateTask(taskStore.getState().tasks[2].id, { status: "done" });
+    useStore.getState().addTask(projectId, "Task 1", "medium"); // todo
+    useStore.getState().addTask(projectId, "Task 2", "medium");
+    useStore.getState().updateTask(useStore.getState().tasks[1].id, { status: "in-progress" });
+    useStore.getState().addTask(projectId, "Task 3", "medium");
+    useStore.getState().updateTask(useStore.getState().tasks[2].id, { status: "done" });
 
     // Add task to another project (should be ignored)
-    const otherProject = taskStore.getState().addProject("Other Project");
-    taskStore.getState().addTask(otherProject.id, "Other Task", "medium");
+    const otherProject = useStore.getState().addProject("Other Project");
+    useStore.getState().addTask(otherProject.id, "Other Task", "medium");
 
     const { result } = renderHook(() => useProjectStats(projectId));
 
@@ -45,7 +45,7 @@ describe("useProjectStats", () => {
   });
 
   it("should return empty stats for a project with no tasks", () => {
-    const project = taskStore.getState().addProject("Empty Project");
+    const project = useStore.getState().addProject("Empty Project");
     const { result } = renderHook(() => useProjectStats(project.id));
     expect(result.current).toEqual({
       total: 0,

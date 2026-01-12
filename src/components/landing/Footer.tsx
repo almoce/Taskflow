@@ -10,7 +10,7 @@ export const Footer = () => {
             alt="TaskFlow"
             className="w-5 h-5"
           />
-          <span>© 2026 TaskFlow Inc.</span>
+          <span>© 2026 TaskFlow</span>
         </div>
         <div className="flex gap-8">
           <a

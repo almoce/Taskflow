@@ -92,7 +92,7 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
       .attr("offset", "100%")
       .attr("stop-color", "hsl(142 76% 36%)")
       .attr("stop-opacity", 0);
-      
+
   }, [data]);
 
   return (
@@ -100,7 +100,7 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
       <CardHeader className="p-3 pb-0">
         <CardTitle className="text-[10px] uppercase tracking-wider font-bold flex items-center gap-1.5 text-muted-foreground/70">
           <TrendingUp className="w-3 h-3 text-emerald-500/70" />
-          Activity
+          Week Activity
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0 pt-1">

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { 
-  ArrowUpWideNarrow, 
-  Calendar, 
-  Clock, 
+import {
+  ArrowUpWideNarrow,
+  Calendar,
+  Clock,
   Tag,
   ChevronUp,
   ChevronDown
@@ -55,13 +55,13 @@ export function ColumnSortControls({ columnId }: ColumnSortControlsProps) {
               onClick={() => handleSortClick(id)}
               aria-label={`Sort by ${label}${isActive ? (columnSort.direction === "asc" ? " (Asc)" : " (Desc)") : ""}`}
             >
-              <Icon className="h-3 w-3" />
+              <Icon className="h-3! w-3!" />
               {isActive && (
                 <div className="absolute -top-1 -right-1 bg-background rounded-full border border-border shadow-sm p-0.5">
                   {columnSort.direction === "asc" ? (
-                    <ChevronUp className="h-1.5 w-1.5" />
+                    <ChevronUp className="h-2! w-2!" />
                   ) : (
-                    <ChevronDown className="h-1.5 w-1.5" />
+                    <ChevronDown className="h-2! w-2!" />
                   )}
                 </div>
               )}
@@ -75,7 +75,7 @@ export function ColumnSortControls({ columnId }: ColumnSortControlsProps) {
               <TooltipTrigger asChild>
                 {content}
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-[10px] px-2 py-1">
+              <TooltipContent side="top" className="text-[10px] px-2 py-1">
                 Sort by {label}
               </TooltipContent>
             </Tooltip>

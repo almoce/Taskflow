@@ -1,12 +1,12 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, beforeEach, vi } from "vitest";
 import { useProjectChartData } from "@/hooks/useProjectChartData";
-import { taskStore } from "@/hooks/useTaskStore";
+import { useStore } from "@/store/useStore";
 import { startOfDay, subDays, format } from "date-fns";
 
 describe("useProjectChartData", () => {
   beforeEach(() => {
-    taskStore.getState().reset();
+    useStore.getState().reset();
     // Mock date to ensure consistent results
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-11T12:00:00Z"));
@@ -18,18 +18,18 @@ describe("useProjectChartData", () => {
   });
 
   it("should return 7 days of data for a specific project", () => {
-    const project = taskStore.getState().addProject("Test Project");
+    const project = useStore.getState().addProject("Test Project");
     const projectId = project.id;
 
     // Create a task today
-    taskStore.getState().addTask(projectId, "Task Today", "medium");
+    useStore.getState().addTask(projectId, "Task Today", "medium");
     
     // Create a task 2 days ago and complete it today
     vi.setSystemTime(new Date("2026-01-09T12:00:00Z"));
-    const taskOld = taskStore.getState().addTask(projectId, "Task Old", "medium");
+    const taskOld = useStore.getState().addTask(projectId, "Task Old", "medium");
     
     vi.setSystemTime(new Date("2026-01-11T12:00:00Z"));
-    taskStore.getState().updateTask(taskOld.id, { status: "done" });
+    useStore.getState().updateTask(taskOld.id, { status: "done" });
 
     const { result } = renderHook(() => useProjectChartData(projectId, "week"));
 
@@ -48,7 +48,7 @@ describe("useProjectChartData", () => {
   });
 
   it("should return weekly data for a month time range", () => {
-    const project = taskStore.getState().addProject("Month Project");
+    const project = useStore.getState().addProject("Month Project");
     const { result } = renderHook(() => useProjectChartData(project.id, "month"));
 
     // subMonths(today, 1) to today usually covers 5-6 weeks depending on dates

@@ -38,8 +38,9 @@ export function ProjectCard({
 }: ProjectCardProps) {
   return (
     <div
-      className={`w-full text-left p-4 rounded-lg border bg-card cursor-pointer transition-colors group ${isSelected ? "border-primary" : "border-border hover:border-muted-foreground/30"
-        }`}
+      className={`w-full text-left p-4 rounded-lg border bg-card cursor-pointer transition-colors group ${
+        isSelected ? "border-primary" : "border-border hover:border-muted-foreground/30"
+      }`}
       onClick={onClick}
     >
       <div className="flex items-start justify-between mb-3">

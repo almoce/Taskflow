@@ -25,13 +25,9 @@ import {
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { Project, Task } from "@/types/task";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { TaskCard } from "./TaskCard";
 
 interface CalendarViewProps {
@@ -193,15 +189,7 @@ export function CalendarView({
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {project.icon ? (
-                <span className="text-lg">{project.icon}</span>
-              ) : (
-                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: project.color }} />
-              )}
-              <h2 className="text-xl font-semibold">{project.name}</h2>
-            </div>
+          <div className="flex items-center justify-end">
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -294,8 +282,7 @@ export function CalendarView({
                                   "bg-priority-high/20 text-priority-high",
                                   task.priority === "medium" &&
                                   "bg-priority-medium/20 text-priority-medium",
-                                  task.priority === "low" &&
-                                  "bg-priority-low/20 text-priority-low",
+                                  task.priority === "low" && "bg-priority-low/20 text-priority-low",
                                 )}
                                 onClick={() =>
                                   onUpdateTask(task.id, {
@@ -377,12 +364,10 @@ export function CalendarView({
                   className={cn(
                     "text-xs px-2 py-1 rounded truncate w-[140px]",
                     activeTask.status === "done" && "opacity-50 line-through",
-                    activeTask.priority === "high" &&
-                    "bg-priority-high/20 text-priority-high",
+                    activeTask.priority === "high" && "bg-priority-high/20 text-priority-high",
                     activeTask.priority === "medium" &&
                     "bg-priority-medium/20 text-priority-medium",
-                    activeTask.priority === "low" &&
-                    "bg-priority-low/20 text-priority-low",
+                    activeTask.priority === "low" && "bg-priority-low/20 text-priority-low",
                   )}
                 >
                   {activeTask.title}
