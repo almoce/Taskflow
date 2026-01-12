@@ -7,6 +7,7 @@ const generateId = () => uuidv4();
 
 export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set, get) => ({
   tasks: [],
+  columnSorts: {},
 
   addTask: (projectId, title, priority = "medium", tag) => {
     const task: Task = {
@@ -77,5 +78,17 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
     if (hasChanges) {
       set({ tasks: updatedTasks });
     }
+  },
+
+  setColumnSort: (columnId, sort) => {
+    set((state) => {
+      const newColumnSorts = { ...state.columnSorts };
+      if (sort) {
+        newColumnSorts[columnId] = sort;
+      } else {
+        delete newColumnSorts[columnId];
+      }
+      return { columnSorts: newColumnSorts };
+    });
   },
 });

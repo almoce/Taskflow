@@ -1,5 +1,13 @@
 import type { Priority, Project, ProjectExportData, Task, TaskStatus } from "@/types/task";
 
+export type SortCriteria = "priority" | "date" | "dueDate" | "tag";
+export type SortDirection = "asc" | "desc";
+
+export interface ColumnSort {
+  criteria: SortCriteria;
+  direction: SortDirection;
+}
+
 export interface ProjectSlice {
   projects: Project[];
   selectedProjectId: string | null;
@@ -13,6 +21,7 @@ export interface ProjectSlice {
 
 export interface TaskSlice {
   tasks: Task[];
+  columnSorts: Record<string, ColumnSort>;
   addTask: (projectId: string, title: string, priority?: Priority, tag?: Task["tag"]) => Task;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
@@ -20,6 +29,7 @@ export interface TaskSlice {
   archiveTask: (id: string) => void;
   unarchiveTask: (id: string) => void;
   checkAutoArchive: () => void;
+  setColumnSort: (columnId: string, sort: ColumnSort | null) => void;
 }
 
 export interface UISlice {
