@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { 
-  ArrowDownAZ, 
   ArrowUpWideNarrow, 
   Calendar, 
   Clock, 
@@ -9,8 +8,9 @@ import {
   ChevronDown
 } from "lucide-react";
 import { useStore } from "@/store/useStore";
-import type { SortCriteria, SortDirection } from "@/store/types";
+import type { SortCriteria } from "@/store/types";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ColumnSortControlsProps {
   columnId: string;
@@ -32,7 +32,6 @@ export function ColumnSortControls({ columnId }: ColumnSortControlsProps) {
       if (columnSort.direction === "asc") {
         setColumnSort(columnId, { criteria, direction: "desc" });
       } else {
-        // Clear sort on third click
         setColumnSort(columnId, null);
       }
     } else {
@@ -41,34 +40,48 @@ export function ColumnSortControls({ columnId }: ColumnSortControlsProps) {
   };
 
   return (
-    <div className="flex items-center gap-0.5 ml-auto">
-      {CRITERIA.map(({ id, icon: Icon, label }) => {
-        const isActive = columnSort?.criteria === id;
-        return (
-          <Button
-            key={id}
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "h-6 w-6 relative group transition-colors",
-              isActive ? "text-primary bg-primary/10" : "text-muted-foreground/50 hover:text-foreground"
-            )}
-            onClick={() => handleSortClick(id)}
-            title={`Sort by ${label}${isActive ? (columnSort.direction === "asc" ? " (Asc)" : " (Desc)") : ""}`}
-          >
-            <Icon className="h-3 w-3" />
-            {isActive && (
-              <div className="absolute -top-1 -right-1 bg-background rounded-full border border-border shadow-sm p-0.5">
-                {columnSort.direction === "asc" ? (
-                  <ChevronUp className="h-2 w-2" />
-                ) : (
-                  <ChevronDown className="h-2 w-2" />
-                )}
-              </div>
-            )}
-          </Button>
-        );
-      })}
-    </div>
+    <TooltipProvider>
+      <div className="flex items-center gap-0.5 ml-auto">
+        {CRITERIA.map(({ id, icon: Icon, label }) => {
+          const isActive = columnSort?.criteria === id;
+          const content = (
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-6 w-6 relative group transition-colors",
+                isActive ? "text-primary bg-primary/10" : "text-muted-foreground/50 hover:text-foreground"
+              )}
+              onClick={() => handleSortClick(id)}
+              aria-label={`Sort by ${label}${isActive ? (columnSort.direction === "asc" ? " (Asc)" : " (Desc)") : ""}`}
+            >
+              <Icon className="h-3 w-3" />
+              {isActive && (
+                <div className="absolute -top-1 -right-1 bg-background rounded-full border border-border shadow-sm p-0.5">
+                  {columnSort.direction === "asc" ? (
+                    <ChevronUp className="h-1.5 w-1.5" />
+                  ) : (
+                    <ChevronDown className="h-1.5 w-1.5" />
+                  )}
+                </div>
+              )}
+            </Button>
+          );
+
+          if (isActive) return <div key={id}>{content}</div>;
+
+          return (
+            <Tooltip key={id} delayDuration={300}>
+              <TooltipTrigger asChild>
+                {content}
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-[10px] px-2 py-1">
+                Sort by {label}
+              </TooltipContent>
+            </Tooltip>
+          );
+        })}
+      </div>
+    </TooltipProvider>
   );
 }

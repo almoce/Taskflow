@@ -18,10 +18,10 @@ describe("ColumnSortControls", () => {
     vi.mocked(useStore).mockReturnValue({}); // columnSort is undefined
     render(<ColumnSortControls columnId="todo" />);
     
-    expect(screen.getByTitle("Sort by Priority")).toBeInTheDocument();
-    expect(screen.getByTitle("Sort by Created")).toBeInTheDocument();
-    expect(screen.getByTitle("Sort by Due")).toBeInTheDocument();
-    expect(screen.getByTitle("Sort by Tag")).toBeInTheDocument();
+    expect(screen.getByLabelText("Sort by Priority")).toBeInTheDocument();
+    expect(screen.getByLabelText("Sort by Created")).toBeInTheDocument();
+    expect(screen.getByLabelText("Sort by Due")).toBeInTheDocument();
+    expect(screen.getByLabelText("Sort by Tag")).toBeInTheDocument();
   });
 
   it("calls setColumnSort when a button is clicked", () => {
@@ -38,7 +38,7 @@ describe("ColumnSortControls", () => {
 
     render(<ColumnSortControls columnId="todo" />);
     
-    fireEvent.click(screen.getByTitle("Sort by Priority"));
+    fireEvent.click(screen.getByLabelText("Sort by Priority"));
     expect(mockSetColumnSort).toHaveBeenCalledWith("todo", { criteria: "priority", direction: "asc" });
   });
 });
