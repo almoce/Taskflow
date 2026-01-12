@@ -19,11 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Project } from "@/types/task";
 
 interface ProjectSidebarProps {
@@ -80,10 +76,11 @@ export function ProjectSidebar({
         <Button
           variant="ghost"
           size="sm"
-          className={`w-full h-8 px-2 text-sm font-normal ${collapsed ? "justify-center" : "justify-start"} ${activeView === "tasks" && selectedProjectId === null
-            ? "bg-secondary text-foreground"
-            : "text-muted-foreground hover:text-foreground"
-            }`}
+          className={`w-full h-8 px-2 text-sm font-normal ${collapsed ? "justify-center" : "justify-start"} ${
+            activeView === "tasks" && selectedProjectId === null
+              ? "bg-secondary text-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
           onClick={() => {
             onSelectProject(null);
             onSetActiveView("tasks");
@@ -96,10 +93,11 @@ export function ProjectSidebar({
         <Button
           variant="ghost"
           size="sm"
-          className={`w-full h-8 px-2 text-sm font-normal ${collapsed ? "justify-center" : "justify-start"} ${activeView === "analytics"
-            ? "bg-secondary text-foreground"
-            : "text-muted-foreground hover:text-foreground"
-            }`}
+          className={`w-full h-8 px-2 text-sm font-normal ${collapsed ? "justify-center" : "justify-start"} ${
+            activeView === "analytics"
+              ? "bg-secondary text-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
           onClick={() => onSetActiveView("analytics")}
         >
           <BarChart3 className={`h-4 w-4 ${collapsed ? "" : "mr-2"}`} />
@@ -130,10 +128,11 @@ export function ProjectSidebar({
             return (
               <div
                 key={project.id}
-                className={`group flex items-center rounded-md transition-colors ${isSelected ? "bg-secondary" : "hover:bg-secondary/50"
-                  }`}
+                className={`group flex items-center rounded-md transition-colors ${
+                  isSelected ? "bg-secondary" : "hover:bg-secondary/50"
+                }`}
               >
-                <Tooltip delayDuration={0}>
+                <Tooltip delayDuration={300}>
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
