@@ -30,6 +30,7 @@ export const useStore = create<StoreState>()(
         projects: state.projects,
         tasks: state.tasks,
         selectedProjectId: state.selectedProjectId,
+        columnSorts: state.columnSorts,
       }),
     },
   ),
@@ -49,6 +50,7 @@ export const useProjects = () => useStore(useShallow((state) => ({
 
 export const useTasks = () => useStore(useShallow((state) => ({
   tasks: state.tasks,
+  columnSorts: state.columnSorts,
   addTask: state.addTask,
   updateTask: state.updateTask,
   deleteTask: state.deleteTask,
@@ -56,6 +58,7 @@ export const useTasks = () => useStore(useShallow((state) => ({
   archiveTask: state.archiveTask,
   unarchiveTask: state.unarchiveTask,
   checkAutoArchive: state.checkAutoArchive,
+  setColumnSort: state.setColumnSort,
 })));
 
 export const useUI = () => useStore(useShallow((state) => ({

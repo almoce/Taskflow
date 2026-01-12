@@ -26,6 +26,9 @@ import {
 import { cn } from "@/lib/utils";
 import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
 import { TaskCard } from "./TaskCard";
+import { ColumnSortControls } from "./kanban/ColumnSortControls";
+import { useTaskSorter } from "@/hooks/useTaskSorter";
+import { useStore } from "@/store/useStore";
 
 interface KanbanBoardProps {
   project: Project;
@@ -99,6 +102,9 @@ function DroppableColumn({
   isHighlighted,
 }: DroppableColumnProps) {
   const { setNodeRef } = useDroppable({ id });
+  const columnSort = useStore((state) => state.columnSorts[id]);
+  const sortedTasks = useTaskSorter(tasks, columnSort?.criteria, columnSort?.direction);
+  const isSortingActive = !!columnSort;
 
   return (
     <div className="space-y-3">
@@ -106,12 +112,14 @@ function DroppableColumn({
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           {title}
         </span>
-        <span className="text-xs text-muted-foreground">{tasks.length}</span>
+        <span className="text-xs text-muted-foreground mr-auto">{tasks.length}</span>
+        
+        <ColumnSortControls columnId={id} />
       </div>
 
       <SortableContext
         id={id}
-        items={tasks.map((t) => t.id)}
+        items={isSortingActive ? [] : sortedTasks.map((t) => t.id)}
         strategy={verticalListSortingStrategy}
       >
         <div
@@ -121,12 +129,12 @@ function DroppableColumn({
             isHighlighted && "bg-primary/10 border-primary/50",
           )}
         >
-          {tasks.length === 0 ? (
+          {sortedTasks.length === 0 ? (
             <div className="flex items-center justify-center h-24 text-xs text-muted-foreground">
               {isHighlighted ? "Drop here" : "No tasks"}
             </div>
           ) : (
-            tasks.map((task) => (
+            sortedTasks.map((task) => (
               <SortableTask
                 key={task.id}
                 task={task}
