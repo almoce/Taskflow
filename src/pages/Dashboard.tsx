@@ -194,14 +194,21 @@ const DashboardPage = () => {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  {selectedProject.icon && (
+                  {selectedProject.icon ? (
                     <span className="text-2xl" role="img" aria-label="Project icon">
                       {selectedProject.icon}
                     </span>
+                  ) : (
+                    <div
+                      className="h-8 w-8 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: selectedProject.color }}
+                    />
                   )}
-                  <div>
+                  <div className="min-w-0">
                     <h1 className="text-xl font-semibold tracking-tight">{selectedProject.name}</h1>
-                    <p className="text-xs text-muted-foreground mt-0.5">Project Overview & Tasks</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate max-w-[300px] sm:max-w-md">
+                      {selectedProject.description || "Project Overview & Tasks"}
+                    </p>
                   </div>
                 </div>
 
