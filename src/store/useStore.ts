@@ -6,6 +6,7 @@ import { createProjectSlice } from "./slices/createProjectSlice";
 import { createTaskSlice } from "./slices/createTaskSlice";
 import { createUISlice } from "./slices/createUISlice";
 import { createSettingsSlice } from "./slices/createSettingsSlice";
+import { createAuthSlice } from "./slices/createAuthSlice";
 
 export const useStore = create<StoreState>()(
   persist(
@@ -14,6 +15,7 @@ export const useStore = create<StoreState>()(
       ...createTaskSlice(set, get, api),
       ...createUISlice(set, get, api),
       ...createSettingsSlice(set, get, api),
+      ...createAuthSlice(set, get, api),
 
       reset: () => {
         set({
@@ -21,6 +23,7 @@ export const useStore = create<StoreState>()(
           tasks: [],
           selectedProjectId: null,
           activeView: "tasks",
+          // We generally don't want to log the user out on reset() unless specified
         });
       },
     }),
@@ -31,6 +34,10 @@ export const useStore = create<StoreState>()(
         tasks: state.tasks,
         selectedProjectId: state.selectedProjectId,
         columnSorts: state.columnSorts,
+        // We persist session to keep user logged in
+        session: state.session,
+        user: state.user,
+        profile: state.profile,
       }),
     },
   ),
@@ -64,6 +71,15 @@ export const useTasks = () => useStore(useShallow((state) => ({
 export const useUI = () => useStore(useShallow((state) => ({
   activeView: state.activeView,
   setActiveView: state.setActiveView,
+})));
+
+export const useAuth = () => useStore(useShallow((state) => ({
+  session: state.session,
+  user: state.user,
+  profile: state.profile,
+  loading: state.loading,
+  setSession: state.setSession,
+  signOut: state.signOut,
 })));
 
 export const useStoreActions = () => useStore(useShallow((state) => ({

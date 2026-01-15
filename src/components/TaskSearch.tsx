@@ -1,19 +1,12 @@
-import { ChevronDown, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { FilterDropdown, type FilterOption } from "@/components/FilterDropdown";
+import { TaskCard } from "./TaskCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
-import { TaskCard } from "./TaskCard";
+import { ChevronDown, Search, X } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface TaskSearchProps {
   tasks: Task[];
@@ -23,9 +16,33 @@ interface TaskSearchProps {
   onSelectProject: (id: string) => void;
 }
 
-const priorities: Priority[] = ["high", "medium", "low"];
-const statuses: TaskStatus[] = ["todo", "in-progress", "done"];
-const tags: TaskTag[] = ["Bug", "Feature", "Improvement"];
+const PRIORITIES: Priority[] = ["high", "medium", "low"];
+const STATUSES: TaskStatus[] = ["todo", "in-progress", "done"];
+const TAGS: TaskTag[] = ["Bug", "Feature", "Improvement"];
+
+const PRIORITY_LABELS: Record<Priority, string> = {
+  high: "High",
+  medium: "Medium",
+  low: "Low",
+};
+
+const STATUS_LABELS: Record<TaskStatus, string> = {
+  todo: "To Do",
+  "in-progress": "In Progress",
+  done: "Done",
+};
+
+const PRIORITY_COLORS: Record<Priority, string> = {
+  high: "bg-priority-high",
+  medium: "bg-priority-medium",
+  low: "bg-priority-low",
+};
+
+const TAG_COLORS: Record<TaskTag, string> = {
+  Bug: "bg-rose-500",
+  Feature: "bg-indigo-500",
+  Improvement: "bg-cyan-500",
+};
 
 export function TaskSearch({
   tasks,
@@ -41,27 +58,15 @@ export function TaskSearch({
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const togglePriority = (priority: Priority) => {
-    setSelectedPriorities((prev) =>
-      prev.includes(priority) ? prev.filter((p) => p !== priority) : [...prev, priority],
-    );
-  };
-
-  const toggleStatus = (status: TaskStatus) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status],
-    );
-  };
-
-  const toggleTag = (tag: TaskTag) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-    );
-  };
-
-  const toggleProject = (projectId: string) => {
-    setSelectedProjects((prev) =>
-      prev.includes(projectId) ? prev.filter((p) => p !== projectId) : [...prev, projectId],
+  const toggleSelection = <T,>(
+    item: T,
+    selectedItems: T[],
+    setSelectedItems: (items: T[]) => void,
+  ) => {
+    setSelectedItems(
+      selectedItems.includes(item)
+        ? selectedItems.filter((i) => i !== item)
+        : [...selectedItems, item],
     );
   };
 
@@ -74,56 +79,67 @@ export function TaskSearch({
   };
 
   const filteredTasks = useMemo(() => {
+    const searchLower = searchQuery.toLowerCase();
+
     return tasks.filter((task) => {
-      // Text search
       const matchesSearch =
         searchQuery === "" ||
-        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        task.description?.toLowerCase().includes(searchQuery.toLowerCase());
+        task.title.toLowerCase().includes(searchLower) ||
+        task.description?.toLowerCase().includes(searchLower);
 
-      // Priority filter
-      const matchesPriority =
-        selectedPriorities.length === 0 || selectedPriorities.includes(task.priority);
+      if (!matchesSearch) return false;
 
-      // Status filter
-      const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(task.status);
+      if (selectedPriorities.length > 0 && !selectedPriorities.includes(task.priority)) {
+        return false;
+      }
 
-      // Project filter
-      const matchesProject =
-        selectedProjects.length === 0 || selectedProjects.includes(task.projectId);
+      if (selectedStatuses.length > 0 && !selectedStatuses.includes(task.status)) {
+        return false;
+      }
 
-      // Tag filter
-      const matchesTag = selectedTags.length === 0 || (task.tag && selectedTags.includes(task.tag));
+      if (selectedProjects.length > 0 && !selectedProjects.includes(task.projectId)) {
+        return false;
+      }
 
-      return matchesSearch && matchesPriority && matchesStatus && matchesProject && matchesTag;
+      if (selectedTags.length > 0 && (!task.tag || !selectedTags.includes(task.tag))) {
+        return false;
+      }
+
+      return true;
     });
   }, [tasks, searchQuery, selectedPriorities, selectedStatuses, selectedProjects, selectedTags]);
 
   const hasActiveFilters =
-    searchQuery ||
+    searchQuery !== "" ||
     selectedPriorities.length > 0 ||
     selectedStatuses.length > 0 ||
     selectedTags.length > 0 ||
     selectedProjects.length > 0;
-  const _activeFilterCount =
-    selectedPriorities.length +
-    selectedStatuses.length +
-    selectedTags.length +
-    selectedProjects.length;
 
   const getProjectById = (projectId: string) => projects.find((p) => p.id === projectId);
 
-  const priorityLabels: Record<Priority, string> = {
-    high: "High",
-    medium: "Medium",
-    low: "Low",
-  };
+  const priorityOptions: FilterOption<Priority>[] = PRIORITIES.map((p) => ({
+    value: p,
+    label: PRIORITY_LABELS[p],
+    className: PRIORITY_COLORS[p],
+  }));
 
-  const statusLabels: Record<TaskStatus, string> = {
-    todo: "To Do",
-    "in-progress": "In Progress",
-    done: "Done",
-  };
+  const statusOptions: FilterOption<TaskStatus>[] = STATUSES.map((s) => ({
+    value: s,
+    label: STATUS_LABELS[s],
+  }));
+
+  const tagOptions: FilterOption<TaskTag>[] = TAGS.map((t) => ({
+    value: t,
+    label: t,
+    className: TAG_COLORS[t],
+  }));
+
+  const projectOptions: FilterOption<string>[] = projects.map((p) => ({
+    value: p.id,
+    label: p.name,
+    color: p.color,
+  }));
 
   return (
     <div className="space-y-4 p-6 rounded-xl bg-card border border-border">
@@ -147,155 +163,33 @@ export function TaskSearch({
           )}
         </div>
 
-        {/* Priority Filter */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              Priority
-              {selectedPriorities.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-1 h-5 w-5 p-0 flex items-center justify-center"
-                >
-                  {selectedPriorities.length}
-                </Badge>
-              )}
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-popover">
-            <DropdownMenuLabel>Filter by Priority</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {priorities.map((priority) => (
-              <DropdownMenuCheckboxItem
-                key={priority}
-                checked={selectedPriorities.includes(priority)}
-                onCheckedChange={() => togglePriority(priority)}
-              >
-                <div className="flex items-center gap-2">
-                  <div
-                    className={cn(
-                      "w-2 h-2 rounded-full",
-                      priority === "high" && "bg-priority-high",
-                      priority === "medium" && "bg-priority-medium",
-                      priority === "low" && "bg-priority-low",
-                    )}
-                  />
-                  {priorityLabels[priority]}
-                </div>
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <FilterDropdown
+          label="Priority"
+          options={priorityOptions}
+          selectedValues={selectedPriorities}
+          onToggle={(val) => toggleSelection(val, selectedPriorities, setSelectedPriorities)}
+        />
 
-        {/* Status Filter */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              Status
-              {selectedStatuses.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-1 h-5 w-5 p-0 flex items-center justify-center"
-                >
-                  {selectedStatuses.length}
-                </Badge>
-              )}
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-popover">
-            <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {statuses.map((status) => (
-              <DropdownMenuCheckboxItem
-                key={status}
-                checked={selectedStatuses.includes(status)}
-                onCheckedChange={() => toggleStatus(status)}
-              >
-                {statusLabels[status]}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <FilterDropdown
+          label="Status"
+          options={statusOptions}
+          selectedValues={selectedStatuses}
+          onToggle={(val) => toggleSelection(val, selectedStatuses, setSelectedStatuses)}
+        />
 
-        {/* Tag Filter */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              Tag
-              {selectedTags.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-1 h-5 w-5 p-0 flex items-center justify-center"
-                >
-                  {selectedTags.length}
-                </Badge>
-              )}
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-popover">
-            <DropdownMenuLabel>Filter by Tag</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {tags.map((tag) => (
-              <DropdownMenuCheckboxItem
-                key={tag}
-                checked={selectedTags.includes(tag)}
-                onCheckedChange={() => toggleTag(tag)}
-              >
-                <div className="flex items-center gap-2">
-                  <div
-                    className={cn(
-                      "w-2 h-2 rounded-full",
-                      tag === "Bug" && "bg-rose-500",
-                      tag === "Feature" && "bg-indigo-500",
-                      tag === "Improvement" && "bg-cyan-500",
-                    )}
-                  />
-                  {tag}
-                </div>
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <FilterDropdown
+          label="Tag"
+          options={tagOptions}
+          selectedValues={selectedTags}
+          onToggle={(val) => toggleSelection(val, selectedTags, setSelectedTags)}
+        />
 
-        {/* Project Filter */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              Project
-              {selectedProjects.length > 0 && (
-                <Badge
-                  variant="secondary"
-                  className="ml-1 h-5 w-5 p-0 flex items-center justify-center"
-                >
-                  {selectedProjects.length}
-                </Badge>
-              )}
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-popover">
-            <DropdownMenuLabel>Filter by Project</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {projects.map((project) => (
-              <DropdownMenuCheckboxItem
-                key={project.id}
-                checked={selectedProjects.includes(project.id)}
-                onCheckedChange={() => toggleProject(project.id)}
-              >
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: project.color }}
-                  />
-                  {project.name}
-                </div>
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <FilterDropdown
+          label="Project"
+          options={projectOptions}
+          selectedValues={selectedProjects}
+          onToggle={(val) => toggleSelection(val, selectedProjects, setSelectedProjects)}
+        />
 
         {hasActiveFilters && (
           <Button
@@ -310,20 +204,25 @@ export function TaskSearch({
         )}
       </div>
 
-      {/* Active Filters Display */}
       {hasActiveFilters && (
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-sm text-muted-foreground">Filters:</span>
           {selectedPriorities.map((priority) => (
             <Badge key={priority} variant="secondary" className="gap-1">
-              {priorityLabels[priority]}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => togglePriority(priority)} />
+              {PRIORITY_LABELS[priority]}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => toggleSelection(priority, selectedPriorities, setSelectedPriorities)}
+              />
             </Badge>
           ))}
           {selectedStatuses.map((status) => (
             <Badge key={status} variant="secondary" className="gap-1">
-              {statusLabels[status]}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => toggleStatus(status)} />
+              {STATUS_LABELS[status]}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => toggleSelection(status, selectedStatuses, setSelectedStatuses)}
+              />
             </Badge>
           ))}
           {selectedTags.map((tag) => (
@@ -338,7 +237,10 @@ export function TaskSearch({
               )}
             >
               {tag}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => toggleTag(tag)} />
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => toggleSelection(tag, selectedTags, setSelectedTags)}
+              />
             </Badge>
           ))}
           {selectedProjects.map((projectId) => {
@@ -347,14 +249,18 @@ export function TaskSearch({
               <Badge key={projectId} variant="secondary" className="gap-1">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: project.color }} />
                 {project.name}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => toggleProject(projectId)} />
+                <X
+                  className="h-3 w-3 cursor-pointer"
+                  onClick={() =>
+                    toggleSelection(projectId, selectedProjects, setSelectedProjects)
+                  }
+                />
               </Badge>
             ) : null;
           })}
         </div>
       )}
 
-      {/* Search Results */}
       {hasActiveFilters && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -369,7 +275,7 @@ export function TaskSearch({
             >
               {isExpanded ? "Collapse" : "Expand"} results
               <ChevronDown
-                className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")}
               />
             </Button>
           </div>
@@ -381,22 +287,19 @@ export function TaskSearch({
                   No tasks match your search criteria
                 </div>
               ) : (
-                filteredTasks.map((task) => {
-                  const project = getProjectById(task.projectId);
-                  return (
-                    <div
-                      key={task.id}
-                      className="relative"
-                      onClick={() => onSelectProject(task.projectId)}
-                    >
-                      <TaskCard
-                        task={task}
-                        onUpdate={(updates) => onUpdateTask(task.id, updates)}
-                        onDelete={() => onDeleteTask(task.id)}
-                      />
-                    </div>
-                  );
-                })
+                filteredTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className="relative cursor-pointer"
+                    onClick={() => onSelectProject(task.projectId)}
+                  >
+                    <TaskCard
+                      task={task}
+                      onUpdate={(updates) => onUpdateTask(task.id, updates)}
+                      onDelete={() => onDeleteTask(task.id)}
+                    />
+                  </div>
+                ))
               )}
             </div>
           )}

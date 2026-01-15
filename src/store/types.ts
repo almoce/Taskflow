@@ -1,3 +1,4 @@
+import type { Session, User } from "@supabase/supabase-js";
 import type { Priority, Project, ProjectExportData, Task, TaskStatus } from "@/types/task";
 
 export type SortCriteria = "priority" | "date" | "dueDate" | "tag";
@@ -37,10 +38,19 @@ export interface UISlice {
   setActiveView: (view: "tasks" | "analytics") => void;
 }
 
+export interface AuthSlice {
+  session: Session | null;
+  user: User | null;
+  profile: unknown | null; // Placeholder for future profile data
+  loading: boolean;
+  setSession: (session: Session | null) => void;
+  signOut: () => Promise<void>;
+}
+
 export interface SettingsSlice {
   // Placeholder for future settings
 }
 
-export interface StoreState extends ProjectSlice, TaskSlice, UISlice, SettingsSlice {
+export interface StoreState extends ProjectSlice, TaskSlice, UISlice, AuthSlice, SettingsSlice {
   reset: () => void;
 }
