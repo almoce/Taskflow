@@ -1,6 +1,7 @@
 import { Archive, Calendar, LayoutGrid } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArchivedView } from "@/components/ArchivedView";
 import { CalendarView } from "@/components/CalendarView";
 import { Dashboard } from "@/components/Dashboard";
@@ -21,15 +22,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useProjects, useTasks, useUI } from "@/store/useStore";
+import { useAuth, useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
 import { downloadJson } from "@/utils/exportUtils";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
+import { supabase } from "@/lib/supabase";
 
 type ViewMode = "kanban" | "calendar" | "archived";
 
 const DashboardPage = () => {
   useRealtimeSync();
+  const location = useLocation();
+  const navigate = useNavigate();
+  // Using the hook properly
+  const { fetchProfile: refreshProfile } = useAuth();
+  
   const [showNewProject, setShowNewProject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
@@ -61,6 +68,24 @@ const DashboardPage = () => {
   } = useTasks();
 
   const { activeView, setActiveView } = useUI();
+
+  // Handle Stripe Checkout Return
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const sessionId = searchParams.get("session_id");
+
+    if (sessionId) {
+      toast.promise(refreshProfile(), {
+        loading: 'Verifying subscription...',
+        success: () => {
+          // Clean up URL
+          navigate("/app", { replace: true });
+          return "Welcome to Pro! You now have access to premium features.";
+        },
+        error: "Failed to verify subscription status. Please refresh.",
+      });
+    }
+  }, [location.search, navigate, refreshProfile]);
 
   // Computed values (formerly in useTaskStore)
   const selectedProject = projects.find((p) => p.id === selectedProjectId) || null;
@@ -157,7 +182,10 @@ const DashboardPage = () => {
 
   const handleManageSubscription = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke("create-portal-session");
+      const returnUrl = window.location.origin + import.meta.env.BASE_URL + "#/app";
+      const { data, error } = await supabase.functions.invoke("create-portal-session", {
+        body: { returnUrl }
+      });
       if (error) throw error;
       if (data?.url) {
         window.location.href = data.url;

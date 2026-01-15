@@ -166,53 +166,53 @@ export const ProjectSidebar = ({
               <Button
                 variant="ghost"
                 className={cn(
-                  "w-full h-10 px-2 hover:bg-accent flex items-center",
-                  collapsed ? "justify-center" : "justify-start gap-2"
+                  "w-full h-12 px-2 hover:bg-accent flex items-center",
+                  collapsed ? "justify-center" : "justify-start gap-3"
                 )}
               >
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback className="text-[10px] bg-primary/20 text-primary">
-                    {userInitials}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative shrink-0">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="text-xs bg-primary/20 text-primary font-medium">
+                      {userInitials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Badge 
+                    variant={isPro ? "default" : "secondary"} 
+                    className={cn(
+                      "absolute -bottom-2 left-1/2 -translate-x-1/2 text-[8px] h-3.5 px-1 py-0 pointer-events-none shadow-sm z-10 whitespace-nowrap",
+                      isPro && "bg-gradient-to-r from-purple-500 to-blue-500 border-none text-white",
+                      !isPro && "bg-background border border-border text-muted-foreground"
+                    )}
+                  >
+                    {isPro ? "PRO" : "FREE"}
+                  </Badge>
+                </div>
+                
                 {!collapsed && (
                   <div className="flex flex-col items-start overflow-hidden">
-                    <span className="text-xs font-medium truncate w-32">
+                    <span className="text-xs font-medium truncate w-32 whitespace-nowrap">
                       {user.email}
                     </span>
-                    <Badge 
-                      variant={isPro ? "default" : "outline"} 
-                      className={cn(
-                        "text-[10px] h-4 px-1 py-0",
-                        isPro && "bg-gradient-to-r from-purple-500 to-blue-500 border-none"
-                      )}
-                    >
-                      {isPro ? "Pro" : "Free"}
-                    </Badge>
                   </div>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-52" side={collapsed ? "right" : "top"}>
+            <DropdownMenuContent align="start" className="w-56" side={collapsed ? "right" : "top"}>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              
               <DropdownMenuItem 
-                className="gap-2 cursor-pointer" 
-                onClick={!isPro ? onUpgrade : undefined}
-                disabled={isPro}
+                className="gap-3 cursor-pointer focus:bg-accent" 
+                onClick={isPro ? onManageSubscription : onUpgrade}
               >
-                <Badge variant={isPro ? "default" : "secondary"} className="text-[10px]">
+                <Badge variant={isPro ? "default" : "secondary"} className="text-[10px] whitespace-nowrap">
                   {isPro ? "Pro Plan" : "Free Plan"}
                 </Badge>
-                <span className="text-xs text-muted-foreground">
-                  {isPro ? "Subscription Active" : "Upgrade"}
+                <span className="text-xs font-medium whitespace-nowrap">
+                  {isPro ? "Manage Subscription" : "Upgrade to Pro"}
                 </span>
               </DropdownMenuItem>
-              {isPro && (
-                <DropdownMenuItem className="gap-2 cursor-pointer" onClick={onManageSubscription}>
-                  <span className="text-xs">Manage Subscription</span>
-                </DropdownMenuItem>
-              )}
+              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()} className="text-red-500 gap-2 cursor-pointer">
                 <LogOut className="h-4 w-4" />

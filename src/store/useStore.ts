@@ -87,6 +87,7 @@ export const useAuth = () => useStore(useShallow((state) => ({
   isPro: state.isPro,
   loading: state.loading,
   setSession: state.setSession,
+  fetchProfile: state.fetchProfile,
   signOut: state.signOut,
 })));
 

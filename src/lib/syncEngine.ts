@@ -3,8 +3,8 @@ import { useStore } from "@/store/useStore";
 import type { Project, Task } from "@/types/task";
 
 export const syncProjects = async () => {
-  const { session } = useStore.getState();
-  if (!session?.user) return;
+  const { session, isPro } = useStore.getState();
+  if (!session?.user || !isPro) return;
 
   const { data: remoteProjects, error } = await supabase
     .from("projects")
@@ -56,25 +56,28 @@ export const syncProjects = async () => {
   });
 
   if (toUpload.length > 0) {
-    const { error: uploadError } = await supabase.from("projects").upsert(
-      toUpload.map((p) => ({
-        id: p.id,
-        user_id: session.user!.id,
-        name: p.name,
-        description: p.description,
-        color: p.color,
-        icon: p.icon,
-        created_at: p.createdAt,
-        updated_at: p.updatedAt || new Date().toISOString(),
-      }))
-    );
+    const payload = toUpload.map((p) => ({
+      id: p.id,
+      user_id: session.user!.id,
+      name: p.name,
+      description: p.description,
+      color: p.color,
+      icon: p.icon,
+      created_at: p.createdAt,
+      updated_at: p.updatedAt || new Date().toISOString(),
+    }));
+
+    console.log("DEBUG: Uploading projects payload:", payload);
+    console.log("DEBUG: Current User ID:", session.user!.id);
+
+    const { error: uploadError } = await supabase.from("projects").upsert(payload);
     if (uploadError) console.error("Error uploading projects:", uploadError);
   }
 };
 
 export const syncTasks = async () => {
-  const { session } = useStore.getState();
-  if (!session?.user) return;
+  const { session, isPro } = useStore.getState();
+  if (!session?.user || !isPro) return;
 
   const { data: remoteTasks, error } = await supabase.from("tasks").select("*");
 
@@ -153,8 +156,8 @@ export const syncTasks = async () => {
 };
 
 export const syncDeletes = async () => {
-  const { session, pendingDeleteProjectIds, pendingDeleteTaskIds, removeFromPendingDelete } = useStore.getState();
-  if (!session?.user) return;
+  const { session, isPro, pendingDeleteProjectIds, pendingDeleteTaskIds, removeFromPendingDelete } = useStore.getState();
+  if (!session?.user || !isPro) return;
 
   // Process Projects
   if (pendingDeleteProjectIds.length > 0) {

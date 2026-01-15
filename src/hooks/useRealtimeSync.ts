@@ -46,6 +46,39 @@ export const useRealtimeSync = () => {
     };
   }, [session, isPro]);
 
+  // Profile Realtime Listener (Upgrades/Downgrades)
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const channel = supabase
+      .channel("profile-changes")
+      .on(
+        "postgres_changes",
+        { 
+          event: "UPDATE", 
+          schema: "public", 
+          table: "profiles", 
+          filter: `id=eq.${session.user.id}` 
+        },
+        (payload) => {
+          const newProfile = payload.new as any;
+          useStore.getState().fetchProfile(); // Re-fetch to update store state
+          
+          if (newProfile.is_pro) {
+             toast.success("You are now a Pro member!");
+          } else {
+             // Optional: toast("Your Pro subscription has ended.");
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session]);
+
+  // Main Sync Logic (Projects & Tasks) - Only for Pro Users
   useEffect(() => {
     if (!session?.user || !isPro) return;
 
@@ -122,5 +155,5 @@ export const useRealtimeSync = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [session, upsertProject, upsertTask, deleteProject, deleteTask]);
+  }, [session, isPro, upsertProject, upsertTask, deleteProject, deleteTask]);
 };

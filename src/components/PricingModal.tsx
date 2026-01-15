@@ -26,7 +26,7 @@ const PRO_FEATURES = [
   "Custom project icons & colors",
 ];
 
-const PRICE_ID = "price_pro_monthly"; // Placeholder
+const PRICE_ID = import.meta.env.VITE_STRIPE_PRICE_ID || "price_pro_monthly"; // Fallback/Placeholder
 
 export function PricingModal({ open, onOpenChange }: PricingModalProps) {
   const [loading, setLoading] = useState(false);
@@ -40,8 +40,9 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
 
     setLoading(true);
     try {
+      const returnUrl = window.location.origin + import.meta.env.BASE_URL + "#/app";
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
-        body: { priceId: PRICE_ID },
+        body: { priceId: PRICE_ID, returnUrl },
       });
 
       if (error) throw error;
