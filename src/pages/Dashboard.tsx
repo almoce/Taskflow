@@ -155,6 +155,19 @@ const DashboardPage = () => {
     }
   };
 
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("create-portal-session");
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error: any) {
+      console.error("Portal error:", error);
+      toast.error(error.message || "Failed to open customer portal");
+    }
+  };
+
   return (
     <div className="flex h-screen bg-background">
       <ProjectSidebar
@@ -168,6 +181,7 @@ const DashboardPage = () => {
         onNewProject={() => setShowNewProject(true)}
         onExport={handleExport}
         onUpgrade={() => setShowPricing(true)}
+        onManageSubscription={handleManageSubscription}
       />
 
       <main className="flex-1 overflow-auto">

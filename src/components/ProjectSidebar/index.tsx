@@ -44,6 +44,7 @@ interface ProjectSidebarProps {
   onNewProject: () => void;
   onExport: (id: string) => void;
   onUpgrade?: () => void;
+  onManageSubscription?: () => void;
 }
 
 export const ProjectSidebar = ({
@@ -57,6 +58,7 @@ export const ProjectSidebar = ({
   onNewProject,
   onExport,
   onUpgrade,
+  onManageSubscription,
 }: ProjectSidebarProps) => {
   const [collapsed, setCollapsed] = useState(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
@@ -206,6 +208,11 @@ export const ProjectSidebar = ({
                   {isPro ? "Subscription Active" : "Upgrade"}
                 </span>
               </DropdownMenuItem>
+              {isPro && (
+                <DropdownMenuItem className="gap-2 cursor-pointer" onClick={onManageSubscription}>
+                  <span className="text-xs">Manage Subscription</span>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()} className="text-red-500 gap-2 cursor-pointer">
                 <LogOut className="h-4 w-4" />
