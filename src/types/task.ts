@@ -20,6 +20,7 @@ export interface Task {
   dueDate?: string;
   subtasks: Subtask[];
   createdAt: string;
+  updatedAt?: string;
   completedAt?: string;
   isArchived?: boolean;
 }
@@ -31,6 +32,7 @@ export interface Project {
   color: string;
   icon?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AppState {

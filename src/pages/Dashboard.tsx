@@ -23,10 +23,12 @@ import {
 import { useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
 import { downloadJson } from "@/utils/exportUtils";
+import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 
 type ViewMode = "kanban" | "calendar" | "archived";
 
 const DashboardPage = () => {
+  useRealtimeSync();
   const [showNewProject, setShowNewProject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("kanban");

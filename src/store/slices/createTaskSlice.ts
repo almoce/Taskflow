@@ -19,6 +19,7 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
       tag,
       subtasks: [],
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     set((state) => ({
       tasks: [...state.tasks, task],
@@ -30,7 +31,7 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
     set((state) => ({
       tasks: state.tasks.map((t) => {
         if (t.id !== id) return t;
-        const updated = { ...t, ...updates };
+        const updated = { ...t, ...updates, updatedAt: new Date().toISOString() };
         if (
           updates.status === "done" && 
           t.status !== "done" && 
@@ -41,6 +42,20 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
         return updated;
       }),
     }));
+  },
+
+  upsertTask: (task) => {
+    set((state) => {
+      const exists = state.tasks.some((t) => t.id === task.id);
+      if (exists) {
+        return {
+          tasks: state.tasks.map((t) => (t.id === task.id ? task : t)),
+        };
+      }
+      return {
+        tasks: [...state.tasks, task],
+      };
+    });
   },
 
   deleteTask: (id) => {

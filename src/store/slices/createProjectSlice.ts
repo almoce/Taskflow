@@ -22,6 +22,7 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
       color: color || defaultAvailableColor,
       icon,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     set((state) => ({
@@ -33,7 +34,7 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
 
   updateProject: (id, updates) => {
     set((state) => ({
-      projects: state.projects.map((p) => (p.id === id ? { ...p, ...updates } : p)),
+      projects: state.projects.map((p) => (p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p)),
     }));
   },
 
@@ -74,6 +75,20 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
       tasks: [...state.tasks, ...newTasks],
       selectedProjectId: newProjectId,
     }));
+  },
+
+  upsertProject: (project) => {
+    set((state) => {
+      const exists = state.projects.some((p) => p.id === project.id);
+      if (exists) {
+        return {
+          projects: state.projects.map((p) => (p.id === project.id ? project : p)),
+        };
+      }
+      return {
+        projects: [...state.projects, project],
+      };
+    });
   },
 
   getProjectExportData: (projectId) => {

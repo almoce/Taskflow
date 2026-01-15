@@ -17,6 +17,7 @@ export interface ProjectSlice {
   deleteProject: (id: string) => void;
   selectProject: (id: string | null) => void;
   importProject: (data: ProjectExportData) => void;
+  upsertProject: (project: Project) => void;
   getProjectExportData: (projectId: string) => ProjectExportData | null;
 }
 
@@ -25,6 +26,7 @@ export interface TaskSlice {
   columnSorts: Record<string, ColumnSort>;
   addTask: (projectId: string, title: string, priority?: Priority, tag?: Task["tag"]) => Task;
   updateTask: (id: string, updates: Partial<Task>) => void;
+  upsertTask: (task: Task) => void;
   deleteTask: (id: string) => void;
   moveTask: (taskId: string, newStatus: TaskStatus) => void;
   archiveTask: (id: string) => void;
