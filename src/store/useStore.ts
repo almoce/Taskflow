@@ -7,6 +7,7 @@ import { createTaskSlice } from "./slices/createTaskSlice";
 import { createUISlice } from "./slices/createUISlice";
 import { createSettingsSlice } from "./slices/createSettingsSlice";
 import { createAuthSlice } from "./slices/createAuthSlice";
+import { createSyncSlice } from "./slices/createSyncSlice";
 
 export const useStore = create<StoreState>()(
   persist(
@@ -16,6 +17,7 @@ export const useStore = create<StoreState>()(
       ...createUISlice(set, get, api),
       ...createSettingsSlice(set, get, api),
       ...createAuthSlice(set, get, api),
+      ...createSyncSlice(set, get, api),
 
       reset: () => {
         set({
@@ -23,6 +25,8 @@ export const useStore = create<StoreState>()(
           tasks: [],
           selectedProjectId: null,
           activeView: "tasks",
+          pendingDeleteProjectIds: [],
+          pendingDeleteTaskIds: [],
           // We generally don't want to log the user out on reset() unless specified
         });
       },
@@ -38,6 +42,8 @@ export const useStore = create<StoreState>()(
         session: state.session,
         user: state.user,
         profile: state.profile,
+        pendingDeleteProjectIds: state.pendingDeleteProjectIds,
+        pendingDeleteTaskIds: state.pendingDeleteTaskIds,
       }),
     },
   ),

@@ -53,6 +53,13 @@ export interface SettingsSlice {
   // Placeholder for future settings
 }
 
-export interface StoreState extends ProjectSlice, TaskSlice, UISlice, AuthSlice, SettingsSlice {
+export interface SyncSlice {
+  pendingDeleteProjectIds: string[];
+  pendingDeleteTaskIds: string[];
+  addToPendingDelete: (type: "project" | "task", id: string) => void;
+  removeFromPendingDelete: (type: "project" | "task", id: string) => void;
+}
+
+export interface StoreState extends ProjectSlice, TaskSlice, UISlice, AuthSlice, SettingsSlice, SyncSlice {
   reset: () => void;
 }
