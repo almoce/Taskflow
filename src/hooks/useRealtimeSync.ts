@@ -6,7 +6,7 @@ import type { Project, Task } from "@/types/task";
 import { toast } from "sonner";
 
 export const useRealtimeSync = () => {
-  const { session } = useAuth();
+  const { session, isPro } = useAuth();
   const { 
     upsertProject, 
     upsertTask, 
@@ -27,6 +27,10 @@ export const useRealtimeSync = () => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         
         timeoutRef.current = setTimeout(async () => {
+          if (!isPro) {
+            // We don't want to spam toast here, but maybe a console log or a silent skip
+            return;
+          }
           try {
             await syncAll();
           } catch (e) {
@@ -40,10 +44,10 @@ export const useRealtimeSync = () => {
       unsub();
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [session]);
+  }, [session, isPro]);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user || !isPro) return;
 
     const performSync = async () => {
       // Optional: toast.loading("Syncing...") if we want visual feedback
