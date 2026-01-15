@@ -29,3 +29,6 @@ supabase
 coverage
 .agent
 AGENTS.md
+# Project Management & Backend
+conductor/
+supabase/
