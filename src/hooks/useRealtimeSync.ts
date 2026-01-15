@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth, useStore } from "@/store/useStore";
 import { syncAll } from "@/lib/syncEngine";
@@ -8,6 +8,32 @@ import { toast } from "sonner";
 export const useRealtimeSync = () => {
   const { session } = useAuth();
   const { upsertProject, upsertTask, deleteProject, deleteTask } = useStore();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Autosave Listener
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const unsub = useStore.subscribe((state, prevState) => {
+      // Check if projects or tasks have changed
+      if (state.tasks !== prevState.tasks || state.projects !== prevState.projects) {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        
+        timeoutRef.current = setTimeout(async () => {
+          try {
+            await syncAll();
+          } catch (e) {
+            console.error("Autosave failed", e);
+          }
+        }, 2000); // 2 seconds debounce
+      }
+    });
+
+    return () => {
+      unsub();
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [session]);
 
   useEffect(() => {
     if (!session?.user) return;
