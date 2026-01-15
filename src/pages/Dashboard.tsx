@@ -12,6 +12,7 @@ import { ProjectOverview } from "@/components/ProjectOverview";
 import { ProjectSidebar } from "@/components/ProjectSidebar";
 import { TaskSearch } from "@/components/TaskSearch";
 import { ProjectSummary } from "@/components/ProjectSummary";
+import { PricingModal } from "@/components/PricingModal";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -31,6 +32,7 @@ const DashboardPage = () => {
   useRealtimeSync();
   const [showNewProject, setShowNewProject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
+  const [showPricing, setShowPricing] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("kanban");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -165,6 +167,7 @@ const DashboardPage = () => {
         onDeleteProject={deleteProject}
         onNewProject={() => setShowNewProject(true)}
         onExport={handleExport}
+        onUpgrade={() => setShowPricing(true)}
       />
 
       <main className="flex-1 overflow-auto">
@@ -333,6 +336,11 @@ const DashboardPage = () => {
         onSubmit={handleAddTask}
         editTask={editingTask}
         onEditSubmit={updateTask}
+      />
+
+      <PricingModal 
+        open={showPricing} 
+        onOpenChange={setShowPricing} 
       />
     </div>
   );

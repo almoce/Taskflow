@@ -43,6 +43,7 @@ interface ProjectSidebarProps {
   onDeleteProject: (id: string) => void;
   onNewProject: () => void;
   onExport: (id: string) => void;
+  onUpgrade?: () => void;
 }
 
 export const ProjectSidebar = ({
@@ -55,6 +56,7 @@ export const ProjectSidebar = ({
   onDeleteProject,
   onNewProject,
   onExport,
+  onUpgrade,
 }: ProjectSidebarProps) => {
   const [collapsed, setCollapsed] = useState(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
@@ -186,9 +188,9 @@ export const ProjectSidebar = ({
             <DropdownMenuContent align="start" className="w-52" side={collapsed ? "right" : "top"}>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 cursor-pointer" disabled>
+              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={onUpgrade}>
                 <Badge variant="secondary" className="text-[10px]">Free Plan</Badge>
-                <span className="text-xs text-muted-foreground">Upgrade (Soon)</span>
+                <span className="text-xs text-muted-foreground">Upgrade</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()} className="text-red-500 gap-2 cursor-pointer">
