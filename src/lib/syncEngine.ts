@@ -15,11 +15,13 @@ export const syncProjects = async () => {
     return;
   }
 
-  const { projects: localProjects, upsertProject } = useStore.getState();
+  const { projects: localProjects, upsertProject, pendingDeleteProjectIds } = useStore.getState();
   const upserts: Project[] = [];
 
   // 1. Remote -> Local (Down)
-  remoteProjects.forEach((remote) => {
+  remoteProjects
+    .filter((remote) => !pendingDeleteProjectIds.includes(remote.id))
+    .forEach((remote) => {
     const mappedRemote: Project = {
       id: remote.id,
       name: remote.name,
@@ -81,11 +83,13 @@ export const syncTasks = async () => {
     return;
   }
 
-  const { tasks: localTasks, upsertTask } = useStore.getState();
+  const { tasks: localTasks, upsertTask, pendingDeleteTaskIds } = useStore.getState();
   const upserts: Task[] = [];
 
   // 1. Remote -> Local (Down)
-  remoteTasks.forEach((remote) => {
+  remoteTasks
+    .filter((remote) => !pendingDeleteTaskIds.includes(remote.id))
+    .forEach((remote) => {
     const mappedRemote: Task = {
       id: remote.id,
       projectId: remote.project_id,
@@ -148,7 +152,45 @@ export const syncTasks = async () => {
   }
 };
 
+export const syncDeletes = async () => {
+  const { session, pendingDeleteProjectIds, pendingDeleteTaskIds, removeFromPendingDelete } = useStore.getState();
+  if (!session?.user) return;
+
+  // Process Projects
+  if (pendingDeleteProjectIds.length > 0) {
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .in("id", pendingDeleteProjectIds);
+    
+    if (!error) {
+      // Clear IDs one by one or all at once if we had a clearAll action
+      // For now, let's just clear those that were sent
+      const idsToClear = [...pendingDeleteProjectIds];
+      idsToClear.forEach(id => removeFromPendingDelete("project", id));
+    } else {
+      console.error("Error syncing project deletions:", error);
+    }
+  }
+
+  // Process Tasks
+  if (pendingDeleteTaskIds.length > 0) {
+    const { error } = await supabase
+      .from("tasks")
+      .delete()
+      .in("id", pendingDeleteTaskIds);
+    
+    if (!error) {
+      const idsToClear = [...pendingDeleteTaskIds];
+      idsToClear.forEach(id => removeFromPendingDelete("task", id));
+    } else {
+      console.error("Error syncing task deletions:", error);
+    }
+  }
+};
+
 export const syncAll = async () => {
+  await syncDeletes();
   await syncProjects();
   await syncTasks();
 };

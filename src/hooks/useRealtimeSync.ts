@@ -7,7 +7,14 @@ import { toast } from "sonner";
 
 export const useRealtimeSync = () => {
   const { session } = useAuth();
-  const { upsertProject, upsertTask, deleteProject, deleteTask } = useStore();
+  const { 
+    upsertProject, 
+    upsertTask, 
+    deleteProject, 
+    deleteTask,
+    pendingDeleteProjectIds,
+    pendingDeleteTaskIds
+  } = useStore();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Autosave Listener
@@ -60,6 +67,8 @@ export const useRealtimeSync = () => {
         (payload) => {
           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
             const remote = payload.new as any;
+            if (pendingDeleteProjectIds.includes(remote.id)) return;
+            
             const project: Project = {
               id: remote.id,
               name: remote.name,
@@ -81,6 +90,8 @@ export const useRealtimeSync = () => {
         (payload) => {
            if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
             const remote = payload.new as any;
+            if (pendingDeleteTaskIds.includes(remote.id)) return;
+
             const task: Task = {
               id: remote.id,
               projectId: remote.project_id,
