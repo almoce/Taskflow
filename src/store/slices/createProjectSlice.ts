@@ -39,6 +39,9 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
   },
 
   deleteProject: (id) => {
+    // Add to pending deletes for sync propagation
+    get().addToPendingDelete("project", id);
+    
     set((state) => ({
       projects: state.projects.filter((p) => p.id !== id),
       // Cross-slice state update: removing tasks associated with the project

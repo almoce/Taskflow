@@ -59,6 +59,9 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
   },
 
   deleteTask: (id) => {
+    // Add to pending deletes for sync propagation
+    get().addToPendingDelete("task", id);
+
     set((state) => ({
       tasks: state.tasks.filter((t) => t.id !== id),
     }));
