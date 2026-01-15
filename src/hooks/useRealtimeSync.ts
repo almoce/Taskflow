@@ -25,7 +25,7 @@ export const useRealtimeSync = () => {
           } catch (e) {
             console.error("Autosave failed", e);
           }
-        }, 2000); // 2 seconds debounce
+        }, 1000); // 1 second debounce
       }
     });
 
