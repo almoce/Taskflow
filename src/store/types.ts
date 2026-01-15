@@ -40,13 +40,21 @@ export interface UISlice {
   setActiveView: (view: "tasks" | "analytics") => void;
 }
 
+export interface UserProfile {
+  id: string;
+  is_pro: boolean;
+  stripe_customer_id?: string;
+}
+
 export interface AuthSlice {
   session: Session | null;
   user: User | null;
-  profile: unknown | null; // Placeholder for future profile data
+  profile: UserProfile | null;
+  isPro: boolean;
   loading: boolean;
   setSession: (session: Session | null) => void;
   signOut: () => Promise<void>;
+  fetchProfile: () => Promise<void>;
 }
 
 export interface SettingsSlice {
