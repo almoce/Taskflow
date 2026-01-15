@@ -63,7 +63,7 @@ export const ProjectSidebar = ({
     return saved ? JSON.parse(saved) : false;
   });
   const [authOpen, setAuthOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut, isPro } = useAuth();
 
   const toggleCollapsed = () => {
     const newState = !collapsed;
@@ -178,8 +178,14 @@ export const ProjectSidebar = ({
                     <span className="text-xs font-medium truncate w-32">
                       {user.email}
                     </span>
-                    <Badge variant="outline" className="text-[10px] h-4 px-1 py-0">
-                      Free
+                    <Badge 
+                      variant={isPro ? "default" : "outline"} 
+                      className={cn(
+                        "text-[10px] h-4 px-1 py-0",
+                        isPro && "bg-gradient-to-r from-purple-500 to-blue-500 border-none"
+                      )}
+                    >
+                      {isPro ? "Pro" : "Free"}
                     </Badge>
                   </div>
                 )}
@@ -188,9 +194,17 @@ export const ProjectSidebar = ({
             <DropdownMenuContent align="start" className="w-52" side={collapsed ? "right" : "top"}>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 cursor-pointer" onClick={onUpgrade}>
-                <Badge variant="secondary" className="text-[10px]">Free Plan</Badge>
-                <span className="text-xs text-muted-foreground">Upgrade</span>
+              <DropdownMenuItem 
+                className="gap-2 cursor-pointer" 
+                onClick={!isPro ? onUpgrade : undefined}
+                disabled={isPro}
+              >
+                <Badge variant={isPro ? "default" : "secondary"} className="text-[10px]">
+                  {isPro ? "Pro Plan" : "Free Plan"}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {isPro ? "Subscription Active" : "Upgrade"}
+                </span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()} className="text-red-500 gap-2 cursor-pointer">
@@ -215,7 +229,7 @@ export const ProjectSidebar = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p>Sign in to sync your data (Pro)</p>
+              <p>{isPro ? "Data is syncing" : "Sign in to sync your data (Pro)"}</p>
             </TooltipContent>
           </Tooltip>
         )}
