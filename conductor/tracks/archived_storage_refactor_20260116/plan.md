@@ -26,10 +26,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Local Archived State Separation' (Protocol in workflow.md) [checkpoint: 75ca144]
 
 ## Phase 3: Cloud Architecture (Supabase)
-- [ ] Task: Create Supabase Migration for `archived_tasks` table
-    - [ ] Create SQL file in `supabase/migrations` (mirror `tasks` schema)
-    - [ ] Apply migration (or provide instructions)
-- [ ] Task: Update `syncEngine.ts`
+- [x] Task: Create Supabase Migration for `archived_tasks` table [commit: 6cd392e]
+    - [x] Create SQL file in `supabase/migrations` (mirror `tasks` schema)
+    - [x] Apply migration (or provide instructions)
+- [~] Task: Update `syncEngine.ts`
     - [ ] Write tests for `syncArchivedTasks`
     - [ ] Implement `syncArchivedTasks` (fetch only on demand/view)
     - [ ] Update `syncTasks` to strictly work with `tasks` table (active)
