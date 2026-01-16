@@ -25,7 +25,7 @@
     - [x] Update `Dashboard.tsx` stats calculations to include/exclude archived as needed
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Local Archived State Separation' (Protocol in workflow.md) [checkpoint: 75ca144]
 
-## Phase 3: Cloud Architecture (Supabase)
+## Phase 3: Cloud Architecture (Supabase) [checkpoint: 1b0ba00]
 - [x] Task: Create Supabase Migration for `archived_tasks` table [commit: 6cd392e]
     - [x] Create SQL file in `supabase/migrations` (mirror `tasks` schema)
     - [x] Apply migration (or provide instructions)
@@ -36,7 +36,7 @@
     - [x] Implement "Move" logic in sync (delete from one table, insert into other)
 - [x] Task: Update `useRealtimeSync.ts` [commit: 1557259]
     - [x] Add subscription to `archived_tasks` table (optional, or only when view is open)
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Cloud Architecture (Supabase)' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Cloud Architecture (Supabase)' (Protocol in workflow.md) [checkpoint: 1b0ba00]
 
 ## Phase 4: Data Migration & Cleanup
 - [ ] Task: Implement "One-time" Data Migration (Logic)
