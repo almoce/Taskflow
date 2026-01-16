@@ -10,6 +10,7 @@ import { TaskCard } from "./TaskCard";
 
 interface TaskSearchProps {
   tasks: Task[];
+  archivedTasks: Task[];
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onDeleteTask: (id: string) => void;
@@ -46,6 +47,7 @@ const TAG_COLORS: Record<TaskTag, string> = {
 
 export function TaskSearch({
   tasks,
+  archivedTasks,
   projects,
   onUpdateTask,
   onDeleteTask,
@@ -78,10 +80,12 @@ export function TaskSearch({
     setSelectedProjects([]);
   };
 
+  const allTasks = useMemo(() => [...tasks, ...archivedTasks], [tasks, archivedTasks]);
+
   const filteredTasks = useMemo(() => {
     const searchLower = searchQuery.toLowerCase();
 
-    return tasks.filter((task) => {
+    return allTasks.filter((task) => {
       const matchesSearch =
         searchQuery === "" ||
         task.title.toLowerCase().includes(searchLower) ||
@@ -107,7 +111,7 @@ export function TaskSearch({
 
       return true;
     });
-  }, [tasks, searchQuery, selectedPriorities, selectedStatuses, selectedProjects, selectedTags]);
+  }, [allTasks, searchQuery, selectedPriorities, selectedStatuses, selectedProjects, selectedTags]);
 
   const hasActiveFilters =
     searchQuery !== "" ||
