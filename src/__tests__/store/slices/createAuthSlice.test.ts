@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useStore } from "@/store/useStore";
 
 describe("createAuthSlice", () => {
@@ -16,9 +16,9 @@ describe("createAuthSlice", () => {
 
   it("should update session and user via setSession", () => {
     const mockSession = { user: { id: "123", email: "test@example.com" } } as any;
-    
+
     useStore.getState().setSession(mockSession);
-    
+
     const state = useStore.getState();
     expect(state.session).toBe(mockSession);
     expect(state.user).toBe(mockSession.user);
@@ -29,10 +29,10 @@ describe("createAuthSlice", () => {
     // Setup initial state
     const mockSession = { user: { id: "123", email: "test@example.com" } } as any;
     useStore.getState().setSession(mockSession);
-    
+
     // Perform sign out
     await useStore.getState().signOut();
-    
+
     const state = useStore.getState();
     expect(state.session).toBeNull();
     expect(state.user).toBeNull();

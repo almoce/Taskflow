@@ -1,19 +1,19 @@
 import { useEffect, useRef } from "react";
-import { supabase } from "@/lib/supabase";
-import { useAuth, useStore } from "@/store/useStore";
-import { syncAll } from "@/lib/syncEngine";
-import type { Project, Task } from "@/types/task";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { syncAll } from "@/lib/syncEngine";
+import { useAuth, useStore } from "@/store/useStore";
+import type { Project, Task } from "@/types/task";
 
 export const useRealtimeSync = () => {
   const { session, isPro } = useAuth();
-  const { 
-    upsertProject, 
-    upsertTask, 
-    deleteProject, 
+  const {
+    upsertProject,
+    upsertTask,
+    deleteProject,
     deleteTask,
     pendingDeleteProjectIds,
-    pendingDeleteTaskIds
+    pendingDeleteTaskIds,
   } = useStore();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -25,7 +25,7 @@ export const useRealtimeSync = () => {
       // Check if projects or tasks have changed
       if (state.tasks !== prevState.tasks || state.projects !== prevState.projects) {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        
+
         timeoutRef.current = setTimeout(async () => {
           if (!isPro) {
             // We don't want to spam toast here, but maybe a console log or a silent skip
@@ -54,22 +54,22 @@ export const useRealtimeSync = () => {
       .channel("profile-changes")
       .on(
         "postgres_changes",
-        { 
-          event: "UPDATE", 
-          schema: "public", 
-          table: "profiles", 
-          filter: `id=eq.${session.user.id}` 
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "profiles",
+          filter: `id=eq.${session.user.id}`,
         },
         (payload) => {
           const newProfile = payload.new as any;
           useStore.getState().fetchProfile(); // Re-fetch to update store state
-          
+
           if (newProfile.is_pro) {
-             toast.success("You are now a Pro member!");
+            toast.success("You are now a Pro member!");
           } else {
-             // Optional: toast("Your Pro subscription has ended.");
+            // Optional: toast("Your Pro subscription has ended.");
           }
-        }
+        },
       )
       .subscribe();
 
@@ -98,58 +98,50 @@ export const useRealtimeSync = () => {
     // Realtime Subscriptions
     const channel = supabase
       .channel("db-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "projects" },
-        (payload) => {
-          if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-            const remote = payload.new as any;
-            if (pendingDeleteProjectIds.includes(remote.id)) return;
-            
-            const project: Project = {
-              id: remote.id,
-              name: remote.name,
-              description: remote.description,
-              color: remote.color,
-              icon: remote.icon,
-              createdAt: remote.created_at,
-              updatedAt: remote.updated_at,
-            };
-            upsertProject(project);
-          } else if (payload.eventType === "DELETE") {
-            deleteProject(payload.old.id);
-          }
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "tasks" },
-        (payload) => {
-           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-            const remote = payload.new as any;
-            if (pendingDeleteTaskIds.includes(remote.id)) return;
+      .on("postgres_changes", { event: "*", schema: "public", table: "projects" }, (payload) => {
+        if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+          const remote = payload.new as any;
+          if (pendingDeleteProjectIds.includes(remote.id)) return;
 
-            const task: Task = {
-              id: remote.id,
-              projectId: remote.project_id,
-              title: remote.title,
-              description: remote.description,
-              status: remote.status,
-              priority: remote.priority,
-              tag: remote.tag,
-              dueDate: remote.due_date,
-              subtasks: remote.subtasks,
-              createdAt: remote.created_at,
-              completedAt: remote.completed_at,
-              updatedAt: remote.updated_at,
-              isArchived: remote.is_archived,
-            };
-            upsertTask(task);
-          } else if (payload.eventType === "DELETE") {
-            deleteTask(payload.old.id);
-          }
+          const project: Project = {
+            id: remote.id,
+            name: remote.name,
+            description: remote.description,
+            color: remote.color,
+            icon: remote.icon,
+            createdAt: remote.created_at,
+            updatedAt: remote.updated_at,
+          };
+          upsertProject(project);
+        } else if (payload.eventType === "DELETE") {
+          deleteProject(payload.old.id);
         }
-      )
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, (payload) => {
+        if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+          const remote = payload.new as any;
+          if (pendingDeleteTaskIds.includes(remote.id)) return;
+
+          const task: Task = {
+            id: remote.id,
+            projectId: remote.project_id,
+            title: remote.title,
+            description: remote.description,
+            status: remote.status,
+            priority: remote.priority,
+            tag: remote.tag,
+            dueDate: remote.due_date,
+            subtasks: remote.subtasks,
+            createdAt: remote.created_at,
+            completedAt: remote.completed_at,
+            updatedAt: remote.updated_at,
+            isArchived: remote.is_archived,
+          };
+          upsertTask(task);
+        } else if (payload.eventType === "DELETE") {
+          deleteTask(payload.old.id);
+        }
+      })
       .subscribe();
 
     return () => {

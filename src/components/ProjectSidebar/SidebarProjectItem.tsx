@@ -1,9 +1,4 @@
-import {
-  Download,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { Download, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,8 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { Project } from "@/types/task";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/types/task";
 
 export interface SidebarProjectItemProps {
   project: Project;
@@ -39,7 +34,7 @@ export const SidebarProjectItem = ({
     <div
       className={cn(
         "group flex items-center rounded-md transition-colors",
-        isSelected ? "bg-secondary" : "hover:bg-secondary/50"
+        isSelected ? "bg-secondary" : "hover:bg-secondary/50",
       )}
     >
       <Tooltip delayDuration={300}>
@@ -49,7 +44,7 @@ export const SidebarProjectItem = ({
             size="sm"
             className={cn(
               "flex-1 h-8 px-2 hover:bg-transparent",
-              collapsed ? "justify-center" : "justify-start"
+              collapsed ? "justify-center" : "justify-start",
             )}
             onClick={onSelect}
           >
@@ -66,7 +61,7 @@ export const SidebarProjectItem = ({
                 <span
                   className={cn(
                     "truncate max-w-36 text-sm",
-                    isSelected ? "text-foreground" : "text-muted-foreground"
+                    isSelected ? "text-foreground" : "text-muted-foreground",
                   )}
                 >
                   {project.name}

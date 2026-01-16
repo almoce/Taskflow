@@ -1,3 +1,5 @@
+import { ChevronDown } from "lucide-react";
+import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
-import type { ReactNode } from "react";
 
 export interface FilterOption<T extends string> {
   value: T;
@@ -62,14 +62,9 @@ export function FilterDropdown<T extends string>({
           >
             <div className="flex items-center gap-2">
               {option.color && (
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: option.color }}
-                />
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: option.color }} />
               )}
-              {option.className && (
-                <div className={cn("w-2 h-2 rounded-full", option.className)} />
-              )}
+              {option.className && <div className={cn("w-2 h-2 rounded-full", option.className)} />}
               {option.icon}
               {option.label}
             </div>

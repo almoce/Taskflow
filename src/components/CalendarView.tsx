@@ -52,10 +52,10 @@ function DraggableTask({ task, children }: DraggableTaskProps) {
 
   const style = transform
     ? {
-      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      opacity: isDragging ? 0.5 : 1,
-      cursor: "grab",
-    }
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        opacity: isDragging ? 0.5 : 1,
+        cursor: "grab",
+      }
     : { cursor: "grab" };
 
   return (
@@ -279,9 +279,9 @@ export function CalendarView({
                                   "w-full text-left text-xs px-2 py-1 rounded truncate transition-all",
                                   task.status === "done" && "opacity-50 line-through",
                                   task.priority === "high" &&
-                                  "bg-priority-high/20 text-priority-high",
+                                    "bg-priority-high/20 text-priority-high",
                                   task.priority === "medium" &&
-                                  "bg-priority-medium/20 text-priority-medium",
+                                    "bg-priority-medium/20 text-priority-medium",
                                   task.priority === "low" && "bg-priority-low/20 text-priority-low",
                                 )}
                                 onClick={() =>
@@ -366,7 +366,7 @@ export function CalendarView({
                     activeTask.status === "done" && "opacity-50 line-through",
                     activeTask.priority === "high" && "bg-priority-high/20 text-priority-high",
                     activeTask.priority === "medium" &&
-                    "bg-priority-medium/20 text-priority-medium",
+                      "bg-priority-medium/20 text-priority-medium",
                     activeTask.priority === "low" && "bg-priority-low/20 text-priority-low",
                   )}
                 >
@@ -375,7 +375,7 @@ export function CalendarView({
               </div>
             ) : (
               <div className="opacity-90 rotate-1 scale-105 shadow-xl w-[280px]">
-                <TaskCard task={activeTask} onUpdate={() => { }} onDelete={() => { }} />
+                <TaskCard task={activeTask} onUpdate={() => {}} onDelete={() => {}} />
               </div>
             )}
           </div>

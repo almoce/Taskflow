@@ -23,12 +23,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
-import { TaskCard } from "./TaskCard";
-import { ColumnSortControls } from "./kanban/ColumnSortControls";
 import { useTaskSorter } from "@/hooks/useTaskSorter";
+import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
+import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
+import { ColumnSortControls } from "./kanban/ColumnSortControls";
+import { TaskCard } from "./TaskCard";
 
 interface KanbanBoardProps {
   project: Project;
@@ -113,7 +113,7 @@ function DroppableColumn({
           {title}
         </span>
         <span className="text-xs text-muted-foreground mr-auto">{tasks.length}</span>
-        
+
         <ColumnSortControls columnId={id} />
       </div>
 

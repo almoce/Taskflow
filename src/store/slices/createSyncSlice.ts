@@ -1,12 +1,7 @@
-import { StateCreator } from "zustand";
-import { StoreState, SyncSlice } from "../types";
+import type { StateCreator } from "zustand";
+import type { StoreState, SyncSlice } from "../types";
 
-export const createSyncSlice: StateCreator<
-  StoreState,
-  [],
-  [],
-  SyncSlice
-> = (set) => ({
+export const createSyncSlice: StateCreator<StoreState, [], [], SyncSlice> = (set) => ({
   pendingDeleteProjectIds: [],
   pendingDeleteTaskIds: [],
   addToPendingDelete: (type, id) =>

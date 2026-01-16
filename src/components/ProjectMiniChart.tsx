@@ -1,8 +1,8 @@
+import * as d3 from "d3";
+import { TrendingUp } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useProjectChartData } from "@/hooks/useProjectChartData";
-import { TrendingUp } from "lucide-react";
-import * as d3 from "d3";
-import { useEffect, useRef } from "react";
 
 interface ProjectMiniChartProps {
   projectId: string;
@@ -59,10 +59,7 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
       .curve(d3.curveMonotoneX);
 
     // Draw
-    g.append("path")
-      .datum(data)
-      .attr("fill", "url(#miniGradient)")
-      .attr("d", area);
+    g.append("path").datum(data).attr("fill", "url(#miniGradient)").attr("d", area);
 
     g.append("path")
       .datum(data)
@@ -92,7 +89,6 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
       .attr("offset", "100%")
       .attr("stop-color", "hsl(142 76% 36%)")
       .attr("stop-opacity", 0);
-
   }, [data]);
 
   return (

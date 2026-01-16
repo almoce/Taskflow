@@ -1,5 +1,5 @@
-import type { StateCreator } from "zustand";
 import { v4 as uuidv4 } from "uuid";
+import type { StateCreator } from "zustand";
 import type { Task } from "@/types/task";
 import type { StoreState, TaskSlice } from "../types";
 
@@ -33,8 +33,8 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
         if (t.id !== id) return t;
         const updated = { ...t, ...updates, updatedAt: new Date().toISOString() };
         if (
-          updates.status === "done" && 
-          t.status !== "done" && 
+          updates.status === "done" &&
+          t.status !== "done" &&
           !updates.completedAt // Only set if not provided
         ) {
           updated.completedAt = new Date().toISOString();

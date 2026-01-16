@@ -1,15 +1,9 @@
-import {
-  BarChart3,
-  ChevronLeft,
-  ChevronRight,
-  Home,
-  LogOut,
-  Plus,
-  User,
-} from "lucide-react";
+import { BarChart3, ChevronLeft, ChevronRight, Home, LogOut, Plus, User } from "lucide-react";
 import { useState } from "react";
+import { AuthModal } from "@/components/AuthModal";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,18 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import type { Project } from "@/types/task";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/store/useStore";
-import { AuthModal } from "@/components/AuthModal";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import type { Project } from "@/types/task";
 import { SidebarNavItem } from "./SidebarNavItem";
 import { SidebarProjectItem } from "./SidebarProjectItem";
 
@@ -79,14 +66,14 @@ export const ProjectSidebar = ({
     <aside
       className={cn(
         "h-dvh bg-background border-r border-border flex flex-col transition-all duration-200",
-        collapsed ? "w-14" : "w-56"
+        collapsed ? "w-14" : "w-56",
       )}
     >
       <div className="h-12 px-3 flex items-center border-b border-border">
         <div
           className={cn(
             "flex items-center overflow-hidden transition-all duration-300",
-            collapsed ? "w-6" : "w-32"
+            collapsed ? "w-6" : "w-32",
           )}
         >
           <img
@@ -129,7 +116,7 @@ export const ProjectSidebar = ({
             aria-label="Add project"
             className={cn(
               "h-5 w-5 text-muted-foreground hover:text-foreground",
-              collapsed && "mx-auto"
+              collapsed && "mx-auto",
             )}
             onClick={onNewProject}
           >
@@ -161,13 +148,13 @@ export const ProjectSidebar = ({
 
       <div className="p-2 border-t border-border space-y-2">
         {user ? (
-           <DropdownMenu>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 className={cn(
                   "w-full h-12 px-2 hover:bg-accent flex items-center",
-                  collapsed ? "justify-center" : "justify-start gap-3"
+                  collapsed ? "justify-center" : "justify-start gap-3",
                 )}
               >
                 <div className="relative shrink-0">
@@ -176,18 +163,19 @@ export const ProjectSidebar = ({
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
-                  <Badge 
-                    variant={isPro ? "default" : "secondary"} 
+                  <Badge
+                    variant={isPro ? "default" : "secondary"}
                     className={cn(
                       "absolute -bottom-2 left-1/2 -translate-x-1/2 text-[8px] h-3.5 px-1 py-0 pointer-events-none shadow-sm z-10 whitespace-nowrap",
-                      isPro && "bg-gradient-to-r from-purple-500 to-blue-500 border-none text-white",
-                      !isPro && "bg-background border border-border text-muted-foreground"
+                      isPro &&
+                        "bg-gradient-to-r from-purple-500 to-blue-500 border-none text-white",
+                      !isPro && "bg-background border border-border text-muted-foreground",
                     )}
                   >
                     {isPro ? "PRO" : "FREE"}
                   </Badge>
                 </div>
-                
+
                 {!collapsed && (
                   <div className="flex flex-col items-start overflow-hidden">
                     <span className="text-xs font-medium truncate w-32 whitespace-nowrap">
@@ -200,21 +188,27 @@ export const ProjectSidebar = ({
             <DropdownMenuContent align="start" className="w-56" side={collapsed ? "right" : "top"}>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              
-              <DropdownMenuItem 
-                className="gap-3 cursor-pointer focus:bg-accent" 
+
+              <DropdownMenuItem
+                className="gap-3 cursor-pointer focus:bg-accent"
                 onClick={isPro ? onManageSubscription : onUpgrade}
               >
-                <Badge variant={isPro ? "default" : "secondary"} className="text-[10px] whitespace-nowrap">
+                <Badge
+                  variant={isPro ? "default" : "secondary"}
+                  className="text-[10px] whitespace-nowrap"
+                >
                   {isPro ? "Pro Plan" : "Free Plan"}
                 </Badge>
                 <span className="text-xs font-medium whitespace-nowrap">
                   {isPro ? "Manage Subscription" : "Upgrade to Pro"}
                 </span>
               </DropdownMenuItem>
-              
+
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => signOut()} className="text-red-500 gap-2 cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => signOut()}
+                className="text-red-500 gap-2 cursor-pointer"
+              >
                 <LogOut className="h-4 w-4" />
                 Sign Out
               </DropdownMenuItem>
@@ -226,10 +220,7 @@ export const ProjectSidebar = ({
               <Button
                 variant="default"
                 size="sm"
-                className={cn(
-                  "w-full",
-                  collapsed ? "px-0" : "px-4"
-                )}
+                className={cn("w-full", collapsed ? "px-0" : "px-4")}
                 onClick={() => setAuthOpen(true)}
               >
                 {collapsed ? <User className="h-4 w-4" /> : "Sign In"}
@@ -248,7 +239,7 @@ export const ProjectSidebar = ({
           aria-expanded={!collapsed}
           className={cn(
             "w-full h-8 px-2 text-muted-foreground hover:text-foreground",
-            collapsed ? "justify-center" : "justify-start"
+            collapsed ? "justify-center" : "justify-start",
           )}
           onClick={toggleCollapsed}
         >

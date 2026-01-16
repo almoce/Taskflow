@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   eachDayOfInterval,
   eachWeekOfInterval,
@@ -9,11 +8,12 @@ import {
   subDays,
   subMonths,
 } from "date-fns";
+import { useMemo } from "react";
 import { useStore } from "@/store/useStore";
 
 export function useProjectChartData(
   projectId: string | null,
-  timeRange: "week" | "month" = "week"
+  timeRange: "week" | "month" = "week",
 ) {
   const tasks = useStore((state) => state.tasks);
 

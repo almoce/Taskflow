@@ -1,4 +1,5 @@
 import { Github } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -12,7 +13,13 @@ export const Footer = () => {
           />
           <span>© 2026 TaskFlow</span>
         </div>
-        <div className="flex gap-8">
+        <div className="flex items-center gap-8">
+          <Link to="/privacy" className="hover:text-white transition-colors">
+            Privacy
+          </Link>
+          <Link to="/terms" className="hover:text-white transition-colors">
+            Terms
+          </Link>
           <a
             href="https://github.com/almoce/Taskflow"
             target="_blank"

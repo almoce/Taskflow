@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react";
-import { describe, expect, it, beforeEach, vi } from "vitest";
+import { format, startOfDay, subDays } from "date-fns";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useProjectChartData } from "@/hooks/useProjectChartData";
 import { useStore } from "@/store/useStore";
-import { startOfDay, subDays, format } from "date-fns";
 
 describe("useProjectChartData", () => {
   beforeEach(() => {
@@ -23,26 +23,26 @@ describe("useProjectChartData", () => {
 
     // Create a task today
     useStore.getState().addTask(projectId, "Task Today", "medium");
-    
+
     // Create a task 2 days ago and complete it today
     vi.setSystemTime(new Date("2026-01-09T12:00:00Z"));
     const taskOld = useStore.getState().addTask(projectId, "Task Old", "medium");
-    
+
     vi.setSystemTime(new Date("2026-01-11T12:00:00Z"));
     useStore.getState().updateTask(taskOld.id, { status: "done" });
 
     const { result } = renderHook(() => useProjectChartData(projectId, "week"));
 
     expect(result.current).toHaveLength(7);
-    
+
     // Today (Jan 11) is Sunday (Sun)
-    const todayData = result.current.find(d => d.date === "Sun");
+    const todayData = result.current.find((d) => d.date === "Sun");
     expect(todayData).toBeDefined();
     expect(todayData?.completed).toBe(1);
     expect(todayData?.created).toBe(1); // One created today
 
     // Friday (Jan 9)
-    const fridayData = result.current.find(d => d.date === "Fri");
+    const fridayData = result.current.find((d) => d.date === "Fri");
     expect(fridayData?.created).toBe(1);
     expect(fridayData?.completed).toBe(0);
   });

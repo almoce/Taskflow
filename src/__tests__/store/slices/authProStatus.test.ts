@@ -1,14 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { useStore } from "@/store/useStore";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { supabase } from "@/lib/supabase";
+import { useStore } from "@/store/useStore";
 
 vi.mock("@/lib/supabase", () => ({
   supabase: {
     auth: {
-      signOut: vi.fn().mockResolvedValue({ error: null })
+      signOut: vi.fn().mockResolvedValue({ error: null }),
     },
-    from: vi.fn()
-  }
+    from: vi.fn(),
+  },
 }));
 
 describe("AuthSlice Pro Status", () => {
@@ -22,15 +22,15 @@ describe("AuthSlice Pro Status", () => {
     vi.mocked(supabase.from).mockReturnValue({
       select: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
-          single: vi.fn().mockResolvedValue({ data: { id: "u1", is_pro: true }, error: null })
-        })
-      })
+          single: vi.fn().mockResolvedValue({ data: { id: "u1", is_pro: true }, error: null }),
+        }),
+      }),
     } as any);
 
     // 2. Set user in session (this triggers fetchProfile)
     const mockUser = { id: "u1", email: "test@example.com" };
     await useStore.getState().setSession({ user: mockUser } as any);
-    
+
     const state = useStore.getState();
     expect(state.isPro).toBe(true);
     expect(state.profile?.is_pro).toBe(true);

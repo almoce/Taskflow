@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { Task } from "@/types/task";
 import type { SortCriteria, SortDirection } from "@/store/types";
+import type { Task } from "@/types/task";
 
 export const PRIORITY_WEIGHTS = {
   high: 3,
@@ -11,7 +11,7 @@ export const PRIORITY_WEIGHTS = {
 export function sortTasks(
   tasks: Task[],
   criteria: SortCriteria | undefined,
-  direction: SortDirection = "asc"
+  direction: SortDirection = "asc",
 ): Task[] {
   if (!criteria) return tasks;
 
@@ -52,7 +52,7 @@ export function sortTasks(
 export function useTaskSorter(
   tasks: Task[],
   criteria: SortCriteria | undefined,
-  direction: SortDirection = "asc"
+  direction: SortDirection = "asc",
 ) {
   return useMemo(() => {
     return sortTasks(tasks, criteria, direction);

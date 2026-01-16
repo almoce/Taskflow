@@ -15,12 +15,7 @@ describe("ProjectStatsCard", () => {
       progress: 30,
     });
 
-    render(
-      <ProjectStatsCard
-        projectId="p1"
-        projectColor="#8B5CF6"
-      />
-    );
+    render(<ProjectStatsCard projectId="p1" projectColor="#8B5CF6" />);
 
     expect(screen.getByText("Current Status")).toBeInTheDocument();
     expect(screen.getByText("30% Complete")).toBeInTheDocument();

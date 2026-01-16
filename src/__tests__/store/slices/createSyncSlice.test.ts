@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { useStore } from "@/store/useStore";
 
 describe("createSyncSlice", () => {
@@ -14,10 +14,10 @@ describe("createSyncSlice", () => {
 
   it("should add to pending delete arrays", () => {
     const state = useStore.getState();
-    
+
     state.addToPendingDelete("project", "p1");
     state.addToPendingDelete("task", "t1");
-    
+
     const updatedState = useStore.getState();
     expect(updatedState.pendingDeleteProjectIds).toContain("p1");
     expect(updatedState.pendingDeleteTaskIds).toContain("t1");
@@ -25,20 +25,20 @@ describe("createSyncSlice", () => {
 
   it("should not add duplicates to pending delete arrays", () => {
     const state = useStore.getState();
-    
+
     state.addToPendingDelete("project", "p1");
     state.addToPendingDelete("project", "p1");
-    
+
     const updatedState = useStore.getState();
     expect(updatedState.pendingDeleteProjectIds.length).toBe(1);
   });
 
   it("should remove from pending delete arrays", () => {
     const state = useStore.getState();
-    
+
     state.addToPendingDelete("project", "p1");
     state.removeFromPendingDelete("project", "p1");
-    
+
     const updatedState = useStore.getState();
     expect(updatedState.pendingDeleteProjectIds).not.toContain("p1");
   });

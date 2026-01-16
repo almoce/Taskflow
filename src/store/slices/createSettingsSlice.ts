@@ -1,5 +1,5 @@
 import type { StateCreator } from "zustand";
-import type { StoreState, SettingsSlice } from "../types";
+import type { SettingsSlice, StoreState } from "../types";
 
 export const createSettingsSlice: StateCreator<StoreState, [], [], SettingsSlice> = (_set) => ({
   // Placeholder for future settings

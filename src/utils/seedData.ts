@@ -8,7 +8,11 @@ import {
 } from "../types/task";
 
 const PROJECT_TEMPLATES = [
-  { name: "Website Redesign", description: "Overhaul the company website with modern design", icon: "🎨" },
+  {
+    name: "Website Redesign",
+    description: "Overhaul the company website with modern design",
+    icon: "🎨",
+  },
   { name: "Mobile App", description: "Develop iOS and Android applications", icon: "📱" },
   { name: "Marketing Campaign", description: "Q4 Marketing push", icon: "🚀" },
   { name: "Backend Migration", description: "Migrate legacy backend to Node.js", icon: "🔧" },
@@ -21,11 +25,26 @@ const PROJECT_TEMPLATES = [
 ];
 
 const TASK_TITLES = [
-  "Design Homepage", "Implement Login", "Fix Navigation Bug", "Write Documentation",
-  "Setup Database", "Create API Endpoints", "Test Payment Gateway", "Optimize Images",
-  "Code Review", "Deploy to Staging", "User Interview", "Analyze Metrics",
-  "Refactor Auth", "Update Dependencies", "Fix CSS Glitch", "Write Unit Tests",
-  "Configure CI/CD", "Design Icon Set", "Draft Blog Post", "Record Demo Video",
+  "Design Homepage",
+  "Implement Login",
+  "Fix Navigation Bug",
+  "Write Documentation",
+  "Setup Database",
+  "Create API Endpoints",
+  "Test Payment Gateway",
+  "Optimize Images",
+  "Code Review",
+  "Deploy to Staging",
+  "User Interview",
+  "Analyze Metrics",
+  "Refactor Auth",
+  "Update Dependencies",
+  "Fix CSS Glitch",
+  "Write Unit Tests",
+  "Configure CI/CD",
+  "Design Icon Set",
+  "Draft Blog Post",
+  "Record Demo Video",
 ];
 
 const DESCRIPTIONS = [
@@ -92,7 +111,7 @@ export const generateSeedData = () => {
       // Determine Status & Dates
       const statusRoll = Math.random();
       let status: TaskStatus = "todo";
-      let createdAt = getRandomDate(sixtyDaysAgo, now);
+      const createdAt = getRandomDate(sixtyDaysAgo, now);
       let completedAt: string | undefined;
       let isArchived = false;
 
@@ -103,7 +122,7 @@ export const generateSeedData = () => {
         const createdDate = new Date(createdAt);
         // Ensure completion is within range (after created, before now)
         completedAt = getRandomDate(createdDate, now);
-        
+
         // 20% chance to archive completed tasks
         if (Math.random() < 0.2) {
           isArchived = true;
@@ -130,7 +149,7 @@ export const generateSeedData = () => {
       if (status === "done") {
         updates.completedAt = completedAt;
       }
-      
+
       if (isArchived) {
         updates.isArchived = true;
       }

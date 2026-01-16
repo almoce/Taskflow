@@ -1,7 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -18,10 +20,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/store/useStore";
-import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/store/useStore";
 
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -54,14 +54,14 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       let error;
       if (isLogin) {
         const { data: sessionData, error: signInError } = await supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.password,
+          email: data.email,
+          password: data.password,
         });
         error = signInError;
         if (sessionData.session) {
-             setSession(sessionData.session);
-             onOpenChange(false);
-             toast.success("Welcome back!");
+          setSession(sessionData.session);
+          onOpenChange(false);
+          toast.success("Welcome back!");
         }
       } else {
         const { error: signUpError } = await supabase.auth.signUp({
@@ -70,8 +70,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         });
         error = signUpError;
         if (!error) {
-             toast.success("Account created! Please check your email.");
-             setIsLogin(true); 
+          toast.success("Account created! Please check your email.");
+          setIsLogin(true);
         }
       }
 
@@ -125,17 +125,19 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
               )}
             />
             <div className="flex flex-col gap-2 pt-2">
-                <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
-                </Button>
-                <Button
-                    type="button"
-                    variant="ghost"
-                    className="w-full text-xs text-muted-foreground hover:text-primary"
-                    onClick={() => setIsLogin(!isLogin)}
-                >
-                    {isLogin ? "Don't have an account? Create an account" : "Already have an account? Sign In"}
-                </Button>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full text-xs text-muted-foreground hover:text-primary"
+                onClick={() => setIsLogin(!isLogin)}
+              >
+                {isLogin
+                  ? "Don't have an account? Create an account"
+                  : "Already have an account? Sign In"}
+              </Button>
             </div>
           </form>
         </Form>

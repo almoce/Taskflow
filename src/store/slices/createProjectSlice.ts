@@ -1,7 +1,7 @@
-import type { StateCreator } from "zustand";
 import { v4 as uuidv4 } from "uuid";
-import { type Project, PROJECT_COLORS } from "@/types/task";
-import type { StoreState, ProjectSlice } from "../types";
+import type { StateCreator } from "zustand";
+import { PROJECT_COLORS, type Project } from "@/types/task";
+import type { ProjectSlice, StoreState } from "../types";
 
 const generateId = () => uuidv4();
 
@@ -34,14 +34,16 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
 
   updateProject: (id, updates) => {
     set((state) => ({
-      projects: state.projects.map((p) => (p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p)),
+      projects: state.projects.map((p) =>
+        p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p,
+      ),
     }));
   },
 
   deleteProject: (id) => {
     // Add to pending deletes for sync propagation
     get().addToPendingDelete("project", id);
-    
+
     set((state) => ({
       projects: state.projects.filter((p) => p.id !== id),
       // Cross-slice state update: removing tasks associated with the project

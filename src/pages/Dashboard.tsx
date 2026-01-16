@@ -1,19 +1,19 @@
 import { Archive, Calendar, LayoutGrid } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { ArchivedView } from "@/components/ArchivedView";
 import { CalendarView } from "@/components/CalendarView";
 import { Dashboard } from "@/components/Dashboard";
 import { KanbanBoard } from "@/components/KanbanBoard";
 import { NewTaskDialog } from "@/components/NewTaskDialog";
+import { PricingModal } from "@/components/PricingModal";
 import { ProductivityCharts } from "@/components/ProductivityCharts";
 import { ProjectDialog } from "@/components/ProjectDialog";
 import { ProjectOverview } from "@/components/ProjectOverview";
 import { ProjectSidebar } from "@/components/ProjectSidebar";
-import { TaskSearch } from "@/components/TaskSearch";
 import { ProjectSummary } from "@/components/ProjectSummary";
-import { PricingModal } from "@/components/PricingModal";
+import { TaskSearch } from "@/components/TaskSearch";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -22,11 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRealtimeSync } from "@/hooks/useRealtimeSync";
+import { supabase } from "@/lib/supabase";
 import { useAuth, useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
 import { downloadJson } from "@/utils/exportUtils";
-import { useRealtimeSync } from "@/hooks/useRealtimeSync";
-import { supabase } from "@/lib/supabase";
 
 type ViewMode = "kanban" | "calendar" | "archived";
 
@@ -36,7 +36,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   // Using the hook properly
   const { fetchProfile: refreshProfile } = useAuth();
-  
+
   const [showNewProject, setShowNewProject] = useState(false);
   const [showNewTask, setShowNewTask] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
@@ -76,7 +76,7 @@ const DashboardPage = () => {
 
     if (sessionId) {
       toast.promise(refreshProfile(), {
-        loading: 'Verifying subscription...',
+        loading: "Verifying subscription...",
         success: () => {
           // Clean up URL
           navigate("/app", { replace: true });
@@ -89,9 +89,7 @@ const DashboardPage = () => {
 
   // Computed values (formerly in useTaskStore)
   const selectedProject = projects.find((p) => p.id === selectedProjectId) || null;
-  const projectTasks = tasks.filter(
-    (t) => t.projectId === selectedProjectId && !t.isArchived,
-  );
+  const projectTasks = tasks.filter((t) => t.projectId === selectedProjectId && !t.isArchived);
   const archivedTasks = tasks.filter((t) => t.isArchived);
 
   const getProjectProgress = (projectId: string) => {
@@ -184,7 +182,7 @@ const DashboardPage = () => {
     try {
       const returnUrl = window.location.origin + import.meta.env.BASE_URL + "#/app";
       const { data, error } = await supabase.functions.invoke("create-portal-session", {
-        body: { returnUrl }
+        body: { returnUrl },
       });
       if (error) throw error;
       if (data?.url) {
@@ -290,10 +288,7 @@ const DashboardPage = () => {
                 </div>
               </div>
 
-              <ProjectSummary
-                projectId={selectedProject.id}
-                projectColor={selectedProject.color}
-              />
+              <ProjectSummary projectId={selectedProject.id} projectColor={selectedProject.color} />
 
               <div className="pt-2">
                 {viewMode === "kanban" ? (
@@ -380,10 +375,7 @@ const DashboardPage = () => {
         onEditSubmit={updateTask}
       />
 
-      <PricingModal 
-        open={showPricing} 
-        onOpenChange={setShowPricing} 
-      />
+      <PricingModal open={showPricing} onOpenChange={setShowPricing} />
     </div>
   );
 };

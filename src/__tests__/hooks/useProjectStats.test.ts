@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { describe, expect, it, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { useProjectStats } from "@/hooks/useProjectStats";
 import { useStore } from "@/store/useStore";
 

@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
-import type { StoreState, AuthSlice } from "../types";
 import { supabase } from "@/lib/supabase";
+import type { AuthSlice, StoreState } from "../types";
 
 export const createAuthSlice: StateCreator<StoreState, [], [], AuthSlice> = (set, get) => ({
   session: null,
@@ -13,7 +13,7 @@ export const createAuthSlice: StateCreator<StoreState, [], [], AuthSlice> = (set
     set({
       session,
       user: session?.user ?? null,
-      loading: false
+      loading: false,
     });
     if (session?.user) {
       get().fetchProfile();
@@ -28,19 +28,19 @@ export const createAuthSlice: StateCreator<StoreState, [], [], AuthSlice> = (set
 
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
         .single();
 
       if (error) throw error;
 
-      set({ 
+      set({
         profile: data,
-        isPro: data.is_pro
+        isPro: data.is_pro,
       });
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error("Error fetching profile:", error);
     }
   },
 

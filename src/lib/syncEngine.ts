@@ -6,9 +6,7 @@ export const syncProjects = async () => {
   const { session, isPro } = useStore.getState();
   if (!session?.user || !isPro) return;
 
-  const { data: remoteProjects, error } = await supabase
-    .from("projects")
-    .select("*");
+  const { data: remoteProjects, error } = await supabase.from("projects").select("*");
 
   if (error) {
     console.error("Error fetching remote projects:", error);
@@ -22,27 +20,27 @@ export const syncProjects = async () => {
   remoteProjects
     .filter((remote) => !pendingDeleteProjectIds.includes(remote.id))
     .forEach((remote) => {
-    const mappedRemote: Project = {
-      id: remote.id,
-      name: remote.name,
-      description: remote.description,
-      color: remote.color,
-      icon: remote.icon,
-      createdAt: remote.created_at,
-      updatedAt: remote.updated_at,
-    };
+      const mappedRemote: Project = {
+        id: remote.id,
+        name: remote.name,
+        description: remote.description,
+        color: remote.color,
+        icon: remote.icon,
+        createdAt: remote.created_at,
+        updatedAt: remote.updated_at,
+      };
 
-    const local = localProjects.find((p) => p.id === remote.id);
-    if (!local) {
-      upserts.push(mappedRemote);
-    } else {
-      const remoteTime = new Date(remote.updated_at).getTime();
-      const localTime = new Date(local.updatedAt || local.createdAt).getTime();
-      if (remoteTime > localTime) {
+      const local = localProjects.find((p) => p.id === remote.id);
+      if (!local) {
         upserts.push(mappedRemote);
+      } else {
+        const remoteTime = new Date(remote.updated_at).getTime();
+        const localTime = new Date(local.updatedAt || local.createdAt).getTime();
+        if (remoteTime > localTime) {
+          upserts.push(mappedRemote);
+        }
       }
-    }
-  });
+    });
 
   upserts.forEach((p) => upsertProject(p));
 
@@ -93,33 +91,33 @@ export const syncTasks = async () => {
   remoteTasks
     .filter((remote) => !pendingDeleteTaskIds.includes(remote.id))
     .forEach((remote) => {
-    const mappedRemote: Task = {
-      id: remote.id,
-      projectId: remote.project_id,
-      title: remote.title,
-      description: remote.description,
-      status: remote.status as Task["status"],
-      priority: remote.priority as Task["priority"],
-      tag: remote.tag as Task["tag"],
-      dueDate: remote.due_date,
-      subtasks: remote.subtasks || [],
-      createdAt: remote.created_at,
-      completedAt: remote.completed_at,
-      updatedAt: remote.updated_at,
-      isArchived: remote.is_archived,
-    };
+      const mappedRemote: Task = {
+        id: remote.id,
+        projectId: remote.project_id,
+        title: remote.title,
+        description: remote.description,
+        status: remote.status as Task["status"],
+        priority: remote.priority as Task["priority"],
+        tag: remote.tag as Task["tag"],
+        dueDate: remote.due_date,
+        subtasks: remote.subtasks || [],
+        createdAt: remote.created_at,
+        completedAt: remote.completed_at,
+        updatedAt: remote.updated_at,
+        isArchived: remote.is_archived,
+      };
 
-    const local = localTasks.find((t) => t.id === remote.id);
-    if (!local) {
-      upserts.push(mappedRemote);
-    } else {
-      const remoteTime = new Date(remote.updated_at).getTime();
-      const localTime = new Date(local.updatedAt || local.createdAt).getTime();
-      if (remoteTime > localTime) {
+      const local = localTasks.find((t) => t.id === remote.id);
+      if (!local) {
         upserts.push(mappedRemote);
+      } else {
+        const remoteTime = new Date(remote.updated_at).getTime();
+        const localTime = new Date(local.updatedAt || local.createdAt).getTime();
+        if (remoteTime > localTime) {
+          upserts.push(mappedRemote);
+        }
       }
-    }
-  });
+    });
 
   upserts.forEach((t) => upsertTask(t));
 
@@ -149,28 +147,26 @@ export const syncTasks = async () => {
         completed_at: t.completedAt,
         updated_at: t.updatedAt || new Date().toISOString(),
         is_archived: t.isArchived || false,
-      }))
+      })),
     );
     if (uploadError) console.error("Error uploading tasks:", uploadError);
   }
 };
 
 export const syncDeletes = async () => {
-  const { session, isPro, pendingDeleteProjectIds, pendingDeleteTaskIds, removeFromPendingDelete } = useStore.getState();
+  const { session, isPro, pendingDeleteProjectIds, pendingDeleteTaskIds, removeFromPendingDelete } =
+    useStore.getState();
   if (!session?.user || !isPro) return;
 
   // Process Projects
   if (pendingDeleteProjectIds.length > 0) {
-    const { error } = await supabase
-      .from("projects")
-      .delete()
-      .in("id", pendingDeleteProjectIds);
-    
+    const { error } = await supabase.from("projects").delete().in("id", pendingDeleteProjectIds);
+
     if (!error) {
       // Clear IDs one by one or all at once if we had a clearAll action
       // For now, let's just clear those that were sent
       const idsToClear = [...pendingDeleteProjectIds];
-      idsToClear.forEach(id => removeFromPendingDelete("project", id));
+      idsToClear.forEach((id) => removeFromPendingDelete("project", id));
     } else {
       console.error("Error syncing project deletions:", error);
     }
@@ -178,14 +174,11 @@ export const syncDeletes = async () => {
 
   // Process Tasks
   if (pendingDeleteTaskIds.length > 0) {
-    const { error } = await supabase
-      .from("tasks")
-      .delete()
-      .in("id", pendingDeleteTaskIds);
-    
+    const { error } = await supabase.from("tasks").delete().in("id", pendingDeleteTaskIds);
+
     if (!error) {
       const idsToClear = [...pendingDeleteTaskIds];
-      idsToClear.forEach(id => removeFromPendingDelete("task", id));
+      idsToClear.forEach((id) => removeFromPendingDelete("task", id));
     } else {
       console.error("Error syncing task deletions:", error);
     }

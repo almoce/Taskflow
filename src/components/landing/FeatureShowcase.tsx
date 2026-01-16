@@ -50,9 +50,9 @@ export const FeatureShowcase = () => {
   const features = [
     {
       id: "search",
-      title: "Global Command",
+      title: "Instant Search",
       description:
-        "Instantly find anything with Command-K. Navigate through tasks, projects, and actions with lightning-fast search.",
+        "Find any task, project, or note instantly. Navigate through your workspace with lightning-fast search.",
       icon: Search,
       className: "md:col-span-2",
       delay: "animate-fade-in-up [animation-delay:200ms]",

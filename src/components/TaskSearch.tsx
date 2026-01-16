@@ -1,12 +1,12 @@
+import { ChevronDown, Search, X } from "lucide-react";
+import { useMemo, useState } from "react";
 import { FilterDropdown, type FilterOption } from "@/components/FilterDropdown";
-import { TaskCard } from "./TaskCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
-import { ChevronDown, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { TaskCard } from "./TaskCard";
 
 interface TaskSearchProps {
   tasks: Task[];
@@ -251,9 +251,7 @@ export function TaskSearch({
                 {project.name}
                 <X
                   className="h-3 w-3 cursor-pointer"
-                  onClick={() =>
-                    toggleSelection(projectId, selectedProjects, setSelectedProjects)
-                  }
+                  onClick={() => toggleSelection(projectId, selectedProjects, setSelectedProjects)}
                 />
               </Badge>
             ) : null;

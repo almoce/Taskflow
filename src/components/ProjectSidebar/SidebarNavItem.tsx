@@ -24,9 +24,7 @@ export const SidebarNavItem = ({
       className={cn(
         "w-full h-8 px-2 text-sm font-normal",
         collapsed ? "justify-center" : "justify-start",
-        isActive
-          ? "bg-secondary text-foreground"
-          : "text-muted-foreground hover:text-foreground"
+        isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground",
       )}
       onClick={onClick}
     >

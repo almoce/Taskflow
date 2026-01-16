@@ -1,8 +1,8 @@
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { generateSeedData } from "@/utils/seedData";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/useStore";
+import { generateSeedData } from "@/utils/seedData";
 
 export const DevTools = () => {
   // Only show in development
@@ -17,48 +17,55 @@ export const DevTools = () => {
   };
 
   const handleTestInsert = async () => {
-     if (!session?.user) {
-         toast.error("Not logged in");
-         return;
-     }
-     console.log("Testing insert for user:", session.user.id);
-     const { data, error } = await supabase.from("projects").insert({
-         user_id: session.user.id,
-         name: "Debug Project",
-         color: "#ff0000"
-     }).select();
+    if (!session?.user) {
+      toast.error("Not logged in");
+      return;
+    }
+    console.log("Testing insert for user:", session.user.id);
+    const { data, error } = await supabase
+      .from("projects")
+      .insert({
+        user_id: session.user.id,
+        name: "Debug Project",
+        color: "#ff0000",
+      })
+      .select();
 
-     if (error) {
-         console.error("Test Insert Error:", error);
-         toast.error("Insert Failed: " + error.message);
-     } else {
-         toast.success("Insert Success!");
-     }
+    if (error) {
+      console.error("Test Insert Error:", error);
+      toast.error("Insert Failed: " + error.message);
+    } else {
+      toast.success("Insert Success!");
+    }
   };
 
   const handleTestRead = async () => {
-     const { data: authData, error: authError } = await supabase.auth.getUser();
-     if (authError || !authData.user) {
-         console.error("Auth Check Failed:", authError);
-         toast.error("Auth Check Failed");
-         return;
-     }
-     console.log("Fresh Auth User ID:", authData.user.id);
-     console.log("Stored Session ID:", session?.user?.id);
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData.user) {
+      console.error("Auth Check Failed:", authError);
+      toast.error("Auth Check Failed");
+      return;
+    }
+    console.log("Fresh Auth User ID:", authData.user.id);
+    console.log("Stored Session ID:", session?.user?.id);
 
-     if (authData.user.id !== session?.user?.id) {
-         toast.error("ID MISMATCH! Sign out and in.");
-         return;
-     }
+    if (authData.user.id !== session?.user?.id) {
+      toast.error("ID MISMATCH! Sign out and in.");
+      return;
+    }
 
-     const { data, error } = await supabase.from('profiles').select('*').eq('id', authData.user.id).single();
-     if (error) {
-         console.error("Test Read Error:", error);
-         toast.error("Read Profile Failed: " + error.message);
-     } else {
-         console.log("Profile Read:", data);
-         toast.success("Read Profile Success!");
-     }
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", authData.user.id)
+      .single();
+    if (error) {
+      console.error("Test Read Error:", error);
+      toast.error("Read Profile Failed: " + error.message);
+    } else {
+      console.log("Profile Read:", data);
+      toast.success("Read Profile Success!");
+    }
   };
 
   // Use a high z-index to ensure it stays on top

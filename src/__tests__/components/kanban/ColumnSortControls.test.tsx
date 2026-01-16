@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ColumnSortControls } from "@/components/kanban/ColumnSortControls";
 import { useStore } from "@/store/useStore";
 
@@ -17,7 +17,7 @@ describe("ColumnSortControls", () => {
   it("renders all criteria buttons", () => {
     vi.mocked(useStore).mockReturnValue({}); // columnSort is undefined
     render(<ColumnSortControls columnId="todo" />);
-    
+
     expect(screen.getByLabelText("Sort by Priority")).toBeInTheDocument();
     expect(screen.getByLabelText("Sort by Created")).toBeInTheDocument();
     expect(screen.getByLabelText("Sort by Due")).toBeInTheDocument();
@@ -37,8 +37,11 @@ describe("ColumnSortControls", () => {
     });
 
     render(<ColumnSortControls columnId="todo" />);
-    
+
     fireEvent.click(screen.getByLabelText("Sort by Priority"));
-    expect(mockSetColumnSort).toHaveBeenCalledWith("todo", { criteria: "priority", direction: "asc" });
+    expect(mockSetColumnSort).toHaveBeenCalledWith("todo", {
+      criteria: "priority",
+      direction: "asc",
+    });
   });
 });

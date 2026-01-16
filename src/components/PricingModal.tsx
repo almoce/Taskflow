@@ -1,6 +1,7 @@
-import { useState } from "react";
 import { Check, Loader2, Sparkles, Zap } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,10 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/store/useStore";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/store/useStore";
 
 interface PricingModalProps {
   open: boolean;
@@ -61,7 +61,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[420px] bg-background/80 backdrop-blur-xl border-border/50 shadow-2xl overflow-hidden p-0">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 animate-shimmer" />
-        
+
         <div className="p-6">
           <DialogHeader className="mb-6">
             <div className="flex justify-center mb-4">
@@ -81,7 +81,9 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                 <span className="text-3xl font-bold">$5</span>
                 <span className="text-muted-foreground font-medium">/month</span>
               </div>
-              <p className="text-xs text-center text-muted-foreground">Cancel anytime. No hidden fees.</p>
+              <p className="text-xs text-center text-muted-foreground">
+                Cancel anytime. No hidden fees.
+              </p>
             </div>
 
             <div className="space-y-3">
@@ -96,12 +98,12 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
             </div>
           </div>
 
-          <Button 
-            onClick={handleUpgrade} 
+          <Button
+            onClick={handleUpgrade}
             disabled={loading}
             className={cn(
               "w-full h-12 text-base font-semibold transition-all duration-300",
-              "bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]"
+              "bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]",
             )}
           >
             {loading ? (
@@ -113,10 +115,9 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
               </>
             )}
           </Button>
-          
+
           <p className="text-[10px] text-center text-muted-foreground mt-4">
-            Secure payments processed by Stripe. 
-            By upgrading, you agree to our Terms of Service.
+            Secure payments processed by Stripe. By upgrading, you agree to our Terms of Service.
           </p>
         </div>
       </DialogContent>

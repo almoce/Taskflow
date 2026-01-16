@@ -1,16 +1,9 @@
+import { ArrowUpWideNarrow, Calendar, ChevronDown, ChevronUp, Clock, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowUpWideNarrow,
-  Calendar,
-  Clock,
-  Tag,
-  ChevronUp,
-  ChevronDown
-} from "lucide-react";
-import { useStore } from "@/store/useStore";
-import type { SortCriteria } from "@/store/types";
-import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import type { SortCriteria } from "@/store/types";
+import { useStore } from "@/store/useStore";
 
 interface ColumnSortControlsProps {
   columnId: string;
@@ -50,7 +43,9 @@ export function ColumnSortControls({ columnId }: ColumnSortControlsProps) {
               size="icon"
               className={cn(
                 "h-6 w-6 relative group transition-colors",
-                isActive ? "text-primary bg-primary/10" : "text-muted-foreground/50 hover:text-foreground"
+                isActive
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground/50 hover:text-foreground",
               )}
               onClick={() => handleSortClick(id)}
               aria-label={`Sort by ${label}${isActive ? (columnSort.direction === "asc" ? " (Asc)" : " (Desc)") : ""}`}
@@ -72,9 +67,7 @@ export function ColumnSortControls({ columnId }: ColumnSortControlsProps) {
 
           return (
             <Tooltip key={id} delayDuration={300}>
-              <TooltipTrigger asChild>
-                {content}
-              </TooltipTrigger>
+              <TooltipTrigger asChild>{content}</TooltipTrigger>
               <TooltipContent side="top" className="text-[10px] px-2 py-1">
                 Sort by {label}
               </TooltipContent>
