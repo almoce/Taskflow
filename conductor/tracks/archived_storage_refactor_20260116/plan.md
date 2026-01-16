@@ -12,7 +12,7 @@
     - [x] Verify store still initializes correctly
 - [x] Task: Conductor - User Manual Verification 'Phase 1: IndexedDB Persistence Migration' (Protocol in workflow.md) [commit: 38bb507]
 
-## Phase 2: Local Archived State Separation
+## Phase 2: Local Archived State Separation [checkpoint: 75ca144]
 - [x] Task: Create `createArchivedTaskSlice` [commit: de380a7, 96314e2]
     - [x] Write tests for `archivedTaskSlice` (add, remove, search)
     - [x] Implement the slice with `archivedTasks` array
@@ -23,7 +23,7 @@
     - [x] Update `ArchivedView.tsx` to consume `archivedTasks` from new slice
     - [x] Update `TaskSearch.tsx` to search both slices
     - [x] Update `Dashboard.tsx` stats calculations to include/exclude archived as needed
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Local Archived State Separation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Local Archived State Separation' (Protocol in workflow.md) [checkpoint: 75ca144]
 
 ## Phase 3: Cloud Architecture (Supabase)
 - [ ] Task: Create Supabase Migration for `archived_tasks` table
