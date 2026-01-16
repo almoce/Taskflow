@@ -81,7 +81,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
           <div className="space-y-4 mb-8">
             <div className="bg-muted/30 rounded-xl p-4 border border-border/50">
               <div className="flex items-baseline justify-center gap-1 mb-1">
-                <span className="text-3xl font-bold">$5</span>
+                <span className="text-3xl font-bold">€5</span>
                 <span className="text-muted-foreground font-medium">/month</span>
               </div>
               <p className="text-xs text-center text-muted-foreground">
