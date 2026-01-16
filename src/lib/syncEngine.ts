@@ -77,7 +77,10 @@ export const syncTasks = async () => {
   const { session, isPro } = useStore.getState();
   if (!session?.user || !isPro) return;
 
-  const { data: remoteTasks, error } = await supabase.from("tasks").select("*");
+  const { data: remoteTasks, error } = await supabase
+    .from("tasks")
+    .select("*")
+    .eq("is_archived", false);
 
   if (error) {
     console.error("Error fetching remote tasks:", error);
@@ -157,7 +160,10 @@ export const syncArchivedTasks = async () => {
   const { session, isPro } = useStore.getState();
   if (!session?.user || !isPro) return;
 
-  const { data: remoteTasks, error } = await supabase.from("archived_tasks").select("*");
+  const { data: remoteTasks, error } = await supabase
+    .from("archived_tasks")
+    .select("*")
+    .eq("is_archived", true);
 
   if (error) {
     console.error("Error fetching remote archived tasks:", error);
