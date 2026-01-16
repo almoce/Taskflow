@@ -39,6 +39,7 @@ export const useStore = create<StoreState>()(
           activeView: "tasks",
           pendingDeleteProjectIds: [],
           pendingDeleteTaskIds: [],
+          pendingDeleteArchivedTaskIds: [],
           // We generally don't want to log the user out on reset() unless specified
         });
       },
@@ -59,6 +60,7 @@ export const useStore = create<StoreState>()(
         isPro: state.isPro,
         pendingDeleteProjectIds: state.pendingDeleteProjectIds,
         pendingDeleteTaskIds: state.pendingDeleteTaskIds,
+        pendingDeleteArchivedTaskIds: state.pendingDeleteArchivedTaskIds,
       }),
     },
   ),
