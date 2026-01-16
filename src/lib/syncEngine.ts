@@ -153,9 +153,99 @@ export const syncTasks = async () => {
   }
 };
 
+export const syncArchivedTasks = async () => {
+  const { session, isPro } = useStore.getState();
+  if (!session?.user || !isPro) return;
+
+  const { data: remoteTasks, error } = await supabase.from("archived_tasks").select("*");
+
+  if (error) {
+    console.error("Error fetching remote archived tasks:", error);
+    return;
+  }
+
+  const {
+    archivedTasks: localTasks,
+    upsertArchivedTask,
+    pendingDeleteArchivedTaskIds,
+  } = useStore.getState();
+  const upserts: Task[] = [];
+
+  // 1. Remote -> Local (Down)
+  remoteTasks
+    .filter((remote) => !pendingDeleteArchivedTaskIds.includes(remote.id))
+    .forEach((remote) => {
+      const mappedRemote: Task = {
+        id: remote.id,
+        projectId: remote.project_id,
+        title: remote.title,
+        description: remote.description,
+        status: remote.status as Task["status"],
+        priority: remote.priority as Task["priority"],
+        tag: remote.tag as Task["tag"],
+        dueDate: remote.due_date,
+        subtasks: remote.subtasks || [],
+        createdAt: remote.created_at,
+        completedAt: remote.completed_at,
+        updatedAt: remote.updated_at,
+        isArchived: remote.is_archived,
+      };
+
+      const local = localTasks.find((t) => t.id === remote.id);
+      if (!local) {
+        upserts.push(mappedRemote);
+      } else {
+        const remoteTime = new Date(remote.updated_at).getTime();
+        const localTime = new Date(local.updatedAt || local.createdAt).getTime();
+        if (remoteTime > localTime) {
+          upserts.push(mappedRemote);
+        }
+      }
+    });
+
+  upserts.forEach((t) => upsertArchivedTask(t));
+
+  // 2. Local -> Remote (Up)
+  const toUpload = localTasks.filter((local) => {
+    const remote = remoteTasks.find((r) => r.id === local.id);
+    if (!remote) return true;
+    const remoteTime = new Date(remote.updated_at).getTime();
+    const localTime = new Date(local.updatedAt || local.createdAt).getTime();
+    return localTime > remoteTime;
+  });
+
+  if (toUpload.length > 0) {
+    const { error: uploadError } = await supabase.from("archived_tasks").upsert(
+      toUpload.map((t) => ({
+        id: t.id,
+        user_id: session.user!.id,
+        project_id: t.projectId,
+        title: t.title,
+        description: t.description,
+        status: t.status,
+        priority: t.priority,
+        tag: t.tag,
+        due_date: t.dueDate,
+        subtasks: t.subtasks,
+        created_at: t.createdAt,
+        completed_at: t.completedAt,
+        updated_at: t.updatedAt || new Date().toISOString(),
+        is_archived: t.isArchived || true,
+      })),
+    );
+    if (uploadError) console.error("Error uploading archived tasks:", uploadError);
+  }
+};
+
 export const syncDeletes = async () => {
-  const { session, isPro, pendingDeleteProjectIds, pendingDeleteTaskIds, removeFromPendingDelete } =
-    useStore.getState();
+  const {
+    session,
+    isPro,
+    pendingDeleteProjectIds,
+    pendingDeleteTaskIds,
+    pendingDeleteArchivedTaskIds,
+    removeFromPendingDelete,
+  } = useStore.getState();
   if (!session?.user || !isPro) return;
 
   // Process Projects
@@ -183,10 +273,26 @@ export const syncDeletes = async () => {
       console.error("Error syncing task deletions:", error);
     }
   }
+
+  // Process Archived Tasks
+  if (pendingDeleteArchivedTaskIds.length > 0) {
+    const { error } = await supabase
+      .from("archived_tasks")
+      .delete()
+      .in("id", pendingDeleteArchivedTaskIds);
+
+    if (!error) {
+      const idsToClear = [...pendingDeleteArchivedTaskIds];
+      idsToClear.forEach((id) => removeFromPendingDelete("archived_task", id));
+    } else {
+      console.error("Error syncing archived task deletions:", error);
+    }
+  }
 };
 
 export const syncAll = async () => {
   await syncDeletes();
   await syncProjects();
   await syncTasks();
+  await syncArchivedTasks();
 };
