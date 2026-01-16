@@ -1,6 +1,6 @@
 # TaskFlow
 
-![Project Preview](public/preview.png)
+![Project Preview](public/og-image.png)
 
 A sleek, modern, and highly functional task and project management application built with React, Vite, and Shadcn UI. This tool helps you organize your projects, track tasks with multiple views, and monitor your productivity with advanced data visualizations.
 
@@ -25,7 +25,18 @@ A sleek, modern, and highly functional task and project management application b
   - **Responsive Layout**: Fully optimized for desktop and mobile experiences.
   - **Premium Landing Page**: A visually stunning introduction to the tool at the root url, with the main dashboard accessible at `/app`.
 
-## 🚀 Tech Stack
+## 📸 Gallery
+
+<p align="center">
+  <img src="public/demo/dashboard.png" alt="Dashboard" width="45%" />
+  <img src="public/demo/analytics.png" alt="Analytics" width="45%" />
+</p>
+<p align="center">
+  <img src="public/demo/board.png" alt="Kanban Board" width="45%" />
+  <img src="public/demo/calendar.png" alt="Calendar" width="45%" />
+</p>
+
+## � Tech Stack
 
 - **Core**: [React 19](https://reactjs.org/) & [TypeScript](https://www.typescriptlang.org/)
 - **Build Tool**: [Vite 7](https://vitejs.dev/)

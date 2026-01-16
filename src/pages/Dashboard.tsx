@@ -25,6 +25,7 @@ import {
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 import { useUmami } from "@/hooks/useUmami";
 import { supabase } from "@/lib/supabase";
+import { syncArchivedTasks, syncTasks } from "@/lib/syncEngine";
 import { useArchivedTasks, useAuth, useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
 import { downloadJson } from "@/utils/exportUtils";
@@ -131,8 +132,17 @@ const DashboardPage = () => {
     checkAutoArchive();
   }, [checkAutoArchive]);
 
-    const handleSaveProject = (name: string, description?: string, color?: string, icon?: string) => {
-      if (editingProject) {
+  // Optimize: Sync tasks for the selected project immediately
+  useEffect(() => {
+    if (selectedProjectId) {
+      syncTasks(selectedProjectId);
+      if (viewMode === "archived") {
+        syncArchivedTasks(selectedProjectId);
+      }
+    }
+  }, [selectedProjectId, viewMode]);
+
+  const handleSaveProject = (name: string, description?: string, color?: string, icon?: string) => {      if (editingProject) {
         updateProject(editingProject.id, { name, description, color, icon });
         setEditingProject(null);
       } else {

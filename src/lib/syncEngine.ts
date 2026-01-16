@@ -73,14 +73,16 @@ export const syncProjects = async () => {
   }
 };
 
-export const syncTasks = async () => {
+export const syncTasks = async (projectId?: string) => {
   const { session, isPro } = useStore.getState();
   if (!session?.user || !isPro) return;
 
-  const { data: remoteTasks, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("is_archived", false);
+  let query = supabase.from("tasks").select("*").eq("is_archived", false);
+  if (projectId) {
+    query = query.eq("project_id", projectId);
+  }
+
+  const { data: remoteTasks, error } = await query;
 
   if (error) {
     console.error("Error fetching remote tasks:", error);
@@ -126,7 +128,17 @@ export const syncTasks = async () => {
 
   // 2. Local -> Remote (Up)
   const toUpload = localTasks.filter((local) => {
+    // If syncing specific project, skip tasks from other projects
+    if (projectId && local.projectId !== projectId) return false;
+
+    // Safety check: Don't upload tasks for projects that don't exist locally
+    const projectExists = useStore.getState().projects.some((p) => p.id === local.projectId);
+    if (!projectExists) return false;
+
     const remote = remoteTasks.find((r) => r.id === local.id);
+    // If filtering by project, remoteTasks only has that project's tasks.
+    // So 'find' is correct for that project.
+    
     if (!remote) return true;
     const remoteTime = new Date(remote.updated_at).getTime();
     const localTime = new Date(local.updatedAt || local.createdAt).getTime();
@@ -156,14 +168,16 @@ export const syncTasks = async () => {
   }
 };
 
-export const syncArchivedTasks = async () => {
+export const syncArchivedTasks = async (projectId?: string) => {
   const { session, isPro } = useStore.getState();
   if (!session?.user || !isPro) return;
 
-  const { data: remoteTasks, error } = await supabase
-    .from("archived_tasks")
-    .select("*")
-    .eq("is_archived", true);
+  let query = supabase.from("archived_tasks").select("*").eq("is_archived", true);
+  if (projectId) {
+    query = query.eq("project_id", projectId);
+  }
+
+  const { data: remoteTasks, error } = await query;
 
   if (error) {
     console.error("Error fetching remote archived tasks:", error);
@@ -213,6 +227,13 @@ export const syncArchivedTasks = async () => {
 
   // 2. Local -> Remote (Up)
   const toUpload = localTasks.filter((local) => {
+    // If syncing specific project, skip tasks from other projects
+    if (projectId && local.projectId !== projectId) return false;
+
+    // Safety check: Don't upload tasks for projects that don't exist locally
+    const projectExists = useStore.getState().projects.some((p) => p.id === local.projectId);
+    if (!projectExists) return false;
+
     const remote = remoteTasks.find((r) => r.id === local.id);
     if (!remote) return true;
     const remoteTime = new Date(remote.updated_at).getTime();

@@ -19,11 +19,6 @@ const App = () => {
   const { setSession } = useAuth();
 
   useEffect(() => {
-    // Initialize session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
     // Listen for auth changes
     const {
       data: { subscription },

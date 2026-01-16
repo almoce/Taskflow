@@ -10,12 +10,29 @@ export const createAuthSlice: StateCreator<StoreState, [], [], AuthSlice> = (set
   loading: true,
 
   setSession: (session) => {
+    const currentUser = get().user;
+    const newUser = session?.user ?? null;
+
+    if (currentUser?.id === newUser?.id && get().profile) {
+      // Session refreshed but user is same and profile loaded.
+      // Update session/user but skip profile fetch unless explicit refresh needed?
+      // But maybe profile changed?
+      // Usually setSession is called on token refresh. Profile doesn't change on token refresh.
+      set({
+        session,
+        user: newUser,
+        loading: false,
+      });
+      return;
+    }
+
     set({
       session,
-      user: session?.user ?? null,
+      user: newUser,
       loading: false,
     });
-    if (session?.user) {
+    
+    if (newUser) {
       get().fetchProfile();
     } else {
       set({ isPro: false, profile: null });

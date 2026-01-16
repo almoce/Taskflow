@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
-import { syncAll } from "@/lib/syncEngine";
+import { syncAll, syncArchivedTasks, syncProjects, syncTasks } from "@/lib/syncEngine";
 import { useAuth, useStore } from "@/store/useStore";
 import type { Project, Task } from "@/types/task";
 
@@ -14,32 +14,35 @@ export const useRealtimeSync = () => {
     deleteProject,
     deleteTask,
     deleteArchivedTask,
-    pendingDeleteProjectIds,
-    pendingDeleteTaskIds,
-    pendingDeleteArchivedTaskIds,
   } = useStore();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dirtyRef = useRef({ projects: false, tasks: false, archived: false });
 
   // Autosave Listener
   useEffect(() => {
     if (!session?.user) return;
 
     const unsub = useStore.subscribe((state, prevState) => {
-      // Check if projects or tasks have changed
-      if (
-        state.tasks !== prevState.tasks ||
-        state.projects !== prevState.projects ||
-        state.archivedTasks !== prevState.archivedTasks
-      ) {
+      // Check what changed and update dirty flags
+      if (state.projects !== prevState.projects) dirtyRef.current.projects = true;
+      if (state.tasks !== prevState.tasks) dirtyRef.current.tasks = true;
+      if (state.archivedTasks !== prevState.archivedTasks) dirtyRef.current.archived = true;
+
+      // If any change occurred, schedule sync
+      if (dirtyRef.current.projects || dirtyRef.current.tasks || dirtyRef.current.archived) {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
         timeoutRef.current = setTimeout(async () => {
-          if (!isPro) {
-            // We don't want to spam toast here, but maybe a console log or a silent skip
-            return;
-          }
+          if (!isPro) return;
+
           try {
-            await syncAll();
+            // Execute granular syncs based on what changed
+            if (dirtyRef.current.projects) await syncProjects();
+            if (dirtyRef.current.tasks) await syncTasks();
+            if (dirtyRef.current.archived) await syncArchivedTasks();
+
+            // Reset flags after sync attempts
+            dirtyRef.current = { projects: false, tasks: false, archived: false };
           } catch (e) {
             console.error("Autosave failed", e);
           }
@@ -108,6 +111,8 @@ export const useRealtimeSync = () => {
       .on("postgres_changes", { event: "*", schema: "public", table: "projects" }, (payload) => {
         if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
           const remote = payload.new as any;
+          // Use getState() to avoid stale closure issues without re-subscribing
+          const { pendingDeleteProjectIds } = useStore.getState();
           if (pendingDeleteProjectIds.includes(remote.id)) return;
 
           const project: Project = {
@@ -127,6 +132,7 @@ export const useRealtimeSync = () => {
       .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, (payload) => {
         if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
           const remote = payload.new as any;
+          const { pendingDeleteTaskIds } = useStore.getState();
           if (pendingDeleteTaskIds.includes(remote.id)) return;
 
           const task: Task = {
@@ -152,6 +158,7 @@ export const useRealtimeSync = () => {
       .on("postgres_changes", { event: "*", schema: "public", table: "archived_tasks" }, (payload) => {
         if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
           const remote = payload.new as any;
+          const { pendingDeleteArchivedTaskIds } = useStore.getState();
           if (pendingDeleteArchivedTaskIds.includes(remote.id)) return;
 
           const task: Task = {
@@ -180,7 +187,7 @@ export const useRealtimeSync = () => {
       supabase.removeChannel(channel);
     };
   }, [
-    session,
+    session?.user?.id,
     isPro,
     upsertProject,
     upsertTask,
@@ -188,8 +195,13 @@ export const useRealtimeSync = () => {
     deleteProject,
     deleteTask,
     deleteArchivedTask,
-    pendingDeleteProjectIds,
-    pendingDeleteTaskIds,
-    pendingDeleteArchivedTaskIds,
+    // We remove unstable dependencies that might change often but shouldn't trigger re-subscription
+    // pendingDelete arrays might change, but do we want to re-subscribe?
+    // The callback closes over the values?
+    // No, the callback is defined INSIDE the effect.
+    // So if pendingDelete arrays change, we NEED to re-run the effect to update the closure?
+    // OR we use a ref for pendingDeletes.
+    // Re-subscribing on every delete action is bad.
+    // I should use `useStore.getState().pendingDelete...` inside the callback instead of dependency.
   ]);
 };
