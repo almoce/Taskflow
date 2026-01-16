@@ -29,13 +29,13 @@
 - [x] Task: Create Supabase Migration for `archived_tasks` table [commit: 6cd392e]
     - [x] Create SQL file in `supabase/migrations` (mirror `tasks` schema)
     - [x] Apply migration (or provide instructions)
-- [~] Task: Update `syncEngine.ts`
-    - [ ] Write tests for `syncArchivedTasks`
-    - [ ] Implement `syncArchivedTasks` (fetch only on demand/view)
-    - [ ] Update `syncTasks` to strictly work with `tasks` table (active)
-    - [ ] Implement "Move" logic in sync (delete from one table, insert into other)
-- [ ] Task: Update `useRealtimeSync.ts`
-    - [ ] Add subscription to `archived_tasks` table (optional, or only when view is open)
+- [x] Task: Update `syncEngine.ts` [commit: d28be47]
+    - [x] Write tests for `syncArchivedTasks`
+    - [x] Implement `syncArchivedTasks` (fetch only on demand/view)
+    - [x] Update `syncTasks` to strictly work with `tasks` table (active)
+    - [x] Implement "Move" logic in sync (delete from one table, insert into other)
+- [x] Task: Update `useRealtimeSync.ts` [commit: 1557259]
+    - [x] Add subscription to `archived_tasks` table (optional, or only when view is open)
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Cloud Architecture (Supabase)' (Protocol in workflow.md)
 
 ## Phase 4: Data Migration & Cleanup
