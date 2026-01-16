@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
 import { migrateStorage } from "@/lib/migrateStorage";
 import { indexedDBStorage } from "@/lib/storage";
+import { createArchivedTaskSlice } from "./slices/createArchivedTaskSlice";
 import { createAuthSlice } from "./slices/createAuthSlice";
 import { createProjectSlice } from "./slices/createProjectSlice";
 import { createSettingsSlice } from "./slices/createSettingsSlice";
@@ -23,6 +24,7 @@ export const useStore = create<StoreState>()(
     (set, get, api) => ({
       ...createProjectSlice(set, get, api),
       ...createTaskSlice(set, get, api),
+      ...createArchivedTaskSlice(set, get, api),
       ...createUISlice(set, get, api),
       ...createSettingsSlice(set, get, api),
       ...createAuthSlice(set, get, api),
@@ -32,6 +34,7 @@ export const useStore = create<StoreState>()(
         set({
           projects: [],
           tasks: [],
+          archivedTasks: [],
           selectedProjectId: null,
           activeView: "tasks",
           pendingDeleteProjectIds: [],
@@ -46,6 +49,7 @@ export const useStore = create<StoreState>()(
       partialize: (state) => ({
         projects: state.projects,
         tasks: state.tasks,
+        archivedTasks: state.archivedTasks,
         selectedProjectId: state.selectedProjectId,
         columnSorts: state.columnSorts,
         // We persist session to keep user logged in
@@ -88,6 +92,15 @@ export const useTasks = () =>
       unarchiveTask: state.unarchiveTask,
       checkAutoArchive: state.checkAutoArchive,
       setColumnSort: state.setColumnSort,
+    })),
+  );
+
+export const useArchivedTasks = () =>
+  useStore(
+    useShallow((state) => ({
+      archivedTasks: state.archivedTasks,
+      upsertArchivedTask: state.upsertArchivedTask,
+      deleteArchivedTask: state.deleteArchivedTask,
     })),
   );
 
