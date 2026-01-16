@@ -13,10 +13,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: IndexedDB Persistence Migration' (Protocol in workflow.md) [commit: 38bb507]
 
 ## Phase 2: Local Archived State Separation
-- [ ] Task: Create `createArchivedTaskSlice`
-    - [ ] Write tests for `archivedTaskSlice` (add, remove, search)
-    - [ ] Implement the slice with `archivedTasks` array
-- [ ] Task: Refactor `createTaskSlice` archiving logic
+- [x] Task: Create `createArchivedTaskSlice` [commit: de380a7, 96314e2]
+    - [x] Write tests for `archivedTaskSlice` (add, remove, search)
+    - [x] Implement the slice with `archivedTasks` array
+- [~] Task: Refactor `createTaskSlice` archiving logic
     - [ ] Update tests: `archiveTask` should now remove from `tasks` and call `archivedSlice.add`
     - [ ] Implement `archiveTask` and `unarchiveTask` to move data between slices
 - [ ] Task: Update UI Components
