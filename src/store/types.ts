@@ -66,9 +66,16 @@ export interface SyncSlice {
   removeFromPendingDelete: (type: "project" | "task", id: string) => void;
 }
 
+export interface ArchivedTaskSlice {
+  archivedTasks: Task[];
+  upsertArchivedTask: (task: Task) => void;
+  deleteArchivedTask: (id: string) => void;
+}
+
 export interface StoreState
   extends ProjectSlice,
     TaskSlice,
+    ArchivedTaskSlice,
     UISlice,
     AuthSlice,
     SettingsSlice,
