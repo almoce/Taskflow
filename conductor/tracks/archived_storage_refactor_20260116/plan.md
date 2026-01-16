@@ -16,10 +16,10 @@
 - [x] Task: Create `createArchivedTaskSlice` [commit: de380a7, 96314e2]
     - [x] Write tests for `archivedTaskSlice` (add, remove, search)
     - [x] Implement the slice with `archivedTasks` array
-- [~] Task: Refactor `createTaskSlice` archiving logic
-    - [ ] Update tests: `archiveTask` should now remove from `tasks` and call `archivedSlice.add`
-    - [ ] Implement `archiveTask` and `unarchiveTask` to move data between slices
-- [ ] Task: Update UI Components
+- [x] Task: Refactor `createTaskSlice` archiving logic [commit: 109a99b]
+    - [x] Update tests: `archiveTask` should now remove from `tasks` and call `archivedSlice.add`
+    - [x] Implement `archiveTask` and `unarchiveTask` to move data between slices
+- [~] Task: Update UI Components
     - [ ] Update `ArchivedView.tsx` to consume `archivedTasks` from new slice
     - [ ] Update `TaskSearch.tsx` to search both slices
     - [ ] Update `Dashboard.tsx` stats calculations to include/exclude archived as needed
