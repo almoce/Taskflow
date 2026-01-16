@@ -16,11 +16,13 @@ export function useProjectChartData(
   timeRange: "week" | "month" = "week",
 ) {
   const tasks = useStore((state) => state.tasks);
+  const archivedTasks = useStore((state) => state.archivedTasks);
 
   return useMemo(() => {
     if (!projectId) return [];
 
-    const projectTasks = tasks.filter((t) => t.projectId === projectId);
+    const allTasks = [...tasks, ...archivedTasks];
+    const projectTasks = allTasks.filter((t) => t.projectId === projectId);
     const today = startOfDay(new Date());
 
     if (timeRange === "week") {
@@ -76,5 +78,5 @@ export function useProjectChartData(
         };
       });
     }
-  }, [tasks, projectId, timeRange]);
+  }, [tasks, archivedTasks, projectId, timeRange]);
 }

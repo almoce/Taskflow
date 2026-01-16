@@ -3,6 +3,7 @@ import { useStore } from "@/store/useStore";
 
 export function useProjectStats(projectId: string | null) {
   const tasks = useStore((state) => state.tasks);
+  const archivedTasks = useStore((state) => state.archivedTasks);
 
   return useMemo(() => {
     if (!projectId) {
@@ -15,7 +16,10 @@ export function useProjectStats(projectId: string | null) {
       };
     }
 
-    const projectTasks = tasks.filter((t) => t.projectId === projectId && !t.isArchived);
+    const allTasks = [...tasks, ...archivedTasks];
+    const projectTasks = allTasks.filter((t) => t.projectId === projectId);
+    const activeTasks = tasks.filter((t) => t.projectId === projectId);
+    
     const total = projectTasks.length;
 
     if (total === 0) {
@@ -28,8 +32,8 @@ export function useProjectStats(projectId: string | null) {
       };
     }
 
-    const todo = projectTasks.filter((t) => t.status === "todo").length;
-    const inProgress = projectTasks.filter((t) => t.status === "in-progress").length;
+    const todo = activeTasks.filter((t) => t.status === "todo").length;
+    const inProgress = activeTasks.filter((t) => t.status === "in-progress").length;
     const done = projectTasks.filter((t) => t.status === "done").length;
     const progress = Math.round((done / total) * 100);
 
@@ -40,5 +44,5 @@ export function useProjectStats(projectId: string | null) {
       done,
       progress,
     };
-  }, [tasks, projectId]);
+  }, [tasks, archivedTasks, projectId]);
 }
