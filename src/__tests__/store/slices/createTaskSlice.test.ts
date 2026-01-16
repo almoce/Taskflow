@@ -32,4 +32,27 @@ describe("createTaskSlice", () => {
     expect(updatedTask?.status).toBe("done");
     expect(updatedTask?.completedAt).toBe(historicalDate);
   });
+
+  it("should move task to archivedTasks when archiving", () => {
+    const project = useStore.getState().addProject("Test Project");
+    const task = useStore.getState().addTask(project.id, "Test Task");
+
+    useStore.getState().archiveTask(task.id);
+
+    expect(useStore.getState().tasks.find((t) => t.id === task.id)).toBeUndefined();
+    expect(useStore.getState().archivedTasks.find((t) => t.id === task.id)).toBeDefined();
+    expect(useStore.getState().archivedTasks.find((t) => t.id === task.id)?.isArchived).toBe(true);
+  });
+
+  it("should move task back to tasks when unarchiving", () => {
+    const project = useStore.getState().addProject("Test Project");
+    const task = useStore.getState().addTask(project.id, "Test Task");
+
+    useStore.getState().archiveTask(task.id);
+    useStore.getState().unarchiveTask(task.id);
+
+    expect(useStore.getState().archivedTasks.find((t) => t.id === task.id)).toBeUndefined();
+    expect(useStore.getState().tasks.find((t) => t.id === task.id)).toBeDefined();
+    expect(useStore.getState().tasks.find((t) => t.id === task.id)?.isArchived).toBe(false);
+  });
 });
