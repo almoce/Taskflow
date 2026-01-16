@@ -1,5 +1,26 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useStore } from "@/store/useStore";
+
+// Mock migration to do nothing
+vi.mock("@/lib/migrateStorage", () => ({
+  migrateStorage: vi.fn().mockResolvedValue(undefined),
+}));
+
+// Mock storage to use a simple map
+vi.mock("@/lib/storage", () => {
+  const store = new Map<string, string>();
+  return {
+    indexedDBStorage: {
+      getItem: async (name: string) => store.get(name) || null,
+      setItem: async (name: string, value: string) => {
+        store.set(name, value);
+      },
+      removeItem: async (name: string) => {
+        store.delete(name);
+      },
+    },
+  };
+});
 
 describe("useStore (New Store)", () => {
   beforeEach(() => {
