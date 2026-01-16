@@ -71,7 +71,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           email: data.email,
           password: data.password,
           options: {
-            redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/app`,
+            emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/app`,
           },
         });
         error = signUpError;
