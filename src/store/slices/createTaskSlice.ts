@@ -74,27 +74,54 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
   },
 
   archiveTask: (id) => {
-    get().updateTask(id, { isArchived: true });
+    const task = get().tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    const archivedTask: Task = {
+      ...task,
+      isArchived: true,
+      updatedAt: new Date().toISOString(),
+    };
+
+    set((state) => ({
+      tasks: state.tasks.filter((t) => t.id !== id),
+      archivedTasks: [...state.archivedTasks, archivedTask],
+    }));
   },
 
   unarchiveTask: (id) => {
-    get().updateTask(id, { isArchived: false });
+    const task = get().archivedTasks.find((t) => t.id === id);
+    if (!task) return;
+
+    const unarchivedTask: Task = {
+      ...task,
+      isArchived: false,
+      updatedAt: new Date().toISOString(),
+    };
+
+    set((state) => ({
+      archivedTasks: state.archivedTasks.filter((t) => t.id !== id),
+      tasks: [...state.tasks, unarchivedTask],
+    }));
   },
 
   checkAutoArchive: () => {
     const now = new Date();
     const { tasks } = get();
-    let hasChanges = false;
-    const updatedTasks = tasks.map((t) => {
+    const toArchive: Task[] = [];
+    const remainingTasks = tasks.filter((t) => {
       if (!t.isArchived && t.status === "done" && t.dueDate && new Date(t.dueDate) < now) {
-        hasChanges = true;
-        return { ...t, isArchived: true };
+        toArchive.push({ ...t, isArchived: true, updatedAt: new Date().toISOString() });
+        return false;
       }
-      return t;
+      return true;
     });
 
-    if (hasChanges) {
-      set({ tasks: updatedTasks });
+    if (toArchive.length > 0) {
+      set((state) => ({
+        tasks: remainingTasks,
+        archivedTasks: [...state.archivedTasks, ...toArchive],
+      }));
     }
   },
 
