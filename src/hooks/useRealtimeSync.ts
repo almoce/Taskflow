@@ -10,10 +10,13 @@ export const useRealtimeSync = () => {
   const {
     upsertProject,
     upsertTask,
+    upsertArchivedTask,
     deleteProject,
     deleteTask,
+    deleteArchivedTask,
     pendingDeleteProjectIds,
     pendingDeleteTaskIds,
+    pendingDeleteArchivedTaskIds,
   } = useStore();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -23,7 +26,11 @@ export const useRealtimeSync = () => {
 
     const unsub = useStore.subscribe((state, prevState) => {
       // Check if projects or tasks have changed
-      if (state.tasks !== prevState.tasks || state.projects !== prevState.projects) {
+      if (
+        state.tasks !== prevState.tasks ||
+        state.projects !== prevState.projects ||
+        state.archivedTasks !== prevState.archivedTasks
+      ) {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
         timeoutRef.current = setTimeout(async () => {
@@ -142,10 +149,47 @@ export const useRealtimeSync = () => {
           deleteTask(payload.old.id);
         }
       })
+      .on("postgres_changes", { event: "*", schema: "public", table: "archived_tasks" }, (payload) => {
+        if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+          const remote = payload.new as any;
+          if (pendingDeleteArchivedTaskIds.includes(remote.id)) return;
+
+          const task: Task = {
+            id: remote.id,
+            projectId: remote.project_id,
+            title: remote.title,
+            description: remote.description,
+            status: remote.status,
+            priority: remote.priority,
+            tag: remote.tag,
+            dueDate: remote.due_date,
+            subtasks: remote.subtasks,
+            createdAt: remote.created_at,
+            completedAt: remote.completed_at,
+            updatedAt: remote.updated_at,
+            isArchived: remote.is_archived,
+          };
+          upsertArchivedTask(task);
+        } else if (payload.eventType === "DELETE") {
+          deleteArchivedTask(payload.old.id);
+        }
+      })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [session, isPro, upsertProject, upsertTask, deleteProject, deleteTask]);
+  }, [
+    session,
+    isPro,
+    upsertProject,
+    upsertTask,
+    upsertArchivedTask,
+    deleteProject,
+    deleteTask,
+    deleteArchivedTask,
+    pendingDeleteProjectIds,
+    pendingDeleteTaskIds,
+    pendingDeleteArchivedTaskIds,
+  ]);
 };
