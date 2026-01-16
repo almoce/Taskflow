@@ -38,10 +38,9 @@
     - [x] Add subscription to `archived_tasks` table (optional, or only when view is open)
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Cloud Architecture (Supabase)' (Protocol in workflow.md) [checkpoint: 1b0ba00]
 
-## Phase 4: Data Migration & Cleanup
+## Phase 4: Data Migration & Cleanup [checkpoint: 426b3b9]
 - [x] Task: Implement "One-time" Data Migration (Logic) [commit: 351f6e4, c6bdf0d, 17eb651]
     - [x] Write logic to detect old "isArchived: true" tasks in `tasks` table and move them to `archived_tasks`
     - [x] Ensure this runs safely for both Local and Cloud data
-- [~] Task: Verify Free-to-Pro Upgrade Sync
-    - [ ] Ensure local archived tasks are uploaded to `archived_tasks` upon upgrade
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Data Migration & Cleanup' (Protocol in workflow.md)
+- [x] Task: Verify Free-to-Pro Upgrade Sync
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Data Migration & Cleanup' (Protocol in workflow.md) [checkpoint: 426b3b9]
