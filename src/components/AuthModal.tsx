@@ -70,6 +70,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         const { error: signUpError } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
+          options: {
+            redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/app`,
+          },
         });
         error = signUpError;
         if (!error) {

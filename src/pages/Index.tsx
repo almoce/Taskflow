@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { CallToAction } from "@/components/landing/CallToAction";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { FeatureShowcase } from "@/components/landing/FeatureShowcase";
@@ -9,9 +10,18 @@ import { HeroBackgroundClassic } from "@/components/landing/HeroBackgroundClassi
 import { Navbar } from "@/components/landing/Navbar";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { useUmami } from "@/hooks/useUmami";
+import { useAuth } from "@/store/useStore";
 
 const Index = () => {
   const { track } = useUmami();
+  const { session } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (session) {
+      navigate("/app");
+    }
+  }, [session, navigate]);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-purple-500/30">
