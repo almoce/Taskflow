@@ -19,10 +19,10 @@
 - [x] Task: Refactor `createTaskSlice` archiving logic [commit: 109a99b]
     - [x] Update tests: `archiveTask` should now remove from `tasks` and call `archivedSlice.add`
     - [x] Implement `archiveTask` and `unarchiveTask` to move data between slices
-- [~] Task: Update UI Components
-    - [ ] Update `ArchivedView.tsx` to consume `archivedTasks` from new slice
-    - [ ] Update `TaskSearch.tsx` to search both slices
-    - [ ] Update `Dashboard.tsx` stats calculations to include/exclude archived as needed
+- [x] Task: Update UI Components [commit: 9913f49, f641242]
+    - [x] Update `ArchivedView.tsx` to consume `archivedTasks` from new slice
+    - [x] Update `TaskSearch.tsx` to search both slices
+    - [x] Update `Dashboard.tsx` stats calculations to include/exclude archived as needed
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Local Archived State Separation' (Protocol in workflow.md)
 
 ## Phase 3: Cloud Architecture (Supabase)
