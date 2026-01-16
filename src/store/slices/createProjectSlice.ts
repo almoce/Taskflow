@@ -48,6 +48,7 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
       projects: state.projects.filter((p) => p.id !== id),
       // Cross-slice state update: removing tasks associated with the project
       tasks: state.tasks.filter((t) => t.projectId !== id),
+      archivedTasks: state.archivedTasks.filter((t) => t.projectId !== id),
       selectedProjectId: state.selectedProjectId === id ? null : state.selectedProjectId,
     }));
   },
@@ -64,20 +65,24 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
     const newProject: Project = {
       ...project,
       id: newProjectId,
-      name: `${project.name} (Imported)`, // Append (Imported) to avoid confusion
+      name: `${project.name} (Imported)`,
       createdAt: new Date().toISOString(),
     };
 
-    const newTasks = tasks.map((t) => ({
+    const allNewTasks = tasks.map((t) => ({
       ...t,
       id: generateId(),
       projectId: newProjectId,
     }));
 
+    const newActiveTasks = allNewTasks.filter((t) => !t.isArchived);
+    const newArchivedTasks = allNewTasks.filter((t) => t.isArchived);
+
     set((state) => ({
       projects: [...state.projects, newProject],
       // Cross-slice state update
-      tasks: [...state.tasks, ...newTasks],
+      tasks: [...state.tasks, ...newActiveTasks],
+      archivedTasks: [...state.archivedTasks, ...newArchivedTasks],
       selectedProjectId: newProjectId,
     }));
   },
@@ -97,15 +102,16 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
   },
 
   getProjectExportData: (projectId) => {
-    const { projects, tasks } = get();
+    const { projects, tasks, archivedTasks } = get();
     const project = projects.find((p) => p.id === projectId);
     if (!project) return null;
 
-    const projectTasks = tasks.filter((t) => t.projectId === projectId);
+    const projectActiveTasks = tasks.filter((t) => t.projectId === projectId);
+    const projectArchivedTasks = archivedTasks.filter((t) => t.projectId === projectId);
 
     return {
       project,
-      tasks: projectTasks,
+      tasks: [...projectActiveTasks, ...projectArchivedTasks],
       version: 1,
     };
   },
