@@ -1,6 +1,6 @@
 # Implementation Plan - Archived Tasks & IndexedDB
 
-## Phase 1: IndexedDB Persistence Migration
+## Phase 1: IndexedDB Persistence Migration [checkpoint: 38bb507]
 - [x] Task: Install `idb-keyval` dependency [commit: e486060]
 - [x] Task: Create `src/lib/storage.ts` with Zustand IndexedDB adapter [commit: 444f4cb]
     - [x] Create unit tests for the storage adapter (mocking IndexedDB)
@@ -10,7 +10,7 @@
     - [x] Implement migration logic (run once on startup)
 - [x] Task: Update `src/store/useStore.ts` to use new persistence adapter [commit: 384d1be]
     - [x] Verify store still initializes correctly
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: IndexedDB Persistence Migration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: IndexedDB Persistence Migration' (Protocol in workflow.md) [commit: 38bb507]
 
 ## Phase 2: Local Archived State Separation
 - [ ] Task: Create `createArchivedTaskSlice`
