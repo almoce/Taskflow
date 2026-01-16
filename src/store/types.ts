@@ -62,8 +62,9 @@ export type SettingsSlice = {};
 export interface SyncSlice {
   pendingDeleteProjectIds: string[];
   pendingDeleteTaskIds: string[];
-  addToPendingDelete: (type: "project" | "task", id: string) => void;
-  removeFromPendingDelete: (type: "project" | "task", id: string) => void;
+  pendingDeleteArchivedTaskIds: string[];
+  addToPendingDelete: (type: "project" | "task" | "archived_task", id: string) => void;
+  removeFromPendingDelete: (type: "project" | "task" | "archived_task", id: string) => void;
 }
 
 export interface ArchivedTaskSlice {

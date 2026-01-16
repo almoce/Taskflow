@@ -83,6 +83,9 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
       updatedAt: new Date().toISOString(),
     };
 
+    // Mark for deletion from active table on server
+    get().addToPendingDelete("task", id);
+
     set((state) => ({
       tasks: state.tasks.filter((t) => t.id !== id),
       archivedTasks: [...state.archivedTasks, archivedTask],
@@ -99,6 +102,9 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
       updatedAt: new Date().toISOString(),
     };
 
+    // Mark for deletion from archived table on server
+    get().addToPendingDelete("archived_task", id);
+
     set((state) => ({
       archivedTasks: state.archivedTasks.filter((t) => t.id !== id),
       tasks: [...state.tasks, unarchivedTask],
@@ -112,6 +118,7 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
     const remainingTasks = tasks.filter((t) => {
       if (!t.isArchived && t.status === "done" && t.dueDate && new Date(t.dueDate) < now) {
         toArchive.push({ ...t, isArchived: true, updatedAt: new Date().toISOString() });
+        get().addToPendingDelete("task", t.id);
         return false;
       }
       return true;
