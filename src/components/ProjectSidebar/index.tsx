@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useUmami } from "@/hooks/useUmami";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/store/useStore";
 import type { Project } from "@/types/task";
@@ -53,6 +54,7 @@ export const ProjectSidebar = ({
   });
   const [authOpen, setAuthOpen] = useState(false);
   const { user, signOut, isPro } = useAuth();
+  const { track } = useUmami();
 
   const toggleCollapsed = () => {
     const newState = !collapsed;
@@ -93,6 +95,7 @@ export const ProjectSidebar = ({
           onClick={() => {
             onSelectProject(null);
             onSetActiveView("tasks");
+            track("dashboard_view");
           }}
         />
 
@@ -101,7 +104,10 @@ export const ProjectSidebar = ({
           label="Analytics"
           isActive={activeView === "analytics"}
           collapsed={collapsed}
-          onClick={() => onSetActiveView("analytics")}
+          onClick={() => {
+            onSetActiveView("analytics");
+            track("analytics_view");
+          }}
         />
       </nav>
 
@@ -133,9 +139,15 @@ export const ProjectSidebar = ({
               project={project}
               isSelected={activeView === "tasks" && selectedProjectId === project.id}
               collapsed={collapsed}
-              onSelect={() => onSelectProject(project.id)}
+              onSelect={() => {
+                onSelectProject(project.id);
+                track("project_select");
+              }}
               onEdit={() => onEditProject(project)}
-              onExport={() => onExport(project.id)}
+              onExport={() => {
+                onExport(project.id);
+                track("project_export");
+              }}
               onDelete={() => onDeleteProject(project.id)}
             />
           ))}
@@ -191,7 +203,15 @@ export const ProjectSidebar = ({
 
               <DropdownMenuItem
                 className="gap-3 cursor-pointer focus:bg-accent"
-                onClick={isPro ? onManageSubscription : onUpgrade}
+                onClick={() => {
+                  if (isPro) {
+                    onManageSubscription?.();
+                    track("manage_subscription");
+                  } else {
+                    onUpgrade?.();
+                    track("upgrade_modal_open");
+                  }
+                }}
               >
                 <Badge
                   variant={isPro ? "default" : "secondary"}
@@ -221,7 +241,10 @@ export const ProjectSidebar = ({
                 variant="default"
                 size="sm"
                 className={cn("w-full", collapsed ? "px-0" : "px-4")}
-                onClick={() => setAuthOpen(true)}
+                onClick={() => {
+                  setAuthOpen(true);
+                  track("auth_modal_open");
+                }}
               >
                 {collapsed ? <User className="h-4 w-4" /> : "Sign In"}
               </Button>

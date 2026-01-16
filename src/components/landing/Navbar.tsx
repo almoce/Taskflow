@@ -13,7 +13,7 @@ export const Navbar = () => {
           />
         </div>
         <div className="flex items-center gap-4">
-          <Link to="/app">
+          <Link to="/app" data-umami-event="navbar_get_started_click">
             <Button
               size="sm"
               className="bg-white text-black hover:bg-zinc-200 transition-all font-medium rounded-full px-4 h-8 text-xs"

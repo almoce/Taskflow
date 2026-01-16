@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useUmami } from "@/hooks/useUmami";
 import { cn } from "@/lib/utils";
 import type { Priority, Task } from "@/types/task";
 
@@ -42,6 +43,15 @@ const priorityStyles: Record<Priority, string> = {
 export function TaskCard({ task, onUpdate, onDelete, onEdit, onArchive }: TaskCardProps) {
   const isDone = task.status === "done";
   const hasDescription = task.description && task.description.trim().length > 0;
+  const { track } = useUmami();
+
+  const handleStatusToggle = () => {
+    const newStatus = isDone ? "todo" : "done";
+    onUpdate({ status: newStatus });
+    if (newStatus === "done") {
+      track("task_complete", { priority: task.priority });
+    }
+  };
 
   return (
     <div
@@ -70,10 +80,7 @@ export function TaskCard({ task, onUpdate, onDelete, onEdit, onArchive }: TaskCa
                 Edit
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem
-              onClick={() => onUpdate({ status: isDone ? "todo" : "done" })}
-              className="text-sm"
-            >
+            <DropdownMenuItem onClick={handleStatusToggle} className="text-sm">
               {isDone ? (
                 <>
                   <RotateCcw className="h-3.5 w-3.5 mr-2" />

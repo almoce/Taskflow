@@ -8,8 +8,11 @@ import { Footer } from "@/components/landing/Footer";
 import { HeroBackgroundClassic } from "@/components/landing/HeroBackgroundClassic"; // Use this for the old design
 import { Navbar } from "@/components/landing/Navbar";
 import { PricingSection } from "@/components/landing/PricingSection";
+import { useUmami } from "@/hooks/useUmami";
 
 const Index = () => {
+  const { track } = useUmami();
+
   return (
     <div className="min-h-screen bg-black text-white selection:bg-purple-500/30">
       <Navbar />
@@ -43,7 +46,7 @@ const Index = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up [animation-delay:600ms] opacity-0">
-            <Link to="/app">
+            <Link to="/app" data-umami-event="hero_cta_start_click">
               <div className="relative inline-flex h-12 overflow-hidden rounded-full p-[2px] focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-slate-50 group">
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#9333ea_0%,#e9d5ff_50%,#9333ea_100%)]" />
                 <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-all group-hover:bg-slate-900">

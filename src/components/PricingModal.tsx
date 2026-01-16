@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useUmami } from "@/hooks/useUmami";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/store/useStore";
@@ -31,6 +32,7 @@ const PRICE_ID = import.meta.env.VITE_STRIPE_PRICE_ID || "price_pro_monthly"; //
 export function PricingModal({ open, onOpenChange }: PricingModalProps) {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const { track } = useUmami();
 
   const handleUpgrade = async () => {
     if (!user) {
@@ -39,6 +41,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
     }
 
     setLoading(true);
+    track("checkout_start");
     try {
       const returnUrl = window.location.origin + import.meta.env.BASE_URL + "#/app";
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {

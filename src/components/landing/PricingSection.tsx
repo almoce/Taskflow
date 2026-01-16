@@ -33,20 +33,29 @@ export const PricingSection = () => {
           {/* Header Row */}
           <div className="grid grid-cols-3 p-6 border-b border-white/5 items-end gap-4">
             <div className="col-span-1 text-left">
-              <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Comparison</span>
+              <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                Comparison
+              </span>
             </div>
             <div className="col-span-1 text-center">
               <h3 className="text-lg font-bold text-white mb-4">Local</h3>
-              <Link to="/app">
-                <Button variant="outline" size="sm" className="w-full rounded-full border-white/10 hover:bg-white/5 text-white h-9 text-xs">
+              <Link to="/app" data-umami-event="pricing_start_free_click">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full rounded-full border-white/10 hover:bg-white/5 text-white h-9 text-xs"
+                >
                   Start Free
                 </Button>
               </Link>
             </div>
             <div className="col-span-1 text-center">
               <h3 className="text-lg font-bold text-white mb-4">Pro Cloud</h3>
-              <Link to="/app" className="relative block">
-                <Button size="sm" className="w-full rounded-full bg-white text-black hover:bg-zinc-200 h-9 text-xs">
+              <Link to="/app" className="relative block" data-umami-event="pricing_upgrade_click">
+                <Button
+                  size="sm"
+                  className="w-full rounded-full bg-white text-black hover:bg-zinc-200 h-9 text-xs"
+                >
                   Upgrade
                 </Button>
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-blue-500 text-[8px] font-bold px-2 py-0.5 rounded-full text-white uppercase tracking-wider shadow-lg">
@@ -59,17 +68,17 @@ export const PricingSection = () => {
           {/* Feature Rows */}
           <div className="divide-y divide-white/5">
             {features.map((feature, i) => (
-              <div 
-                key={feature.name} 
+              <div
+                key={feature.name}
                 className={cn(
                   "grid grid-cols-3 p-4 items-center hover:bg-white/[0.02] transition-colors",
-                  i % 2 === 0 ? "bg-transparent" : "bg-white/[0.01]"
+                  i % 2 === 0 ? "bg-transparent" : "bg-white/[0.01]",
                 )}
               >
                 <div className="col-span-1 text-zinc-300 font-medium text-xs md:text-sm">
                   {feature.name}
                 </div>
-                
+
                 {/* Free Column */}
                 <div className="col-span-1 flex justify-center">
                   {feature.free ? (
@@ -93,8 +102,6 @@ export const PricingSection = () => {
             ))}
           </div>
         </div>
-
-
       </div>
     </section>
   );

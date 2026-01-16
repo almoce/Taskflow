@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { RouteTracker } from "./components/analytics/RouteTracker";
 import { DevTools } from "./components/DevTools";
 import DashboardPage from "./pages/Dashboard";
 import Index from "./pages/Index";
@@ -16,6 +17,7 @@ const App = () => (
     <TooltipProvider>
       <Sonner />
       <HashRouter>
+        <RouteTracker />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/app" element={<DashboardPage />} />

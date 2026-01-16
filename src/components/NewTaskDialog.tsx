@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useUmami } from "@/hooks/useUmami";
 import { cn } from "@/lib/utils";
 import type { Priority, Task, TaskTag } from "@/types/task";
 
@@ -50,6 +51,7 @@ export function NewTaskDialog({
   const [priority, setPriority] = useState<Priority>("medium");
   const [tag, setTag] = useState<TaskTag | undefined>(undefined);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
+  const { track } = useUmami();
 
   const isEditMode = !!editTask;
 
@@ -94,6 +96,7 @@ export function NewTaskDialog({
           dueDate ? format(dueDate, "yyyy-MM-dd") : undefined,
           tag,
         );
+        track("task_create", { priority, tag });
       }
       setTitle("");
       setDescription("");

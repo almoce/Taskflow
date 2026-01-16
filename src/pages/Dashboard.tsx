@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
+import { useUmami } from "@/hooks/useUmami";
 import { supabase } from "@/lib/supabase";
 import { useAuth, useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
@@ -34,6 +35,7 @@ const DashboardPage = () => {
   useRealtimeSync();
   const location = useLocation();
   const navigate = useNavigate();
+  const { track } = useUmami();
   // Using the hook properly
   const { fetchProfile: refreshProfile } = useAuth();
 
@@ -157,6 +159,7 @@ const DashboardPage = () => {
       const data = getProjectExportData(projectId);
       if (data) {
         downloadJson(data, `TaskFlow-${data.project.name.toLowerCase().replace(/\s+/g, "-")}.json`);
+        track("project_export");
         toast.success("Project exported successfully");
       } else {
         toast.error("Failed to export project");
@@ -170,6 +173,7 @@ const DashboardPage = () => {
   const handleImport = (data: ProjectExportData) => {
     try {
       importProject(data);
+      track("project_import");
       toast.success("Project imported successfully");
       setShowNewProject(false);
     } catch (error) {
@@ -192,6 +196,11 @@ const DashboardPage = () => {
       console.error("Portal error:", error);
       toast.error(error.message || "Failed to open customer portal");
     }
+  };
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    track("view_mode_change", { mode });
   };
 
   return (
@@ -261,7 +270,7 @@ const DashboardPage = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode("kanban")}
+                    onClick={() => handleViewModeChange("kanban")}
                     className={`h-7 px-3 text-xs font-medium transition-all ${viewMode === "kanban" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                   >
                     <LayoutGrid className="h-3.5 w-3.5 mr-1.5" />
@@ -270,7 +279,7 @@ const DashboardPage = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode("calendar")}
+                    onClick={() => handleViewModeChange("calendar")}
                     className={`h-7 px-3 text-xs font-medium transition-all ${viewMode === "calendar" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                   >
                     <Calendar className="h-3.5 w-3.5 mr-1.5" />
@@ -279,7 +288,7 @@ const DashboardPage = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setViewMode("archived")}
+                    onClick={() => handleViewModeChange("archived")}
                     className={`h-7 px-3 text-xs font-medium transition-all ${viewMode === "archived" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                   >
                     <Archive className="h-3.5 w-3.5 mr-1.5" />

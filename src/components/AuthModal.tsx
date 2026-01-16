@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useUmami } from "@/hooks/useUmami";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/store/useStore";
 
@@ -39,6 +40,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const { setSession } = useAuth();
+  const { track } = useUmami();
 
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
@@ -60,6 +62,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         error = signInError;
         if (sessionData.session) {
           setSession(sessionData.session);
+          track("auth_login");
           onOpenChange(false);
           toast.success("Welcome back!");
         }
@@ -70,6 +73,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         });
         error = signUpError;
         if (!error) {
+          track("auth_signup");
           toast.success("Account created! Please check your email.");
           setIsLogin(true);
         }

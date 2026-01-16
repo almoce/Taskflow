@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { useUmami } from "@/hooks/useUmami";
 import { cn } from "@/lib/utils";
 import { PROJECT_COLORS, type Project, type ProjectExportData } from "@/types/task";
 
@@ -38,6 +39,7 @@ export function ProjectDialog({
   const [icon, setIcon] = useState<string | undefined>(undefined);
   const [pickerOpen, setPickerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { track } = useUmami();
 
   useEffect(() => {
     if (open) {
@@ -59,6 +61,9 @@ export function ProjectDialog({
     e.preventDefault();
     if (name.trim()) {
       onSubmit(name.trim(), description.trim() || undefined, color, icon);
+      if (!project) {
+        track("project_create", { color, hasIcon: !!icon });
+      }
       onOpenChange(false);
     }
   };
@@ -74,6 +79,7 @@ export function ProjectDialog({
         // Basic validation
         if (json.project && Array.isArray(json.tasks)) {
           onImport(json);
+          track("project_import");
           onOpenChange(false);
         } else {
           toast.error("Invalid project file format");
