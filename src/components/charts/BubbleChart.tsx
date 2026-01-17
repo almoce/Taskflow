@@ -22,6 +22,7 @@ interface TaskNode extends d3.SimulationNodeDatum {
   status?: string;
   priority?: string;
   tag?: string;
+  icon?: string;
 }
 
 const COLORS = {
@@ -65,12 +66,13 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
           category: "Overview",
           displayValue: project ? project.name : "Task",
           color: project ? project.color : "#94a3b8",
-          radius: 8,
+          radius: project?.icon ? 12 : 8,
           type: "Project",
           projectName: project?.name,
           status: task.status,
           priority: task.priority,
           tag: task.tag,
+          icon: project?.icon,
         };
       });
     }
@@ -163,24 +165,24 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
     });
 
     if (groupBy === "overview") {
-      // Group by color to cluster same-colored bubbles
-      const colors = Array.from(new Set(nodes.map((n) => n.color))).sort();
-      const colorCount = colors.length;
+      // Group by project name to cluster bubbles by project (even if they share colors)
+      const projectNames = Array.from(new Set(nodes.map((n) => n.projectName || "Other"))).sort();
+      const clusterCount = projectNames.length;
       
-      if (colorCount <= 1) {
+      if (clusterCount <= 1) {
         simulation.force(
           "x",
           d3.forceX<TaskNode>((d) => fociX(d.category) || width / 2).strength(0.35),
         );
         simulation.force("y", d3.forceY<TaskNode>(height / 2).strength(0.15));
       } else {
-        // Distribute color centers in a circle
+        // Distribute project centers in a circle
         const radius = Math.min(width, height) * 0.15; // Small radius to keep them "near" but clustered
         const centers: Record<string, { x: number; y: number }> = {};
         
-        colors.forEach((color, i) => {
-          const angle = (i / colorCount) * 2 * Math.PI;
-          centers[color] = {
+        projectNames.forEach((name, i) => {
+          const angle = (i / clusterCount) * 2 * Math.PI;
+          centers[name] = {
             x: width / 2 + Math.cos(angle) * radius,
             y: height / 2 + Math.sin(angle) * radius,
           };
@@ -188,11 +190,11 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
 
         simulation.force(
           "x",
-          d3.forceX<TaskNode>((d) => centers[d.color]?.x || width / 2).strength(0.2),
+          d3.forceX<TaskNode>((d) => centers[d.projectName || "Other"]?.x || width / 2).strength(0.2),
         );
         simulation.force(
           "y",
-          d3.forceY<TaskNode>((d) => centers[d.color]?.y || height / 2).strength(0.2),
+          d3.forceY<TaskNode>((d) => centers[d.projectName || "Other"]?.y || height / 2).strength(0.2),
         );
       }
     } else {
@@ -219,8 +221,17 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
 
     bubblesEnter
       .append("circle")
-      .attr("r", (d) => d.radius)
+      .attr("r", (d) => (d.icon ? 12 : d.radius))
       .style("cursor", "pointer");
+
+    bubblesEnter
+      .append("text")
+      .attr("class", "task-icon")
+      .attr("text-anchor", "middle")
+      .attr("dy", ".35em")
+      .attr("font-size", "12px")
+      .attr("pointer-events", "none")
+      .style("user-select", "none");
 
     // Merge and update
     const bubblesMerged = bubblesEnter.merge(bubbles);
@@ -229,10 +240,13 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
       .select("circle")
       .transition()
       .duration(500)
+      .attr("r", (d) => (d.icon ? 12 : d.radius))
       .attr("fill", (d) => d.color)
       .attr("stroke", (d) => d.color)
       .attr("stroke-width", 1)
-      .attr("opacity", 0.8);
+      .attr("opacity", (d) => (d.icon ? 0.2 : 0.8));
+
+    bubblesMerged.select("text").text((d) => d.icon || "");
 
     bubblesMerged
       .on("mouseenter", function (event, d) {
@@ -240,8 +254,14 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
           .select("circle")
           .transition()
           .duration(200)
-          .attr("opacity", 1)
-          .attr("r", 12);
+          .attr("opacity", (d) => (d.icon ? 0.4 : 1))
+          .attr("r", d.radius + 6);
+
+        d3.select(this)
+          .select("text")
+          .transition()
+          .duration(200)
+          .attr("font-size", "14px");
 
         setTooltipData({
           x: event.clientX,
@@ -253,13 +273,19 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
       .on("mousemove", (event) => {
         setTooltipData((prev) => ({ ...prev, x: event.clientX, y: event.clientY }));
       })
-      .on("mouseleave", function () {
+      .on("mouseleave", function (event, d) {
         d3.select(this)
           .select("circle")
           .transition()
           .duration(200)
-          .attr("opacity", 0.8)
-          .attr("r", 8);
+          .attr("opacity", (d) => (d.icon ? 0.2 : 0.8))
+          .attr("r", d.radius); // Use the stored radius which is now correct in the datum
+
+        d3.select(this)
+          .select("text")
+          .transition()
+          .duration(200)
+          .attr("font-size", "12px");
 
         setTooltipData((prev) => ({ ...prev, visible: false }));
       });
