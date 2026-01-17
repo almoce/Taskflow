@@ -107,6 +107,10 @@ export function ProductivityCharts({
   const totalCompleted = tasks.filter((t) => t.status === "done").length;
   const completionRate = tasks.length > 0 ? Math.round((totalCompleted / tasks.length) * 100) : 0;
 
+  const activeTasks = useMemo(() => {
+    return tasks.filter((t) => !t.isArchived);
+  }, [tasks]);
+
   if (tasks.length === 0) {
     return (
       <Card className="bg-card/50 backdrop-blur-sm border-border/50">
@@ -221,7 +225,7 @@ export function ProductivityCharts({
           <CardContent>
             <div className="h-[400px]">
               <BubbleChart
-                tasks={tasks}
+                tasks={activeTasks}
                 projects={projects}
                 groupBy={distributionMode}
                 height={400}
