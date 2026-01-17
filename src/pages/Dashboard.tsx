@@ -270,7 +270,11 @@ const DashboardPage = () => {
                                       </SelectContent>
                                     </Select>
                                   </div>
-                                  <ProductivityCharts tasks={[...tasks, ...archivedTasks]} selectedProjectId={analyticsProjectId} />
+                                  <ProductivityCharts
+                    tasks={[...tasks, ...archivedTasks]}
+                    projects={projects}
+                    selectedProjectId={analyticsProjectId}
+                  />
                                 </div>
                               ) : selectedProject ? (
                     
