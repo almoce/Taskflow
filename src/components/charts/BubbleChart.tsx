@@ -1,10 +1,11 @@
 import * as d3 from "d3";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { Task } from "@/types/task";
+import type { Project, Task } from "@/types/task";
 
 interface BubbleChartProps {
   tasks: Task[];
+  projects?: Project[];
   groupBy: "overview" | "status" | "priority" | "tag";
   height?: number;
 }
@@ -17,6 +18,10 @@ interface TaskNode extends d3.SimulationNodeDatum {
   color: string;
   radius: number;
   type?: string;
+  projectName?: string;
+  status?: string;
+  priority?: string;
+  tag?: string;
 }
 
 const COLORS = {
@@ -38,7 +43,7 @@ const COLORS = {
   },
 } as const;
 
-export function BubbleChart({ tasks, groupBy, height = 400 }: BubbleChartProps) {
+export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleChartProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const _tooltipRef = useRef<HTMLDivElement>(null);
   const simulationRef = useRef<d3.Simulation<TaskNode, undefined> | null>(null);
@@ -51,42 +56,23 @@ export function BubbleChart({ tasks, groupBy, height = 400 }: BubbleChartProps) 
 
   const nodes = useMemo(() => {
     if (groupBy === "overview") {
-      const allNodes: TaskNode[] = [];
-      tasks.forEach((task) => {
-        // Status bubble
-        allNodes.push({
-          id: `${task.id}-status`,
+      return tasks.map((task) => {
+        const project = projects?.find((p) => p.id === task.projectId);
+        
+        return {
+          id: task.id,
           title: task.title,
           category: "Overview",
-          displayValue: task.status,
-          color: COLORS.status[task.status as keyof typeof COLORS.status] || "#94a3b8",
-          radius: 7,
-          type: "Status",
-        });
-        // Priority bubble
-        allNodes.push({
-          id: `${task.id}-priority`,
-          title: task.title,
-          category: "Overview",
-          displayValue: task.priority,
-          color: COLORS.priority[task.priority as keyof typeof COLORS.priority] || "#94a3b8",
-          radius: 7,
-          type: "Priority",
-        });
-        // Tag bubble
-        if (task.tag) {
-          allNodes.push({
-            id: `${task.id}-tag`,
-            title: task.title,
-            category: "Overview",
-            displayValue: task.tag,
-            color: COLORS.tag[task.tag as keyof typeof COLORS.tag] || "#94a3b8",
-            radius: 7,
-            type: "Tag",
-          });
-        }
+          displayValue: project ? project.name : "Task",
+          color: project ? project.color : "#94a3b8",
+          radius: 8,
+          type: "Project",
+          projectName: project?.name,
+          status: task.status,
+          priority: task.priority,
+          tag: task.tag,
+        };
       });
-      return allNodes;
     }
 
     return tasks.map((task) => {
@@ -176,11 +162,46 @@ export function BubbleChart({ tasks, groupBy, height = 400 }: BubbleChartProps) 
       node.vy = 0;
     });
 
-    simulation.force(
-      "x",
-      d3.forceX<TaskNode>((d) => fociX(d.category) || width / 2).strength(0.35),
-    );
-    simulation.force("y", d3.forceY<TaskNode>(height / 2).strength(0.15));
+    if (groupBy === "overview") {
+      // Group by color to cluster same-colored bubbles
+      const colors = Array.from(new Set(nodes.map((n) => n.color))).sort();
+      const colorCount = colors.length;
+      
+      if (colorCount <= 1) {
+        simulation.force(
+          "x",
+          d3.forceX<TaskNode>((d) => fociX(d.category) || width / 2).strength(0.35),
+        );
+        simulation.force("y", d3.forceY<TaskNode>(height / 2).strength(0.15));
+      } else {
+        // Distribute color centers in a circle
+        const radius = Math.min(width, height) * 0.15; // Small radius to keep them "near" but clustered
+        const centers: Record<string, { x: number; y: number }> = {};
+        
+        colors.forEach((color, i) => {
+          const angle = (i / colorCount) * 2 * Math.PI;
+          centers[color] = {
+            x: width / 2 + Math.cos(angle) * radius,
+            y: height / 2 + Math.sin(angle) * radius,
+          };
+        });
+
+        simulation.force(
+          "x",
+          d3.forceX<TaskNode>((d) => centers[d.color]?.x || width / 2).strength(0.2),
+        );
+        simulation.force(
+          "y",
+          d3.forceY<TaskNode>((d) => centers[d.color]?.y || height / 2).strength(0.2),
+        );
+      }
+    } else {
+      simulation.force(
+        "x",
+        d3.forceX<TaskNode>((d) => fociX(d.category) || width / 2).strength(0.35),
+      );
+      simulation.force("y", d3.forceY<TaskNode>(height / 2).strength(0.15));
+    }
 
     // Delay the bubble drop slightly to let labels appear
     setTimeout(() => {
@@ -269,15 +290,27 @@ export function BubbleChart({ tasks, groupBy, height = 400 }: BubbleChartProps) 
             }}
           >
             <div className="text-xs font-medium mb-1">{tooltipData.task.title}</div>
+            {tooltipData.task.projectName && (
+              <div className="text-[10px] text-muted-foreground mb-1">
+                Project: {tooltipData.task.projectName}
+              </div>
+            )}
             <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
               <span
                 className="w-2 h-2 rounded-full"
                 style={{ background: tooltipData.task.color }}
               ></span>
               <span>
-                {tooltipData.task.type
-                  ? `${tooltipData.task.type}: ${tooltipData.task.displayValue}`
-                  : tooltipData.task.displayValue}
+                {groupBy === "overview" ? (
+                  <>
+                    {tooltipData.task.status} • {tooltipData.task.priority}
+                    {tooltipData.task.tag ? ` • ${tooltipData.task.tag}` : ""}
+                  </>
+                ) : tooltipData.task.type ? (
+                  `${tooltipData.task.type}: ${tooltipData.task.displayValue}`
+                ) : (
+                  tooltipData.task.displayValue
+                )}
               </span>
             </div>
           </div>,

@@ -23,15 +23,17 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { useTaskStore } from "@/hooks/useTaskStore";
-import type { Task } from "@/types/task";
+import type { Project, Task } from "@/types/task";
 
 interface ProductivityChartsProps {
   tasks: Task[];
+  projects?: Project[];
   selectedProjectId?: string;
 }
 
 export function ProductivityCharts({
   tasks: allTasks,
+  projects,
   selectedProjectId = "all",
 }: ProductivityChartsProps) {
   const [timeRange, setTimeRange] = useState<"week" | "month">("week");
@@ -218,7 +220,12 @@ export function ProductivityCharts({
           </CardHeader>
           <CardContent>
             <div className="h-[400px]">
-              <BubbleChart tasks={tasks} groupBy={distributionMode} height={400} />
+              <BubbleChart
+                tasks={tasks}
+                projects={projects}
+                groupBy={distributionMode}
+                height={400}
+              />
             </div>
           </CardContent>
         </Card>
