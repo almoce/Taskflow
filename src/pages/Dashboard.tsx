@@ -98,19 +98,22 @@ const DashboardPage = () => {
   const archivedTasksForProject = archivedTasks.filter((t) => t.projectId === selectedProjectId);
 
   const getProjectProgress = (projectId: string) => {
-    const projectTasks = tasks.filter((t) => t.projectId === projectId);
-    if (projectTasks.length === 0) return 0;
-    const completed = projectTasks.filter((t) => t.status === "done").length;
-    return Math.round((completed / projectTasks.length) * 100);
+    const activeProjectTasks = tasks.filter((t) => t.projectId === projectId);
+
+    if (activeProjectTasks.length === 0) return 0;
+    
+    const completed = activeProjectTasks.filter((t) => t.status === "done").length;
+    return Math.round((completed / activeProjectTasks.length) * 100);
   };
 
   const getProjectTaskCounts = (projectId: string) => {
-    const projectTasks = tasks.filter((t) => t.projectId === projectId);
+    const activeProjectTasks = tasks.filter((t) => t.projectId === projectId);
+
     return {
-      total: projectTasks.length,
-      todo: projectTasks.filter((t) => t.status === "todo").length,
-      inProgress: projectTasks.filter((t) => t.status === "in-progress").length,
-      done: projectTasks.filter((t) => t.status === "done").length,
+      total: activeProjectTasks.length,
+      todo: activeProjectTasks.filter((t) => t.status === "todo").length,
+      inProgress: activeProjectTasks.filter((t) => t.status === "in-progress").length,
+      done: activeProjectTasks.filter((t) => t.status === "done").length,
     };
   };
 

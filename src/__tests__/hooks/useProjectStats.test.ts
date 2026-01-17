@@ -44,6 +44,28 @@ describe("useProjectStats", () => {
     });
   });
 
+  it("should ignore archived tasks", () => {
+    const project = useStore.getState().addProject("Project With Archived");
+    const projectId = project.id;
+
+    // Add active task
+    useStore.getState().addTask(projectId, "Active Task", "medium");
+
+    // Add task and archive it
+    const task = useStore.getState().addTask(projectId, "To Archive", "medium");
+    useStore.getState().archiveTask(task.id);
+
+    const { result } = renderHook(() => useProjectStats(projectId));
+
+    expect(result.current).toEqual({
+      total: 1,
+      todo: 1,
+      inProgress: 0,
+      done: 0,
+      progress: 0,
+    });
+  });
+
   it("should return empty stats for a project with no tasks", () => {
     const project = useStore.getState().addProject("Empty Project");
     const { result } = renderHook(() => useProjectStats(project.id));
