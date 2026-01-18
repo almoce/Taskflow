@@ -110,6 +110,7 @@ export const syncTasks = async (projectId?: string) => {
         completedAt: remote.completed_at,
         updatedAt: remote.updated_at,
         isArchived: remote.is_archived,
+        totalTimeSpent: remote.total_time_spent,
       };
 
       const local = localTasks.find((t) => t.id === remote.id);
@@ -162,6 +163,7 @@ export const syncTasks = async (projectId?: string) => {
         completed_at: t.completedAt,
         updated_at: t.updatedAt || new Date().toISOString(),
         is_archived: t.isArchived || false,
+        total_time_spent: t.totalTimeSpent || 0,
       })),
     );
     if (uploadError) console.error("Error uploading tasks:", uploadError);
@@ -209,6 +211,7 @@ export const syncArchivedTasks = async (projectId?: string) => {
         completedAt: remote.completed_at,
         updatedAt: remote.updated_at,
         isArchived: remote.is_archived,
+        totalTimeSpent: remote.total_time_spent,
       };
 
       const local = localTasks.find((t) => t.id === remote.id);
@@ -258,6 +261,7 @@ export const syncArchivedTasks = async (projectId?: string) => {
         completed_at: t.completedAt,
         updated_at: t.updatedAt || new Date().toISOString(),
         is_archived: t.isArchived || true,
+        total_time_spent: t.totalTimeSpent || 0,
       })),
     );
     if (uploadError) console.error("Error uploading archived tasks:", uploadError);
