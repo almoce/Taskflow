@@ -73,6 +73,14 @@ export interface ArchivedTaskSlice {
   deleteArchivedTask: (id: string) => void;
 }
 
+export interface FocusSlice {
+  activeFocusTaskId: string | null;
+  isFocusModeActive: boolean;
+  startFocusSession: (taskId: string) => void;
+  endFocusSession: () => void;
+  updateTaskTime: (taskId: string, duration: number) => void;
+}
+
 export interface StoreState
   extends ProjectSlice,
     TaskSlice,
@@ -80,6 +88,7 @@ export interface StoreState
     UISlice,
     AuthSlice,
     SettingsSlice,
-    SyncSlice {
+    SyncSlice,
+    FocusSlice {
   reset: () => void;
 }
