@@ -171,17 +171,23 @@ const DashboardPage = () => {
       }
     };
   
+    const { startFocusSession } = useFocus();
+
     const handleAddTask = (
       title: string,
       description?: string,
       priority?: Priority,
       dueDate?: string,
       tag?: Task["tag"],
+      startFocus?: boolean,
     ) => {
       if (selectedProjectId) {
         const task = addTask(selectedProjectId, title, priority, tag);
         if (description || dueDate) {
           updateTask(task.id, { description, dueDate });
+        }
+        if (startFocus) {
+          startFocusSession(task.id);
         }
       }
     };

@@ -34,6 +34,7 @@ interface NewTaskDialogProps {
     priority?: Priority,
     dueDate?: string,
     tag?: TaskTag,
+    startFocus?: boolean,
   ) => void;
   editTask?: Task | null;
   onEditSubmit?: (id: string, updates: Partial<Task>) => void;
@@ -77,7 +78,7 @@ export function NewTaskDialog({
     }
   }, [editTask, open]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent, startFocus = false) => {
     e.preventDefault();
     if (title.trim()) {
       if (isEditMode && onEditSubmit && editTask) {
@@ -95,6 +96,7 @@ export function NewTaskDialog({
           priority,
           dueDate ? format(dueDate, "yyyy-MM-dd") : undefined,
           tag,
+          startFocus,
         );
         track("task_create", { priority, tag });
       }
@@ -112,7 +114,7 @@ export function NewTaskDialog({
         <DialogHeader>
           <DialogTitle>{isEditMode ? "Edit Task" : "Add New Task"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(e) => handleSubmit(e)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Task Title</Label>
             <Input
@@ -207,6 +209,18 @@ export function NewTaskDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
+            {!isEditMode && (
+              <Button 
+                type="button" 
+                variant="secondary" 
+                disabled={!title.trim()} 
+                onClick={(e) => handleSubmit(e as any, true)}
+                className="gap-2"
+              >
+                <Zap className="h-4 w-4 fill-current" />
+                Add & Focus
+              </Button>
+            )}
             <Button type="submit" disabled={!title.trim()} className="gradient-primary">
               {isEditMode ? "Save Changes" : "Add Task"}
             </Button>
