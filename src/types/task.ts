@@ -23,6 +23,7 @@ export interface Task {
   updatedAt?: string;
   completedAt?: string;
   isArchived?: boolean;
+  totalTimeSpent?: number; // in milliseconds
 }
 
 export interface Project {
