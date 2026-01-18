@@ -20,7 +20,7 @@ export const migrateArchivedTasks = async () => {
       for (const task of toArchive) {
         // 1. Add to archived slice
         upsertArchivedTask(task);
-        
+
         // 2. Mark for deletion from active table on server (for Pro users)
         addToPendingDelete("task", task.id);
       }

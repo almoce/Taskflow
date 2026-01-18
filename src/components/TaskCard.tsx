@@ -41,13 +41,13 @@ const priorityStyles: Record<Priority, string> = {
   low: "priority-low",
 };
 
-export function TaskCard({ 
-  task, 
-  onUpdate, 
-  onDelete, 
-  onEdit, 
+export function TaskCard({
+  task,
+  onUpdate,
+  onDelete,
+  onEdit,
   onArchive,
-  onStartFocus
+  onStartFocus,
 }: TaskCardProps) {
   const isDone = task.status === "done";
   const hasDescription = task.description && task.description.trim().length > 0;
@@ -100,48 +100,49 @@ export function TaskCard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
-            {onEdit && (
-              <DropdownMenuItem onClick={onEdit} className="text-sm">
-                <Pencil className="h-3.5 w-3.5 mr-2" />
-                Edit
+              {onEdit && (
+                <DropdownMenuItem onClick={onEdit} className="text-sm">
+                  <Pencil className="h-3.5 w-3.5 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={handleStatusToggle} className="text-sm">
+                {isDone ? (
+                  <>
+                    <RotateCcw className="h-3.5 w-3.5 mr-2" />
+                    Reopen
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="h-3.5 w-3.5 mr-2" />
+                    Complete
+                  </>
+                )}
               </DropdownMenuItem>
-            )}
-            <DropdownMenuItem onClick={handleStatusToggle} className="text-sm">
-              {isDone ? (
-                <>
-                  <RotateCcw className="h-3.5 w-3.5 mr-2" />
-                  Reopen
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="h-3.5 w-3.5 mr-2" />
-                  Complete
-                </>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onArchive} className="text-sm">
-              {task.isArchived ? (
-                <>
-                  <ArchiveRestore className="h-3.5 w-3.5 mr-2" />
-                  Unarchive
-                </>
-              ) : (
-                <>
-                  <Archive className="h-3.5 w-3.5 mr-2" />
-                  Archive
-                </>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={onDelete}
-              className="text-destructive focus:text-destructive text-sm"
-            >
-              <Trash2 className="h-3.5 w-3.5 mr-2" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuItem onClick={onArchive} className="text-sm">
+                {task.isArchived ? (
+                  <>
+                    <ArchiveRestore className="h-3.5 w-3.5 mr-2" />
+                    Unarchive
+                  </>
+                ) : (
+                  <>
+                    <Archive className="h-3.5 w-3.5 mr-2" />
+                    Archive
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={onDelete}
+                className="text-destructive focus:text-destructive text-sm"
+              >
+                <Trash2 className="h-3.5 w-3.5 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">

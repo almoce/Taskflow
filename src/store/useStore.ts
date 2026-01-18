@@ -69,6 +69,10 @@ export const useStore = create<StoreState>()(
         pendingDeleteProjectIds: state.pendingDeleteProjectIds,
         pendingDeleteTaskIds: state.pendingDeleteTaskIds,
         pendingDeleteArchivedTaskIds: state.pendingDeleteArchivedTaskIds,
+        // Persist focus state to survive reloads
+        activeFocusTaskId: state.activeFocusTaskId,
+        isFocusModeActive: state.isFocusModeActive,
+        previousTaskStatus: state.previousTaskStatus,
       }),
     },
   ),
@@ -143,6 +147,7 @@ export const useFocus = () =>
       isFocusModeActive: state.isFocusModeActive,
       startFocusSession: state.startFocusSession,
       endFocusSession: state.endFocusSession,
+      cancelFocusSession: state.cancelFocusSession,
       updateTaskTime: state.updateTaskTime,
     })),
   );

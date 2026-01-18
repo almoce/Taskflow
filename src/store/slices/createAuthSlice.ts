@@ -31,7 +31,7 @@ export const createAuthSlice: StateCreator<StoreState, [], [], AuthSlice> = (set
       user: newUser,
       loading: false,
     });
-    
+
     if (newUser) {
       get().fetchProfile();
     } else {

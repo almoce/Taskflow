@@ -210,10 +210,10 @@ export function NewTaskDialog({
               Cancel
             </Button>
             {!isEditMode && (
-              <Button 
-                type="button" 
-                variant="secondary" 
-                disabled={!title.trim()} 
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={!title.trim()}
                 onClick={(e) => handleSubmit(e as any, true)}
                 className="gap-2"
               >

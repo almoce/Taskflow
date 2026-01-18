@@ -139,7 +139,7 @@ export const syncTasks = async (projectId?: string) => {
     const remote = remoteTasks.find((r) => r.id === local.id);
     // If filtering by project, remoteTasks only has that project's tasks.
     // So 'find' is correct for that project.
-    
+
     if (!remote) return true;
     const remoteTime = new Date(remote.updated_at).getTime();
     const localTime = new Date(local.updatedAt || local.createdAt).getTime();
