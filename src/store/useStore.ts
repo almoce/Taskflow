@@ -6,6 +6,7 @@ import { migrateArchivedTasks } from "@/lib/migrateTasks";
 import { indexedDBStorage } from "@/lib/storage";
 import { createArchivedTaskSlice } from "./slices/createArchivedTaskSlice";
 import { createAuthSlice } from "./slices/createAuthSlice";
+import { createFocusSlice } from "./slices/createFocusSlice";
 import { createProjectSlice } from "./slices/createProjectSlice";
 import { createSettingsSlice } from "./slices/createSettingsSlice";
 import { createSyncSlice } from "./slices/createSyncSlice";
@@ -35,6 +36,7 @@ export const useStore = create<StoreState>()(
       ...createSettingsSlice(set, get, api),
       ...createAuthSlice(set, get, api),
       ...createSyncSlice(set, get, api),
+      ...createFocusSlice(set, get, api),
 
       reset: () => {
         set({
@@ -131,6 +133,17 @@ export const useAuth = () =>
       setSession: state.setSession,
       fetchProfile: state.fetchProfile,
       signOut: state.signOut,
+    })),
+  );
+
+export const useFocus = () =>
+  useStore(
+    useShallow((state) => ({
+      activeFocusTaskId: state.activeFocusTaskId,
+      isFocusModeActive: state.isFocusModeActive,
+      startFocusSession: state.startFocusSession,
+      endFocusSession: state.endFocusSession,
+      updateTaskTime: state.updateTaskTime,
     })),
   );
 
