@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { RouteTracker } from "./components/analytics/RouteTracker";
 import { DevTools } from "./components/DevTools";
 import { supabase } from "./lib/supabase";
+import AuthCallback from "./pages/AuthCallback";
 import DashboardPage from "./pages/Dashboard";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -39,6 +40,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/app" element={<DashboardPage />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/terms" element={<TermsOfService />} />

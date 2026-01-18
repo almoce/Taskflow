@@ -80,7 +80,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/app`,
+            emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/auth/callback`,
           },
         });
         error = signUpError;
@@ -110,7 +110,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/reset-password`,
+        redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/auth/callback`,
       });
 
       if (error) {

@@ -43,24 +43,6 @@ export default function ResetPassword() {
   });
 
   useEffect(() => {
-    // Handle tokens from URL hash for password reset
-    const hash = window.location.hash;
-    if (hash.startsWith("#/reset-password#")) {
-      const tokenPart = hash.substring("#/reset-password#".length);
-      const params = new URLSearchParams(tokenPart);
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token");
-      const type = params.get("type");
-      if (type === "recovery" && accessToken && refreshToken) {
-        supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
-        // Clean the hash
-        window.history.replaceState(null, "", "#/reset-password");
-      }
-    }
-
     // Redirect to app if already logged in and not in password recovery
     if (session?.user && !session.user.email_confirmed_at) {
       navigate("/app");
