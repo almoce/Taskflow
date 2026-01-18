@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -39,8 +39,17 @@ interface AuthModalProps {
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [successEmail, setSuccessEmail] = useState("");
   const { setSession } = useAuth();
   const { track } = useUmami();
+
+  useEffect(() => {
+    if (open) {
+      setIsSuccess(false);
+      setIsLogin(true);
+    }
+  }, [open]);
 
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
@@ -77,8 +86,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         error = signUpError;
         if (!error) {
           track("auth_signup");
-          toast.success("Account created! Please check your email.");
-          setIsLogin(true);
+          setSuccessEmail(data.email);
+          setIsSuccess(true);
         }
       }
 
@@ -92,62 +101,112 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
     }
   };
 
+  const handleForgotPassword = async () => {
+    const email = form.getValues("email");
+    if (!email) {
+      toast.error("Please enter your email address first");
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/reset-password`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Password reset email sent! Check your inbox.");
+      }
+    } catch (e) {
+      toast.error("An unexpected error occurred");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-md border-white/20">
+      <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-xl border-border/50 shadow-2xl">
         <DialogHeader>
-          <DialogTitle>{isLogin ? "Welcome Back" : "Create Account"}</DialogTitle>
+          <DialogTitle>
+            {isSuccess ? "Success" : isLogin ? "Welcome Back" : "Create Account"}
+          </DialogTitle>
           <DialogDescription>
-            {isLogin
-              ? "Enter your credentials to access your account."
-              : "Sign up to sync your tasks across devices."}
+            {isSuccess
+              ? ""
+              : isLogin
+                ? "Enter your credentials to access your account."
+                : "Sign up to sync your tasks across devices."}
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="hello@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex flex-col gap-2 pt-2">
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className="w-full text-xs text-muted-foreground hover:text-primary"
-                onClick={() => setIsLogin(!isLogin)}
-              >
-                {isLogin
-                  ? "Don't have an account? Create an account"
-                  : "Already have an account? Sign In"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+        {isSuccess ? (
+          <div className="text-center space-y-4">
+            <div className="text-green-500 text-2xl">✓</div>
+            <h3 className="text-lg font-semibold">Account Created Successfully</h3>
+            <p>Verification email sent to {successEmail}</p>
+            <p className="text-sm text-muted-foreground">
+              Please check your inbox and click the link to verify your account.
+            </p>
+            <Button onClick={() => onOpenChange(false)} className="w-full">
+              Close
+            </Button>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="hello@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex flex-col gap-2 pt-2">
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full text-xs text-muted-foreground hover:text-primary"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  {isLogin
+                    ? "Don't have an account? Create an account"
+                    : "Already have an account? Sign In"}
+                </Button>
+                {isLogin && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full text-xs text-muted-foreground hover:text-primary"
+                    onClick={handleForgotPassword}
+                  >
+                    Forgot your password?
+                  </Button>
+                )}
+              </div>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   );

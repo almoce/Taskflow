@@ -1,6 +1,7 @@
-import { BarChart3, ChevronLeft, ChevronRight, Home, LogOut, Plus, User } from "lucide-react";
+import { BarChart3, ChevronLeft, ChevronRight, Home, Key, LogOut, Plus, User } from "lucide-react";
 import { useState } from "react";
 import { AuthModal } from "@/components/AuthModal";
+import { ChangePasswordModal } from "@/components/ChangePasswordModal";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,10 +50,11 @@ export const ProjectSidebar = ({
   onManageSubscription,
 }: ProjectSidebarProps) => {
   const [collapsed, setCollapsed] = useState(() => {
-    const saved = localStorage.getItem("sidebar-collapsed");
-    return saved ? JSON.parse(saved) : false;
+    const stored = localStorage.getItem("sidebar-collapsed");
+    return stored ? JSON.parse(stored) : false;
   });
   const [authOpen, setAuthOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const { user, signOut, isPro } = useAuth();
   const { track } = useUmami();
 
@@ -224,6 +226,14 @@ export const ProjectSidebar = ({
                 </span>
               </DropdownMenuItem>
 
+              <DropdownMenuItem
+                onClick={() => setChangePasswordOpen(true)}
+                className="gap-2 cursor-pointer"
+              >
+                <Key className="h-4 w-4" />
+                Change Password
+              </DropdownMenuItem>
+
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => signOut()}
@@ -278,6 +288,7 @@ export const ProjectSidebar = ({
       </div>
 
       <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
+      <ChangePasswordModal open={changePasswordOpen} onOpenChange={setChangePasswordOpen} />
     </aside>
   );
 };
