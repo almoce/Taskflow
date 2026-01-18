@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
-import { indexedDBStorage } from "@/lib/storage";
+import { smartStorageAdapter } from "@/lib/smartStorage";
 import { createArchivedTaskSlice } from "./slices/createArchivedTaskSlice";
 import { createAuthSlice } from "./slices/createAuthSlice";
 import { createFocusSlice } from "./slices/createFocusSlice";
@@ -42,26 +42,8 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: "task-manager-data",
-      storage: createJSONStorage(() => indexedDBStorage),
-      partialize: (state) => ({
-        projects: state.projects,
-        tasks: state.tasks,
-        archivedTasks: state.archivedTasks,
-        selectedProjectId: state.selectedProjectId,
-        columnSorts: state.columnSorts,
-        // We persist session to keep user logged in
-        session: state.session,
-        user: state.user,
-        profile: state.profile,
-        isPro: state.isPro,
-        pendingDeleteProjectIds: state.pendingDeleteProjectIds,
-        pendingDeleteTaskIds: state.pendingDeleteTaskIds,
-        pendingDeleteArchivedTaskIds: state.pendingDeleteArchivedTaskIds,
-        // Persist focus state to survive reloads
-        activeFocusTaskId: state.activeFocusTaskId,
-        isFocusModeActive: state.isFocusModeActive,
-        previousTaskStatus: state.previousTaskStatus,
-      }),
+      storage: createJSONStorage(() => smartStorageAdapter),
+      // smartStorageAdapter handles slicing/splitting, so we pass the full state
     },
   ),
 );
