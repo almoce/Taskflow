@@ -2,26 +2,38 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Clock, MessageSquare, Play, Square, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { useFocus, useTasks } from "@/store/useStore";
 import { cn } from "@/lib/utils";
+import { useFocus, useTasks } from "@/store/useStore";
 
 export function FocusOverlay() {
-  const { 
-    isFocusModeActive, 
-    activeFocusTaskId, 
-    endFocusSession, 
-    updateTaskTime 
+  const {
+    isFocusModeActive,
+    activeFocusTaskId,
+    endFocusSession,
+    cancelFocusSession,
+    updateTaskTime,
   } = useFocus();
-  
+
   const { tasks, updateTask } = useTasks();
-  
+
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [summaryNote, setSummaryNote] = useState("");
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const task = tasks.find((t) => t.id === activeFocusTaskId);
 
@@ -44,12 +56,14 @@ export function FocusOverlay() {
       if (e.key === "Escape") {
         if (showSummary) {
           setShowSummary(false);
+        } else if (showCancelDialog) {
+          setShowCancelDialog(false);
         } else {
-          handleEndSession();
+          handleCloseAttempt();
         }
       }
-      
-      if (e.code === "Space" && !showSummary) {
+
+      if (e.code === "Space" && !showSummary && !showCancelDialog) {
         e.preventDefault();
         setIsRunning(!isRunning);
       }
@@ -57,17 +71,18 @@ export function FocusOverlay() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isFocusModeActive, isRunning, showSummary]);
+  }, [isFocusModeActive, isRunning, showSummary, showCancelDialog]);
 
   // Auto-start timer when focus mode starts
   useEffect(() => {
-    if (isFocusModeActive) {
+    if (isFocusModeActive && task) {
       setIsRunning(true);
       setElapsedTime(0);
       setShowSummary(false);
-      setSummaryNote("");
+      setSummaryNote(task.description || "");
+      setShowCancelDialog(false);
     }
-  }, [isFocusModeActive]);
+  }, [isFocusModeActive, task]);
 
   // Browser navigation warning
   useEffect(() => {
@@ -96,18 +111,32 @@ export function FocusOverlay() {
     setShowSummary(true);
   };
 
+  const handleCloseAttempt = () => {
+    if (elapsedTime > 0) {
+      setIsRunning(false);
+      setShowCancelDialog(true);
+    } else {
+      cancelFocusSession();
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    cancelFocusSession();
+    setShowCancelDialog(false);
+  };
+
   const handleFinish = () => {
     if (activeFocusTaskId) {
       // Record time
       updateTaskTime(activeFocusTaskId, elapsedTime);
-      
+
       // Update status and description
       const updates: any = { status: "done" };
       if (summaryNote.trim()) {
         updates.description = summaryNote.trim();
       }
       updateTask(activeFocusTaskId, updates);
-      
+
       toast.success("Task completed!", {
         description: `Focused for ${formatTime(elapsedTime)}`,
       });
@@ -127,14 +156,13 @@ export function FocusOverlay() {
       >
         {/* Ambient background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-        
+
         <Card className="relative w-full max-w-2xl bg-card/40 border-border/40 shadow-2xl backdrop-blur-md overflow-hidden flex flex-col items-center p-12 text-center">
-          
           <div className="absolute top-6 right-6">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => endFocusSession()}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCloseAttempt}
               className="rounded-full hover:bg-white/10"
             >
               <X className="h-5 w-5" />
@@ -147,9 +175,7 @@ export function FocusOverlay() {
                 <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
                   Focus Session
                 </span>
-                <h2 className="text-4xl font-bold tracking-tight text-balance">
-                  {task.title}
-                </h2>
+                <h2 className="text-4xl font-bold tracking-tight text-balance">{task.title}</h2>
                 {task.description && (
                   <p className="text-muted-foreground text-lg max-w-md mx-auto leading-relaxed italic">
                     "{task.description}"
@@ -174,7 +200,7 @@ export function FocusOverlay() {
                   className={cn(
                     "h-20 w-20 rounded-full shadow-lg transition-all duration-300",
                     !isRunning && "bg-primary hover:scale-110",
-                    isRunning && "border-primary/50 text-primary hover:bg-primary/10"
+                    isRunning && "border-primary/50 text-primary hover:bg-primary/10",
                   )}
                 >
                   {isRunning ? (
@@ -183,7 +209,7 @@ export function FocusOverlay() {
                     <Play className="h-8 w-8 fill-current ml-1" />
                   )}
                 </Button>
-                
+
                 <Button
                   size="lg"
                   variant="secondary"
@@ -194,13 +220,15 @@ export function FocusOverlay() {
                   Complete Task
                 </Button>
               </div>
-              
+
               <p className="text-[10px] text-muted-foreground/40 font-medium uppercase tracking-widest">
-                Press <kbd className="px-1.5 py-0.5 rounded border border-border/50">Space</kbd> to pause • <kbd className="px-1.5 py-0.5 rounded border border-border/50">Esc</kbd> to end
+                Press <kbd className="px-1.5 py-0.5 rounded border border-border/50">Space</kbd> to
+                pause • <kbd className="px-1.5 py-0.5 rounded border border-border/50">Esc</kbd> to
+                end
               </p>
             </div>
           ) : (
-            <motion.div 
+            <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               className="space-y-8 w-full py-4 animate-in fade-in duration-300"
@@ -211,17 +239,19 @@ export function FocusOverlay() {
                 </div>
                 <h3 className="text-3xl font-bold tracking-tight">Focus session ended</h3>
                 <p className="text-muted-foreground">
-                  You spent <span className="text-foreground font-semibold">{formatTime(elapsedTime)}</span> on this task.
+                  You spent{" "}
+                  <span className="text-foreground font-semibold">{formatTime(elapsedTime)}</span>{" "}
+                  on this task.
                 </p>
               </div>
 
               <div className="space-y-3 text-left">
                 <label className="text-sm font-semibold flex items-center gap-2 text-muted-foreground px-1">
                   <MessageSquare className="h-4 w-4" />
-                  Summary Notes (Optional)
+                  Task Description
                 </label>
                 <Textarea
-                  placeholder="What did you accomplish during this focus session?"
+                  placeholder="Update your task description..."
                   value={summaryNote}
                   onChange={(e) => setSummaryNote(e.target.value)}
                   className="bg-white/5 border-white/10 min-h-[120px] rounded-2xl focus:ring-primary/40 resize-none text-base p-4"
@@ -230,15 +260,15 @@ export function FocusOverlay() {
               </div>
 
               <div className="flex gap-4 pt-4">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowSummary(false)} 
+                <Button
+                  variant="outline"
+                  onClick={() => setShowSummary(false)}
                   className="flex-1 h-14 rounded-2xl border-white/10 hover:bg-white/5 transition-all"
                 >
                   Back to Timer
                 </Button>
-                <Button 
-                  onClick={handleFinish} 
+                <Button
+                  onClick={handleFinish}
                   className="flex-1 h-14 rounded-2xl bg-success hover:bg-success/90 text-white font-bold shadow-lg shadow-success/20 transition-all"
                 >
                   Finish & Mark Done
@@ -247,6 +277,23 @@ export function FocusOverlay() {
             </motion.div>
           )}
         </Card>
+
+        <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>End Focus Session?</AlertDialogTitle>
+              <AlertDialogDescription>
+                The elapsed time for this session will be discarded, and the task status will revert to its previous state.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setIsRunning(true)}>Continue Session</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmCancel} className="bg-destructive hover:bg-destructive/90">
+                Discard Session
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </motion.div>
     </AnimatePresence>
   );

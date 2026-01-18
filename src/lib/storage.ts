@@ -1,5 +1,5 @@
-import { get, set, del } from 'idb-keyval';
-import type { StateStorage } from 'zustand/middleware';
+import { del, get, set } from "idb-keyval";
+import type { StateStorage } from "zustand/middleware";
 
 // Custom storage adapter for Zustand using IndexedDB
 export const indexedDBStorage: StateStorage = {

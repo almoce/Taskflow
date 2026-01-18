@@ -76,8 +76,10 @@ export interface ArchivedTaskSlice {
 export interface FocusSlice {
   activeFocusTaskId: string | null;
   isFocusModeActive: boolean;
+  previousTaskStatus: TaskStatus | null;
   startFocusSession: (taskId: string) => void;
   endFocusSession: () => void;
+  cancelFocusSession: () => void;
   updateTaskTime: (taskId: string, duration: number) => void;
 }
 

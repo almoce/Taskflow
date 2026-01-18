@@ -57,13 +57,13 @@ interface SortableTaskProps {
   onStartFocus?: () => void;
 }
 
-function SortableTask({ 
-  task, 
-  onUpdate, 
-  onDelete, 
-  onEdit, 
+function SortableTask({
+  task,
+  onUpdate,
+  onDelete,
+  onEdit,
   onArchive,
-  onStartFocus
+  onStartFocus,
 }: SortableTaskProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,

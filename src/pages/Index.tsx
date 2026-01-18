@@ -1,5 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { CallToAction } from "@/components/landing/CallToAction";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { FeatureShowcase } from "@/components/landing/FeatureShowcase";

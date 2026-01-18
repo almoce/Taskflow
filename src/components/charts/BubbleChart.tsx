@@ -59,7 +59,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
     if (groupBy === "overview") {
       return tasks.map((task) => {
         const project = projects?.find((p) => p.id === task.projectId);
-        
+
         return {
           id: task.id,
           title: task.title,
@@ -168,7 +168,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
       // Group by project name to cluster bubbles by project (even if they share colors)
       const projectNames = Array.from(new Set(nodes.map((n) => n.projectName || "Other"))).sort();
       const clusterCount = projectNames.length;
-      
+
       if (clusterCount <= 1) {
         simulation.force(
           "x",
@@ -179,7 +179,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
         // Distribute project centers in a circle
         const radius = Math.min(width, height) * 0.15; // Small radius to keep them "near" but clustered
         const centers: Record<string, { x: number; y: number }> = {};
-        
+
         projectNames.forEach((name, i) => {
           const angle = (i / clusterCount) * 2 * Math.PI;
           centers[name] = {
@@ -190,11 +190,15 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
 
         simulation.force(
           "x",
-          d3.forceX<TaskNode>((d) => centers[d.projectName || "Other"]?.x || width / 2).strength(0.2),
+          d3
+            .forceX<TaskNode>((d) => centers[d.projectName || "Other"]?.x || width / 2)
+            .strength(0.2),
         );
         simulation.force(
           "y",
-          d3.forceY<TaskNode>((d) => centers[d.projectName || "Other"]?.y || height / 2).strength(0.2),
+          d3
+            .forceY<TaskNode>((d) => centers[d.projectName || "Other"]?.y || height / 2)
+            .strength(0.2),
         );
       }
     } else {
@@ -257,11 +261,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
           .attr("opacity", (d) => (d.icon ? 0.4 : 1))
           .attr("r", d.radius + 6);
 
-        d3.select(this)
-          .select("text")
-          .transition()
-          .duration(200)
-          .attr("font-size", "14px");
+        d3.select(this).select("text").transition().duration(200).attr("font-size", "14px");
 
         setTooltipData({
           x: event.clientX,
@@ -281,11 +281,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
           .attr("opacity", (d) => (d.icon ? 0.2 : 0.8))
           .attr("r", d.radius); // Use the stored radius which is now correct in the datum
 
-        d3.select(this)
-          .select("text")
-          .transition()
-          .duration(200)
-          .attr("font-size", "12px");
+        d3.select(this).select("text").transition().duration(200).attr("font-size", "12px");
 
         setTooltipData((prev) => ({ ...prev, visible: false }));
       });

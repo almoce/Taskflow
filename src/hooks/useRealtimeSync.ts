@@ -155,32 +155,36 @@ export const useRealtimeSync = () => {
           deleteTask(payload.old.id);
         }
       })
-      .on("postgres_changes", { event: "*", schema: "public", table: "archived_tasks" }, (payload) => {
-        if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-          const remote = payload.new as any;
-          const { pendingDeleteArchivedTaskIds } = useStore.getState();
-          if (pendingDeleteArchivedTaskIds.includes(remote.id)) return;
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "archived_tasks" },
+        (payload) => {
+          if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+            const remote = payload.new as any;
+            const { pendingDeleteArchivedTaskIds } = useStore.getState();
+            if (pendingDeleteArchivedTaskIds.includes(remote.id)) return;
 
-          const task: Task = {
-            id: remote.id,
-            projectId: remote.project_id,
-            title: remote.title,
-            description: remote.description,
-            status: remote.status,
-            priority: remote.priority,
-            tag: remote.tag,
-            dueDate: remote.due_date,
-            subtasks: remote.subtasks,
-            createdAt: remote.created_at,
-            completedAt: remote.completed_at,
-            updatedAt: remote.updated_at,
-            isArchived: remote.is_archived,
-          };
-          upsertArchivedTask(task);
-        } else if (payload.eventType === "DELETE") {
-          deleteArchivedTask(payload.old.id);
-        }
-      })
+            const task: Task = {
+              id: remote.id,
+              projectId: remote.project_id,
+              title: remote.title,
+              description: remote.description,
+              status: remote.status,
+              priority: remote.priority,
+              tag: remote.tag,
+              dueDate: remote.due_date,
+              subtasks: remote.subtasks,
+              createdAt: remote.created_at,
+              completedAt: remote.completed_at,
+              updatedAt: remote.updated_at,
+              isArchived: remote.is_archived,
+            };
+            upsertArchivedTask(task);
+          } else if (payload.eventType === "DELETE") {
+            deleteArchivedTask(payload.old.id);
+          }
+        },
+      )
       .subscribe();
 
     return () => {
