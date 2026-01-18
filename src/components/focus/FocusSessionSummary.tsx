@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
-import { Clock, MessageSquare, X } from "lucide-react";
+import { Clock, X } from "lucide-react";
 
 interface FocusSessionSummaryProps {
   elapsedTime: number;
@@ -47,49 +47,40 @@ export function FocusSessionSummary({
         animate={{ y: 0, opacity: 1 }}
         className="space-y-8 w-full py-4 animate-in fade-in duration-300"
       >
-        <div className="space-y-2">
-          <div className="h-16 w-16 bg-success/10 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-success/20">
-            <Clock className="h-8 w-8 text-success" />
+        <div className="space-y-4">
+          <div className="flex justify-center mb-6">
+             <Clock className="h-12 w-12 text-muted-foreground/50" />
           </div>
-          <h3 className="text-3xl font-bold tracking-tight">Focus session ended</h3>
-          <p className="text-muted-foreground">
-            You spent{" "}
-            <span className="text-foreground font-semibold">{formatTime(elapsedTime)}</span>{" "}
-            on this task.
+          <h3 className="text-2xl font-medium tracking-tight">Session Complete</h3>
+          <p className="text-muted-foreground text-lg">
+            Time focused: <span className="text-foreground font-semibold">{formatTime(elapsedTime)}</span>
           </p>
         </div>
 
-        <div className="space-y-3 text-left">
-          <label
-            htmlFor="task-description-summary"
-            className="text-sm font-semibold flex items-center gap-2 text-muted-foreground px-1"
-          >
-            <MessageSquare className="h-4 w-4" />
-            Task Description
-          </label>
+        <div className="space-y-3 text-left w-full max-w-md mx-auto">
           <Textarea
             id="task-description-summary"
-            placeholder="Update your task description..."
+            placeholder="Add a note about what you accomplished..."
             value={summaryNote}
             onChange={(e) => setSummaryNote(e.target.value)}
-            className="bg-white/5 border-white/10 min-h-[120px] rounded-2xl focus:ring-primary/40 resize-none text-base p-4"
+            className="bg-transparent border-border/50 min-h-[100px] rounded-xl focus:ring-0 focus:border-foreground/30 resize-none text-base p-4"
             autoFocus
           />
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex gap-4 pt-8 w-full max-w-sm mx-auto">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={onBack}
-            className="flex-1 h-14 rounded-2xl border-white/10 hover:bg-white/5 transition-all"
+            className="flex-1 h-12 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all"
           >
-            Back to Timer
+            Back
           </Button>
           <Button
             onClick={onFinish}
-            className="flex-1 h-14 rounded-2xl bg-success hover:bg-success/90 text-white font-bold shadow-lg shadow-success/20 transition-all"
+            className="flex-1 h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-none hover:-translate-y-px transition-all"
           >
-            Finish & Mark Done
+            Finish
           </Button>
         </div>
       </motion.div>

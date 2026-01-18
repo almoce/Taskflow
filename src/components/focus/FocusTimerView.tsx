@@ -45,55 +45,49 @@ export function FocusTimerView({
       </div>
 
       <div className="space-y-12 w-full animate-in fade-in zoom-in duration-500">
-        <div className="space-y-3">
-          <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
-            Focus Session
-          </span>
-          <h2 className="text-4xl font-bold tracking-tight text-balance">{taskTitle}</h2>
+        <div className="space-y-6">
+          <h2 className="text-3xl font-medium tracking-tight text-balance text-foreground/90">{taskTitle}</h2>
           {taskDescription && (
-            <p className="text-muted-foreground text-lg max-w-md mx-auto leading-relaxed italic">
-              "{taskDescription}"
+            <p className="text-muted-foreground text-lg max-w-md mx-auto leading-relaxed">
+              {taskDescription}
             </p>
           )}
         </div>
 
         <div className="relative group">
-          <div className="text-8xl font-black tracking-tighter tabular-nums font-mono">
+          <div className="text-[120px] leading-none font-bold tracking-tighter tabular-nums font-sans text-foreground/80">
             {formatTime(elapsedTime)}
-          </div>
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium text-muted-foreground uppercase tracking-[0.2em] opacity-50">
-            Time Elapsed
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-6 pt-8">
+        <div className="flex items-center justify-center gap-8 pt-4">
           <Button
             size="xl"
-            variant={isRunning ? "outline" : "default"}
+            variant="ghost"
             onClick={onToggleTimer}
             className={cn(
-              "h-20 w-20 rounded-full shadow-lg transition-all duration-300",
-              !isRunning && "bg-primary hover:scale-110",
-              isRunning && "border-primary/50 text-primary hover:bg-primary/10",
+              "h-24 w-24 rounded-full transition-all duration-300 hover:bg-muted/50",
+              !isRunning && "text-primary",
+              isRunning && "text-muted-foreground opacity-50 hover:opacity-100",
             )}
             aria-label={isRunning ? "Pause timer" : "Start timer"}
           >
             {isRunning ? (
-              <Square className="h-8 w-8 fill-current" />
+              <Square className="h-10 w-10 fill-current" />
             ) : (
-              <Play className="h-8 w-8 fill-current ml-1" />
+              <Play className="h-12 w-12 fill-current ml-2" />
             )}
           </Button>
 
           <Button
             size="lg"
-            variant="secondary"
+            variant="outline"
             onClick={onEndSession}
-            className="h-14 px-8 rounded-2xl font-semibold shadow-md hover:translate-y-[-2px] active:translate-y-0 transition-all"
+            className="h-12 px-6 rounded-full border-border/50 hover:border-border hover:bg-muted/50 font-normal transition-all"
             aria-label="Complete task"
           >
-            <CheckCircle2 className="h-5 w-5 mr-2" />
-            Complete Task
+            <CheckCircle2 className="h-4 w-4 mr-2" />
+            Complete
           </Button>
         </div>
 

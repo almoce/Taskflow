@@ -8,7 +8,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Card } from "@/components/ui/card";
 import { useFocusTimer } from "@/hooks/useFocusTimer";
 import { useFocus, useTasks } from "@/store/useStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -84,10 +83,7 @@ export function FocusOverlay() {
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-xl p-6 overflow-hidden"
       >
-        {/* Ambient background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-
-        <Card className="relative w-full max-w-2xl bg-card/40 border-border/40 shadow-2xl backdrop-blur-md overflow-hidden flex flex-col items-center p-12 text-center">
+        <main className="relative w-full max-w-2xl flex flex-col items-center p-12 text-center z-10">
           {!showSummary ? (
             <FocusTimerView
               taskTitle={task.title}
@@ -111,7 +107,7 @@ export function FocusOverlay() {
               onClose={handleCloseAttempt}
             />
           )}
-        </Card>
+        </main>
 
         <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
           <AlertDialogContent>
