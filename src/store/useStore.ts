@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
-import { migrateStorage } from "@/lib/migrateStorage";
 import { indexedDBStorage } from "@/lib/storage";
 import { createArchivedTaskSlice } from "./slices/createArchivedTaskSlice";
 import { createAuthSlice } from "./slices/createAuthSlice";
@@ -13,16 +12,7 @@ import { createTaskSlice } from "./slices/createTaskSlice";
 import { createUISlice } from "./slices/createUISlice";
 import type { StoreState } from "./types";
 
-// Trigger migration on load (client-side only)
-if (typeof window !== "undefined") {
-  (async () => {
-    try {
-      await migrateStorage("task-manager-data");
-    } catch (err) {
-      console.error("[Storage] Migration failed:", err);
-    }
-  })();
-}
+
 
 export const useStore = create<StoreState>()(
   persist(
