@@ -37,6 +37,7 @@ interface CalendarViewProps {
   onDeleteTask: (id: string) => void;
   onAddTask?: () => void;
   onArchiveTask: (id: string) => void;
+  onStartFocus?: (taskId: string) => void;
 }
 
 interface DraggableTaskProps {
@@ -99,6 +100,7 @@ export function CalendarView({
   onDeleteTask,
   onAddTask,
   onArchiveTask,
+  onStartFocus,
 }: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -339,6 +341,7 @@ export function CalendarView({
                             onUpdate={(updates) => onUpdateTask(task.id, updates)}
                             onDelete={() => onDeleteTask(task.id)}
                             onArchive={() => onArchiveTask(task.id)}
+                            onStartFocus={onStartFocus ? () => onStartFocus(task.id) : undefined}
                           />
                         </DraggableTask>
                       ))}

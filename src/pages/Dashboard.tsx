@@ -356,6 +356,7 @@ const DashboardPage = () => {
                         setEditingTask(task);
                         setShowNewTask(true);
                       }}
+                      onStartFocus={(taskId) => startFocusSession(taskId)}
                     />
                   ) : viewMode === "calendar" ? (
                     <CalendarView
@@ -365,6 +366,7 @@ const DashboardPage = () => {
                       onDeleteTask={deleteTask}
                       onAddTask={() => setShowNewTask(true)}
                       onArchiveTask={archiveTask}
+                      onStartFocus={(taskId) => startFocusSession(taskId)}
                     />
                   ) : (
                     <ArchivedView
@@ -387,6 +389,7 @@ const DashboardPage = () => {
                   onUpdateTask={handleUnifiedUpdateTask}
                   onDeleteTask={handleUnifiedDeleteTask}
                   onSelectProject={selectProject}
+                  onStartFocus={(taskId) => startFocusSession(taskId)}
                 />
                 <ProjectOverview                projects={projects}
                 selectedProjectId={selectedProjectId}

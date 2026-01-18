@@ -32,6 +32,7 @@ interface TaskCardProps {
   onDelete: () => void;
   onEdit?: () => void;
   onArchive?: () => void;
+  onStartFocus?: () => void;
 }
 
 const priorityStyles: Record<Priority, string> = {
@@ -40,7 +41,14 @@ const priorityStyles: Record<Priority, string> = {
   low: "priority-low",
 };
 
-export function TaskCard({ task, onUpdate, onDelete, onEdit, onArchive }: TaskCardProps) {
+export function TaskCard({ 
+  task, 
+  onUpdate, 
+  onDelete, 
+  onEdit, 
+  onArchive,
+  onStartFocus
+}: TaskCardProps) {
   const isDone = task.status === "done";
   const hasDescription = task.description && task.description.trim().length > 0;
   const { track } = useUmami();
@@ -63,17 +71,35 @@ export function TaskCard({ task, onUpdate, onDelete, onEdit, onArchive }: TaskCa
         >
           {task.title}
         </p>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground shrink-0"
-            >
-              <MoreHorizontal className="h-3.5 w-3.5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-36">
+        <div className="flex items-center gap-0.5">
+          {!isDone && onStartFocus && (
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onStartFocus}
+                  className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-primary shrink-0"
+                >
+                  <Zap className="h-3.5 w-3.5 fill-current" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-xs font-semibold">Start Focus</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground shrink-0"
+              >
+                <MoreHorizontal className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
             {onEdit && (
               <DropdownMenuItem onClick={onEdit} className="text-sm">
                 <Pencil className="h-3.5 w-3.5 mr-2" />

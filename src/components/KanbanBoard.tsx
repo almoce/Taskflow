@@ -39,6 +39,7 @@ interface KanbanBoardProps {
   onMoveTask: (taskId: string, status: TaskStatus) => void;
   onEditTask?: (task: Task) => void;
   onArchiveTask?: (id: string) => void;
+  onStartFocus?: (taskId: string) => void;
 }
 
 const columns: { id: TaskStatus; title: string }[] = [
@@ -53,9 +54,17 @@ interface SortableTaskProps {
   onDelete: () => void;
   onEdit?: () => void;
   onArchive?: () => void;
+  onStartFocus?: () => void;
 }
 
-function SortableTask({ task, onUpdate, onDelete, onEdit, onArchive }: SortableTaskProps) {
+function SortableTask({ 
+  task, 
+  onUpdate, 
+  onDelete, 
+  onEdit, 
+  onArchive,
+  onStartFocus
+}: SortableTaskProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,
   });
@@ -75,6 +84,7 @@ function SortableTask({ task, onUpdate, onDelete, onEdit, onArchive }: SortableT
         onDelete={onDelete}
         onEdit={onEdit}
         onArchive={onArchive}
+        onStartFocus={onStartFocus}
       />
     </div>
   );
@@ -88,6 +98,7 @@ interface DroppableColumnProps {
   onDeleteTask: (id: string) => void;
   onEditTask?: (task: Task) => void;
   onArchiveTask?: (id: string) => void;
+  onStartFocus?: (taskId: string) => void;
   isHighlighted: boolean;
 }
 
@@ -99,6 +110,7 @@ function DroppableColumn({
   onDeleteTask,
   onEditTask,
   onArchiveTask,
+  onStartFocus,
   isHighlighted,
 }: DroppableColumnProps) {
   const { setNodeRef } = useDroppable({ id });
@@ -142,6 +154,7 @@ function DroppableColumn({
                 onDelete={() => onDeleteTask(task.id)}
                 onEdit={onEditTask ? () => onEditTask(task) : undefined}
                 onArchive={onArchiveTask ? () => onArchiveTask(task.id) : undefined}
+                onStartFocus={onStartFocus ? () => onStartFocus(task.id) : undefined}
               />
             ))
           )}
@@ -160,6 +173,7 @@ export function KanbanBoard({
   onMoveTask,
   onEditTask,
   onArchiveTask,
+  onStartFocus,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeColumn, setActiveColumn] = useState<TaskStatus | null>(null);
@@ -373,6 +387,7 @@ export function KanbanBoard({
               isHighlighted={activeColumn === column.id}
               onEditTask={onEditTask}
               onArchiveTask={onArchiveTask}
+              onStartFocus={onStartFocus}
             />
           ))}
         </div>
