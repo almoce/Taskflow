@@ -14,6 +14,7 @@ import { ProjectOverview } from "@/components/ProjectOverview";
 import { ProjectSidebar } from "@/components/ProjectSidebar";
 import { ProjectSummary } from "@/components/ProjectSummary";
 import { TaskSearch } from "@/components/TaskSearch";
+import { FocusOverlay } from "@/components/focus/FocusOverlay";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -26,7 +27,7 @@ import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 import { useUmami } from "@/hooks/useUmami";
 import { supabase } from "@/lib/supabase";
 import { syncArchivedTasks, syncTasks } from "@/lib/syncEngine";
-import { useArchivedTasks, useAuth, useProjects, useTasks, useUI } from "@/store/useStore";
+import { useArchivedTasks, useAuth, useFocus, useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Priority, Project, ProjectExportData, Task } from "@/types/task";
 import { downloadJson } from "@/utils/exportUtils";
 
@@ -421,6 +422,7 @@ const DashboardPage = () => {
       />
 
       <PricingModal open={showPricing} onOpenChange={setShowPricing} />
+      <FocusOverlay />
     </div>
   );
 };
