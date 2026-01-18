@@ -11,7 +11,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ChevronDown, Filter, Plus, X } from "lucide-react";
+import { Filter, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -119,7 +119,7 @@ function DroppableColumn({
   const isSortingActive = !!columnSort;
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col h-full gap-3">
       <div className="flex items-center gap-2 px-1">
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           {title}
@@ -137,12 +137,12 @@ function DroppableColumn({
         <div
           ref={setNodeRef}
           className={cn(
-            "space-y-2 min-h-[120px] p-2 rounded-lg bg-secondary/30 border border-border/50 transition-colors",
+            "flex-1 space-y-2 min-h-[120px] p-2 rounded-lg bg-secondary/30 border border-border/50 transition-colors",
             isHighlighted && "bg-primary/10 border-primary/50",
           )}
         >
           {sortedTasks.length === 0 ? (
-            <div className="flex items-center justify-center h-24 text-xs text-muted-foreground">
+            <div className="flex items-center justify-center h-full min-h-24 text-xs text-muted-foreground">
               {isHighlighted ? "Drop here" : "No tasks"}
             </div>
           ) : (

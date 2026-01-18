@@ -57,9 +57,10 @@ const DESCRIPTIONS = [
   "Make sure to handle edge cases.",
 ];
 
+
+
 const TAGS: TaskTag[] = ["Feature", "Bug", "Improvement"];
 const PRIORITIES: Priority[] = ["high", "medium", "low"];
-const STATUSES: TaskStatus[] = ["todo", "in-progress", "done"];
 
 function getRandomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -76,6 +77,7 @@ function subDays(date: Date, days: number) {
   result.setDate(result.getDate() - days);
   return result;
 }
+
 
 export const generateSeedData = () => {
   const store = useStore.getState();
@@ -139,11 +141,21 @@ export const generateSeedData = () => {
           ? getRandomDate(now, new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000)) // Next 14 days
           : undefined;
 
+      // Generate Focus Time (totalTimeSpent)
+      // Only for non-todo tasks, or randomly some todo tasks (maybe they started but didn't finish)
+      // Let's say only for in-progress and done.
+      let totalTimeSpent = 0;
+      if (status !== "todo") {
+        // Random time between 15 mins (900000ms) and 4 hours (14400000ms)
+        totalTimeSpent = Math.floor(Math.random() * (14400000 - 900000 + 1)) + 900000;
+      }
+
       const updates: Partial<Task> = {
         description,
         status,
         dueDate,
         createdAt, // Overwrite with historical date
+        totalTimeSpent,
       };
 
       if (status === "done") {
