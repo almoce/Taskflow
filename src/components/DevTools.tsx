@@ -6,6 +6,7 @@ import { generateSeedData } from "@/utils/seedData";
 
 export const DevTools = () => {
   // Only show in development
+  return null
   if (!import.meta.env.DEV) return null;
   const { session } = useAuth();
 

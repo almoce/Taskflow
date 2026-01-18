@@ -81,9 +81,9 @@ export function FocusOverlay() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-xl p-6 overflow-hidden"
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl p-6 overflow-hidden"
       >
-        <main className="relative w-full max-w-2xl flex flex-col items-center p-12 text-center z-10">
+        <main className="relative w-full h-full p-6 z-10">
           {!showSummary ? (
             <FocusTimerView
               taskTitle={task.title}
@@ -98,14 +98,16 @@ export function FocusOverlay() {
               onClose={handleCloseAttempt}
             />
           ) : (
-            <FocusSessionSummary
-              elapsedTime={elapsedTime}
-              summaryNote={summaryNote}
-              setSummaryNote={setSummaryNote}
-              onBack={() => setShowSummary(false)}
-              onFinish={handleFinish}
-              onClose={handleCloseAttempt}
-            />
+            <div className="flex flex-col items-center justify-center h-full text-center max-w-2xl mx-auto">
+              <FocusSessionSummary
+                elapsedTime={elapsedTime}
+                summaryNote={summaryNote}
+                setSummaryNote={setSummaryNote}
+                onBack={() => setShowSummary(false)}
+                onFinish={handleFinish}
+                onClose={handleCloseAttempt}
+              />
+            </div>
           )}
         </main>
 
