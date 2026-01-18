@@ -92,7 +92,11 @@ export const useUI = () =>
   useStore(
     useShallow((state) => ({
       activeView: state.activeView,
+      isProjectDialogOpen: state.isProjectDialogOpen,
+      editingProject: state.editingProject,
       setActiveView: state.setActiveView,
+      setIsProjectDialogOpen: state.setIsProjectDialogOpen,
+      setEditingProject: state.setEditingProject,
     })),
   );
 

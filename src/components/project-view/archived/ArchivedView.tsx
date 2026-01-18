@@ -1,8 +1,8 @@
 import { Archive, ArchiveRestore, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { Project, Task } from "@/types/task";
-import { TaskCard } from "./TaskCard";
-import { Input } from "./ui/input";
+import { TaskCard } from "@/components/tasks/TaskCard";
+import { Input } from "@/components/ui/input";
 
 interface ArchivedViewProps {
   tasks: Task[];

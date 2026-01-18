@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { ProjectMiniChart } from "@/components/ProjectMiniChart";
+import { ProjectMiniChart } from "@/components/project-view/ProjectMiniChart";
 import * as useProjectChartDataHook from "@/hooks/useProjectChartData";
 
 vi.mock("@/hooks/useProjectChartData");

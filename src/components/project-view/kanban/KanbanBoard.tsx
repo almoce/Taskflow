@@ -27,8 +27,8 @@ import { useTaskSorter } from "@/hooks/useTaskSorter";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
 import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
-import { ColumnSortControls } from "./kanban/ColumnSortControls";
-import { TaskCard } from "./TaskCard";
+import { ColumnSortControls } from "./ColumnSortControls";
+import { TaskCard } from "@/components/tasks/TaskCard";
 
 interface KanbanBoardProps {
   project: Project;

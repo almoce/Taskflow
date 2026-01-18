@@ -37,7 +37,11 @@ export interface TaskSlice {
 
 export interface UISlice {
   activeView: "tasks" | "analytics";
+  isProjectDialogOpen: boolean;
+  editingProject: Project | null;
   setActiveView: (view: "tasks" | "analytics") => void;
+  setIsProjectDialogOpen: (isOpen: boolean) => void;
+  setEditingProject: (project: Project | null) => void;
 }
 
 export interface UserProfile {

@@ -1,7 +1,8 @@
 import { BarChart3, ChevronLeft, ChevronRight, Home, Key, LogOut, Plus, User } from "lucide-react";
 import { useState } from "react";
-import { AuthModal } from "@/components/AuthModal";
-import { ChangePasswordModal } from "@/components/ChangePasswordModal";
+import { toast } from "sonner";
+import { AuthModal } from "@/components/modals/AuthModal";
+import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,39 +17,31 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useUmami } from "@/hooks/useUmami";
+import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/store/useStore";
+import { useAuth, useProjects, useUI } from "@/store/useStore";
 import type { Project } from "@/types/task";
+import { downloadJson } from "@/utils/exportUtils";
 import { SidebarNavItem } from "./SidebarNavItem";
 import { SidebarProjectItem } from "./SidebarProjectItem";
 
 interface ProjectSidebarProps {
-  projects: Project[];
-  selectedProjectId: string | null;
-  activeView: "tasks" | "analytics";
-  onSelectProject: (id: string | null) => void;
-  onSetActiveView: (view: "tasks" | "analytics") => void;
-  onEditProject: (project: Project) => void;
-  onDeleteProject: (id: string) => void;
-  onNewProject: () => void;
-  onExport: (id: string) => void;
-  onUpgrade?: () => void;
-  onManageSubscription?: () => void;
+  onUpgrade: () => void;
 }
 
 export const ProjectSidebar = ({
-  projects,
-  selectedProjectId,
-  activeView,
-  onSelectProject,
-  onSetActiveView,
-  onEditProject,
-  onDeleteProject,
-  onNewProject,
-  onExport,
   onUpgrade,
-  onManageSubscription,
 }: ProjectSidebarProps) => {
+  const {
+    projects,
+    selectedProjectId,
+    selectProject,
+    deleteProject,
+    getProjectExportData,
+  } = useProjects();
+  
+  const { activeView, setActiveView, setEditingProject, setIsProjectDialogOpen } = useUI();
+  
   const [collapsed, setCollapsed] = useState(() => {
     const stored = localStorage.getItem("sidebar-collapsed");
     return stored ? JSON.parse(stored) : false;
@@ -62,6 +55,38 @@ export const ProjectSidebar = ({
     const newState = !collapsed;
     setCollapsed(newState);
     localStorage.setItem("sidebar-collapsed", JSON.stringify(newState));
+  };
+
+  const handleExport = (projectId: string) => {
+    try {
+      const data = getProjectExportData(projectId);
+      if (data) {
+        downloadJson(data, `TaskFlow-${data.project.name.toLowerCase().replace(/\s+/g, "-")}.json`);
+        track("project_export");
+        toast.success("Project exported successfully");
+      } else {
+        toast.error("Failed to export project");
+      }
+    } catch (error) {
+      console.error("Failed to export project:", error);
+      toast.error("Failed to export project");
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    try {
+      const returnUrl = `${window.location.origin + import.meta.env.BASE_URL}#/app`;
+      const { data, error } = await supabase.functions.invoke("create-portal-session", {
+        body: { returnUrl },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error: any) {
+      console.error("Portal error:", error);
+      toast.error(error.message || "Failed to open customer portal");
+    }
   };
 
   const userInitials = user?.email?.substring(0, 2).toUpperCase() || "U";
@@ -95,8 +120,8 @@ export const ProjectSidebar = ({
           isActive={activeView === "tasks" && selectedProjectId === null}
           collapsed={collapsed}
           onClick={() => {
-            onSelectProject(null);
-            onSetActiveView("tasks");
+            selectProject(null);
+            setActiveView("tasks");
             track("dashboard_view");
           }}
         />
@@ -107,7 +132,7 @@ export const ProjectSidebar = ({
           isActive={activeView === "analytics"}
           collapsed={collapsed}
           onClick={() => {
-            onSetActiveView("analytics");
+            setActiveView("analytics");
             track("analytics_view");
           }}
         />
@@ -126,7 +151,10 @@ export const ProjectSidebar = ({
               "h-5 w-5 text-muted-foreground hover:text-foreground",
               collapsed && "mx-auto",
             )}
-            onClick={onNewProject}
+            onClick={() => {
+              setEditingProject(null);
+              setIsProjectDialogOpen(true);
+            }}
           >
             <Plus className="h-3.5 w-3.5" />
           </Button>
@@ -142,15 +170,15 @@ export const ProjectSidebar = ({
               isSelected={activeView === "tasks" && selectedProjectId === project.id}
               collapsed={collapsed}
               onSelect={() => {
-                onSelectProject(project.id);
+                selectProject(project.id);
                 track("project_select");
               }}
-              onEdit={() => onEditProject(project)}
+              onEdit={() => setEditingProject(project)}
               onExport={() => {
-                onExport(project.id);
+                handleExport(project.id);
                 track("project_export");
               }}
-              onDelete={() => onDeleteProject(project.id)}
+              onDelete={() => deleteProject(project.id)}
             />
           ))}
 
@@ -207,10 +235,10 @@ export const ProjectSidebar = ({
                 className="gap-3 cursor-pointer focus:bg-accent"
                 onClick={() => {
                   if (isPro) {
-                    onManageSubscription?.();
+                    handleManageSubscription();
                     track("manage_subscription");
                   } else {
-                    onUpgrade?.();
+                    onUpgrade();
                     track("upgrade_modal_open");
                   }
                 }}

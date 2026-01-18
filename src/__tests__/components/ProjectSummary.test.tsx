@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { ProjectSummary } from "@/components/ProjectSummary";
+import { ProjectSummary } from "@/components/project-view/ProjectSummary";
 
 // Mock child components to isolate the test
-vi.mock("@/components/ProjectStatsCard", () => ({
+vi.mock("@/components/project-view/ProjectStatsCard", () => ({
   ProjectStatsCard: () => <div data-testid="stats-card">Stats Card</div>,
 }));
 
-vi.mock("@/components/ProjectMiniChart", () => ({
+vi.mock("@/components/project-view/ProjectMiniChart", () => ({
   ProjectMiniChart: () => <div data-testid="mini-chart">Mini Chart</div>,
 }));
 

@@ -16,23 +16,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { useUmami } from "@/hooks/useUmami";
 import { cn } from "@/lib/utils";
-import { PROJECT_COLORS, type Project, type ProjectExportData } from "@/types/task";
+import { useProjects, useUI } from "@/store/useStore";
+import { PROJECT_COLORS } from "@/types/task";
 
-interface ProjectDialogProps {
-  project?: Project | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (name: string, description?: string, color?: string, icon?: string) => void;
-  onImport?: (data: ProjectExportData) => void;
-}
-
-export function ProjectDialog({
-  project,
-  open,
-  onOpenChange,
-  onSubmit,
-  onImport,
-}: ProjectDialogProps) {
+export function ProjectDialog() {
+  const {
+    isProjectDialogOpen,
+    setIsProjectDialogOpen,
+    editingProject,
+    setEditingProject,
+  } = useUI();
+  const { addProject, updateProject, importProject } = useProjects();
+  
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState(PROJECT_COLORS[0]);
@@ -41,13 +36,15 @@ export function ProjectDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { track } = useUmami();
 
+  const open = isProjectDialogOpen || !!editingProject;
+
   useEffect(() => {
     if (open) {
-      if (project) {
-        setName(project.name);
-        setDescription(project.description || "");
-        setColor(project.color);
-        setIcon(project.icon);
+      if (editingProject) {
+        setName(editingProject.name);
+        setDescription(editingProject.description || "");
+        setColor(editingProject.color);
+        setIcon(editingProject.icon);
       } else {
         setName("");
         setDescription("");
@@ -55,22 +52,36 @@ export function ProjectDialog({
         setIcon(undefined);
       }
     }
-  }, [project, open]);
+  }, [editingProject, open]);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setIsProjectDialogOpen(isOpen);
+    if (!isOpen) {
+      setEditingProject(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onSubmit(name.trim(), description.trim() || undefined, color, icon);
-      if (!project) {
+      if (editingProject) {
+        updateProject(editingProject.id, {
+          name: name.trim(),
+          description: description.trim() || undefined,
+          color,
+          icon,
+        });
+      } else {
+        addProject(name.trim(), description.trim() || undefined, color, icon);
         track("project_create", { color, hasIcon: !!icon });
       }
-      onOpenChange(false);
+      handleOpenChange(false);
     }
   };
 
   const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !onImport) return;
+    if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -78,9 +89,10 @@ export function ProjectDialog({
         const json = JSON.parse(event.target?.result as string);
         // Basic validation
         if (json.project && Array.isArray(json.tasks)) {
-          onImport(json);
+          importProject(json);
           track("project_import");
-          onOpenChange(false);
+          toast.success("Project imported successfully");
+          handleOpenChange(false);
         } else {
           toast.error("Invalid project file format");
         }
@@ -93,12 +105,12 @@ export function ProjectDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="bg-card border-border sm:max-w-[425px]" hideClose>
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle>{project ? "Edit Project" : "Create New Project"}</DialogTitle>
-            {!project && onImport && (
+            <DialogTitle>{editingProject ? "Edit Project" : "Create New Project"}</DialogTitle>
+            {!editingProject && (
               <div>
                 <input
                   type="file"
@@ -273,11 +285,11 @@ export function ProjectDialog({
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit" disabled={!name.trim()} className="gradient-primary px-8">
-              {project ? "Save Changes" : "Create Project"}
+              {editingProject ? "Save Changes" : "Create Project"}
             </Button>
           </DialogFooter>
         </form>
