@@ -12,11 +12,15 @@ export function useProjectStats(projectId: string | null) {
         inProgress: 0,
         done: 0,
         progress: 0,
+        totalTimeSpent: 0,
       };
     }
 
     const projectTasks = tasks.filter((t) => t.projectId === projectId);
     const total = projectTasks.length;
+    const totalTimeSpent = projectTasks
+      .filter((t) => t.status === "done")
+      .reduce((acc, t) => acc + (t.totalTimeSpent || 0), 0);
 
     if (total === 0) {
       return {
@@ -25,6 +29,7 @@ export function useProjectStats(projectId: string | null) {
         inProgress: 0,
         done: 0,
         progress: 0,
+        totalTimeSpent: 0,
       };
     }
 
@@ -39,6 +44,7 @@ export function useProjectStats(projectId: string | null) {
       inProgress,
       done,
       progress,
+      totalTimeSpent,
     };
   }, [tasks, projectId]);
 }

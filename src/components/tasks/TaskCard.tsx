@@ -5,6 +5,7 @@ import {
   Bug,
   Calendar,
   CheckCircle2,
+  Clock,
   FileText,
   MoreHorizontal,
   Pencil,
@@ -25,6 +26,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useUmami } from "@/hooks/useUmami";
 import { cn } from "@/lib/utils";
 import type { Priority, Task } from "@/types/task";
+import { formatDuration } from "@/utils/time";
 
 interface TaskCardProps {
   task: Task;
@@ -176,6 +178,23 @@ export function TaskCard({
             </TooltipContent>
           </Tooltip>
         )}
+        {isDone && task.totalTimeSpent && task.totalTimeSpent > 0 ? (
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-1.5">
+                <div className="w-[18px] h-[18px] rounded-full bg-muted/30 border border-border/50 flex items-center justify-center">
+                  <Clock className="h-2.5 w-2.5 text-muted-foreground/60" />
+                </div>
+                <span className="text-[10px] text-muted-foreground/80 font-medium tabular-nums">
+                  {formatDuration(task.totalTimeSpent)}
+                </span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p className="text-xs">Total time spent</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : null }
 
         {hasDescription && (
           <Tooltip delayDuration={300}>

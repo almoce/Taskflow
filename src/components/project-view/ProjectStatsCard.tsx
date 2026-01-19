@@ -1,7 +1,8 @@
-import { ListTodo } from "lucide-react";
+import { Clock, ListTodo } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useProjectStats } from "@/hooks/useProjectStats";
+import { formatDuration } from "@/utils/time";
 
 interface ProjectStatsCardProps {
   projectId: string;
@@ -19,7 +20,15 @@ export function ProjectStatsCard({ projectId, projectColor }: ProjectStatsCardPr
             <ListTodo className="w-3 h-3" />
             <span>Current Status</span>
           </div>
-          <span className="text-foreground">{stats.progress}% Complete</span>
+          <div className="flex items-center gap-3">
+            {stats.totalTimeSpent > 0 && (
+              <div className="flex items-center gap-1 text-muted-foreground/60">
+                <Clock className="w-2.5 h-2.5" />
+                <span>{formatDuration(stats.totalTimeSpent)}</span>
+              </div>
+            )}
+            <span className="text-foreground">{stats.progress}% Complete</span>
+          </div>
         </CardTitle>
       </CardHeader>
 
