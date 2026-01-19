@@ -93,9 +93,11 @@ export const useUI = () =>
     useShallow((state) => ({
       activeView: state.activeView,
       isProjectDialogOpen: state.isProjectDialogOpen,
+      isPricingModalOpen: state.isPricingModalOpen,
       editingProject: state.editingProject,
       setActiveView: state.setActiveView,
       setIsProjectDialogOpen: state.setIsProjectDialogOpen,
+      setIsPricingModalOpen: state.setIsPricingModalOpen,
       setEditingProject: state.setEditingProject,
     })),
   );

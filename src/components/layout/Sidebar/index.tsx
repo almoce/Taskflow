@@ -1,54 +1,20 @@
-import { BarChart3, ChevronLeft, ChevronRight, Home, Key, LogOut, Plus, User } from "lucide-react";
+import { BarChart3, Home } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
-import { AuthModal } from "@/components/modals/AuthModal";
-import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useUmami } from "@/hooks/useUmami";
-import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
-import { useAuth, useProjects, useUI } from "@/store/useStore";
-import type { Project } from "@/types/task";
-import { downloadJson } from "@/utils/exportUtils";
+import { useProjects, useUI } from "@/store/useStore";
+import { SidebarFooter } from "./SidebarFooter";
 import { SidebarNavItem } from "./SidebarNavItem";
-import { SidebarProjectItem } from "./SidebarProjectItem";
+import { SidebarProjectList } from "./SidebarProjectList";
 
-interface ProjectSidebarProps {
-  onUpgrade: () => void;
-}
-
-export const ProjectSidebar = ({
-  onUpgrade,
-}: ProjectSidebarProps) => {
-  const {
-    projects,
-    selectedProjectId,
-    selectProject,
-    deleteProject,
-    getProjectExportData,
-  } = useProjects();
-  
-  const { activeView, setActiveView, setEditingProject, setIsProjectDialogOpen } = useUI();
+export const ProjectSidebar = () => {
+  const { selectedProjectId, selectProject } = useProjects();
+  const { activeView, setActiveView } = useUI();
   
   const [collapsed, setCollapsed] = useState(() => {
     const stored = localStorage.getItem("sidebar-collapsed");
     return stored ? JSON.parse(stored) : false;
   });
-  const [authOpen, setAuthOpen] = useState(false);
-  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
-  const { user, signOut, isPro } = useAuth();
   const { track } = useUmami();
 
   const toggleCollapsed = () => {
@@ -56,40 +22,6 @@ export const ProjectSidebar = ({
     setCollapsed(newState);
     localStorage.setItem("sidebar-collapsed", JSON.stringify(newState));
   };
-
-  const handleExport = (projectId: string) => {
-    try {
-      const data = getProjectExportData(projectId);
-      if (data) {
-        downloadJson(data, `TaskFlow-${data.project.name.toLowerCase().replace(/\s+/g, "-")}.json`);
-        track("project_export");
-        toast.success("Project exported successfully");
-      } else {
-        toast.error("Failed to export project");
-      }
-    } catch (error) {
-      console.error("Failed to export project:", error);
-      toast.error("Failed to export project");
-    }
-  };
-
-  const handleManageSubscription = async () => {
-    try {
-      const returnUrl = `${window.location.origin + import.meta.env.BASE_URL}#/app`;
-      const { data, error } = await supabase.functions.invoke("create-portal-session", {
-        body: { returnUrl },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error: any) {
-      console.error("Portal error:", error);
-      toast.error(error.message || "Failed to open customer portal");
-    }
-  };
-
-  const userInitials = user?.email?.substring(0, 2).toUpperCase() || "U";
 
   return (
     <aside
@@ -138,185 +70,9 @@ export const ProjectSidebar = ({
         />
       </nav>
 
-      <div className="px-3 py-3">
-        <div className="flex items-center justify-between">
-          {!collapsed && (
-            <span className="text-xs font-medium text-muted-foreground">Projects</span>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Add project"
-            className={cn(
-              "h-5 w-5 text-muted-foreground hover:text-foreground",
-              collapsed && "mx-auto",
-            )}
-            onClick={() => {
-              setEditingProject(null);
-              setIsProjectDialogOpen(true);
-            }}
-          >
-            <Plus className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </div>
+      <SidebarProjectList collapsed={collapsed} />
 
-      <ScrollArea className="flex-1 px-2">
-        <div className="space-y-0.5">
-          {projects.map((project) => (
-            <SidebarProjectItem
-              key={project.id}
-              project={project}
-              isSelected={activeView === "tasks" && selectedProjectId === project.id}
-              collapsed={collapsed}
-              onSelect={() => {
-                selectProject(project.id);
-                track("project_select");
-              }}
-              onEdit={() => setEditingProject(project)}
-              onExport={() => {
-                handleExport(project.id);
-                track("project_export");
-              }}
-              onDelete={() => deleteProject(project.id)}
-            />
-          ))}
-
-          {projects.length === 0 && !collapsed && (
-            <div className="text-center py-6 text-xs text-muted-foreground">No projects yet</div>
-          )}
-        </div>
-      </ScrollArea>
-
-      <div className="p-2 border-t border-border space-y-2">
-        {user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className={cn(
-                  "w-full h-12 px-2 hover:bg-accent flex items-center",
-                  collapsed ? "justify-center" : "justify-start gap-3",
-                )}
-              >
-                <div className="relative shrink-0">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="text-xs bg-primary/20 text-primary font-medium">
-                      {userInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <Badge
-                    variant={isPro ? "default" : "secondary"}
-                    className={cn(
-                      "absolute -bottom-2 left-1/2 -translate-x-1/2 text-[8px] h-3.5 px-1 py-0 pointer-events-none shadow-sm z-10 whitespace-nowrap",
-                      isPro &&
-                        "bg-gradient-to-r from-purple-500 to-blue-500 border-none text-white",
-                      !isPro && "bg-background border border-border text-muted-foreground",
-                    )}
-                  >
-                    {isPro ? "PRO" : "FREE"}
-                  </Badge>
-                </div>
-
-                {!collapsed && (
-                  <div className="flex flex-col items-start overflow-hidden">
-                    <span className="text-xs font-medium truncate w-32 whitespace-nowrap">
-                      {user.email}
-                    </span>
-                  </div>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56" side={collapsed ? "right" : "top"}>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-
-              <DropdownMenuItem
-                className="gap-3 cursor-pointer focus:bg-accent"
-                onClick={() => {
-                  if (isPro) {
-                    handleManageSubscription();
-                    track("manage_subscription");
-                  } else {
-                    onUpgrade();
-                    track("upgrade_modal_open");
-                  }
-                }}
-              >
-                <Badge
-                  variant={isPro ? "default" : "secondary"}
-                  className="text-[10px] whitespace-nowrap"
-                >
-                  {isPro ? "Pro Plan" : "Free Plan"}
-                </Badge>
-                <span className="text-xs font-medium whitespace-nowrap">
-                  {isPro ? "Manage Subscription" : "Upgrade to Pro"}
-                </span>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() => setChangePasswordOpen(true)}
-                className="gap-2 cursor-pointer"
-              >
-                <Key className="h-4 w-4" />
-                Change Password
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => signOut()}
-                className="text-red-500 gap-2 cursor-pointer"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="default"
-                size="sm"
-                className={cn("w-full", collapsed ? "px-0" : "px-4")}
-                onClick={() => {
-                  setAuthOpen(true);
-                  track("auth_modal_open");
-                }}
-              >
-                {collapsed ? <User className="h-4 w-4" /> : "Sign In"}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>{isPro ? "Data is syncing" : "Sign in to sync your data (Pro)"}</p>
-            </TooltipContent>
-          </Tooltip>
-        )}
-
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          aria-expanded={!collapsed}
-          className={cn(
-            "w-full h-8 px-2 text-muted-foreground hover:text-foreground",
-            collapsed ? "justify-center" : "justify-start",
-          )}
-          onClick={toggleCollapsed}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <>
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              <span className="text-sm">Collapse</span>
-            </>
-          )}
-        </Button>
-      </div>
-
-      <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
-      <ChangePasswordModal open={changePasswordOpen} onOpenChange={setChangePasswordOpen} />
+      <SidebarFooter collapsed={collapsed} toggleCollapsed={toggleCollapsed} />
     </aside>
   );
 };

@@ -1,31 +1,35 @@
-import { Archive, ArchiveRestore, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
-import type { Project, Task } from "@/types/task";
+import { Archive, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Input } from "@/components/ui/input";
+import { useArchivedTasks, useProjects, useTasks } from "@/store/useStore";
 
-interface ArchivedViewProps {
-  tasks: Task[];
-  projects: Project[];
-  onUpdateTask: (id: string, updates: Partial<Task>) => void;
-  onDeleteTask: (id: string) => void;
-  onUnarchiveTask: (id: string) => void;
-}
-
-export function ArchivedView({
-  tasks,
-  projects,
-  onUpdateTask,
-  onDeleteTask,
-  onUnarchiveTask,
-}: ArchivedViewProps) {
+export function ArchivedView() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { selectedProjectId } = useProjects();
+  const { updateTask, unarchiveTask } = useTasks();
+  const { archivedTasks, deleteArchivedTask } = useArchivedTasks();
 
-  const filteredTasks = tasks.filter(
-    (task) =>
-      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description?.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredTasks = useMemo(() => {
+    let tasks = archivedTasks;
+    
+    // Filter by project if one is selected
+    if (selectedProjectId) {
+      tasks = tasks.filter(t => t.projectId === selectedProjectId);
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      tasks = tasks.filter(
+        (task) =>
+          task.title.toLowerCase().includes(query) ||
+          task.description?.toLowerCase().includes(query)
+      );
+    }
+    
+    return tasks;
+  }, [archivedTasks, selectedProjectId, searchQuery]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -74,9 +78,9 @@ export function ArchivedView({
               </div>
               <TaskCard
                 task={task}
-                onUpdate={(updates) => onUpdateTask(task.id, updates)}
-                onDelete={() => onDeleteTask(task.id)}
-                onArchive={() => onUnarchiveTask(task.id)}
+                onUpdate={(updates) => updateTask(task.id, updates)}
+                onDelete={() => deleteArchivedTask(task.id)}
+                onArchive={() => unarchiveTask(task.id)}
               />
             </div>
           ))}

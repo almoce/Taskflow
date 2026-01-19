@@ -23,21 +23,16 @@ import {
   subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import type { Project, Task } from "@/types/task";
+import { useFocus, useProjects, useTasks } from "@/store/useStore";
+import type { Task } from "@/types/task";
 import { TaskCard } from "@/components/tasks/TaskCard";
 
 interface CalendarViewProps {
-  project: Project;
-  tasks: Task[];
-  onUpdateTask: (id: string, updates: Partial<Task>) => void;
-  onDeleteTask: (id: string) => void;
   onAddTask?: () => void;
-  onArchiveTask: (id: string) => void;
-  onStartFocus?: (taskId: string) => void;
 }
 
 interface DraggableTaskProps {
@@ -93,18 +88,20 @@ function DroppableDay({ day, children, className, isActive }: DroppableDayProps)
   );
 }
 
-export function CalendarView({
-  project,
-  tasks,
-  onUpdateTask,
-  onDeleteTask,
-  onAddTask,
-  onArchiveTask,
-  onStartFocus,
-}: CalendarViewProps) {
+export function CalendarView({ onAddTask }: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
+  // Store Hooks
+  const { selectedProjectId } = useProjects();
+  const { tasks: allTasks, updateTask, deleteTask, archiveTask } = useTasks();
+  const { startFocusSession } = useFocus();
+
+  const tasks = useMemo(
+    () => (selectedProjectId ? allTasks.filter((t) => t.projectId === selectedProjectId) : []),
+    [allTasks, selectedProjectId]
+  );
+  
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -145,10 +142,10 @@ export function CalendarView({
 
     // Parse the drop target date
     const dropDate = new Date(dropId);
-    if (!isNaN(dropDate.getTime())) {
-      onUpdateTask(taskId, { dueDate: dropId });
+    if (!Number.isNaN(dropDate.getTime())) {
+      updateTask(taskId, { dueDate: dropId });
     } else if (dropId === "unscheduled") {
-      onUpdateTask(taskId, { dueDate: undefined });
+      updateTask(taskId, { dueDate: undefined });
     }
   };
 
@@ -287,7 +284,7 @@ export function CalendarView({
                                   task.priority === "low" && "bg-priority-low/20 text-priority-low",
                                 )}
                                 onClick={() =>
-                                  onUpdateTask(task.id, {
+                                  updateTask(task.id, {
                                     status: task.status === "done" ? "todo" : "done",
                                   })
                                 }
@@ -338,10 +335,10 @@ export function CalendarView({
                         <DraggableTask key={task.id} task={task}>
                           <TaskCard
                             task={task}
-                            onUpdate={(updates) => onUpdateTask(task.id, updates)}
-                            onDelete={() => onDeleteTask(task.id)}
-                            onArchive={() => onArchiveTask(task.id)}
-                            onStartFocus={onStartFocus ? () => onStartFocus(task.id) : undefined}
+                            onUpdate={(updates) => updateTask(task.id, updates)}
+                            onDelete={() => deleteTask(task.id)}
+                            onArchive={() => archiveTask(task.id)}
+                            onStartFocus={startFocusSession ? () => startFocusSession(task.id) : undefined}
                           />
                         </DraggableTask>
                       ))}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FocusOverlay } from "@/components/focus/FocusOverlay";
@@ -23,14 +23,12 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { fetchProfile: refreshProfile } = useAuth();
 
-  const [showPricing, setShowPricing] = useState(false);
-
   const {
     selectedProjectId,
   } = useProjects();
 
   const { checkAutoArchive } = useTasks();
-  const { activeView } = useUI();
+  const { activeView, isPricingModalOpen, setIsPricingModalOpen } = useUI();
 
   // Handle Stripe Checkout Return
   useEffect(() => {
@@ -63,7 +61,7 @@ const DashboardPage = () => {
 
   return (
     <div className="flex h-screen bg-background">
-      <ProjectSidebar onUpgrade={() => setShowPricing(true)} />
+      <ProjectSidebar />
 
       <main className="flex-1 overflow-auto">
         <div className="p-8 max-w-5xl mx-auto">
@@ -79,7 +77,7 @@ const DashboardPage = () => {
 
       <ProjectDialog />
 
-      <PricingModal open={showPricing} onOpenChange={setShowPricing} />
+      <PricingModal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen} />
       <FocusOverlay />
     </div>
   );

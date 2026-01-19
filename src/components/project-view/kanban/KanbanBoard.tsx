@@ -25,21 +25,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTaskSorter } from "@/hooks/useTaskSorter";
 import { cn } from "@/lib/utils";
-import { useStore } from "@/store/useStore";
-import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
+import { useFocus, useProjects, useStore, useTasks } from "@/store/useStore";
+import type { Priority, Task, TaskStatus, TaskTag } from "@/types/task";
 import { ColumnSortControls } from "./ColumnSortControls";
 import { TaskCard } from "@/components/tasks/TaskCard";
 
 interface KanbanBoardProps {
-  project: Project;
-  tasks: Task[];
   onAddTask: () => void;
-  onUpdateTask: (id: string, updates: Partial<Task>) => void;
-  onDeleteTask: (id: string) => void;
-  onMoveTask: (taskId: string, status: TaskStatus) => void;
   onEditTask?: (task: Task) => void;
-  onArchiveTask?: (id: string) => void;
-  onStartFocus?: (taskId: string) => void;
 }
 
 const columns: { id: TaskStatus; title: string }[] = [
@@ -164,30 +157,30 @@ function DroppableColumn({
   );
 }
 
-export function KanbanBoard({
-  project,
-  tasks,
-  onAddTask,
-  onUpdateTask,
-  onDeleteTask,
-  onMoveTask,
-  onEditTask,
-  onArchiveTask,
-  onStartFocus,
-}: KanbanBoardProps) {
+export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeColumn, setActiveColumn] = useState<TaskStatus | null>(null);
   const [selectedPriorities, setSelectedPriorities] = useState<Priority[]>([]);
   const [selectedTags, setSelectedTags] = useState<TaskTag[]>([]);
 
+  // Store Hooks
+  const { selectedProjectId } = useProjects();
+  const { tasks, updateTask, deleteTask, moveTask, archiveTask } = useTasks();
+  const { startFocusSession } = useFocus();
+
+  const projectTasks = useMemo(
+    () => (selectedProjectId ? tasks.filter((t) => t.projectId === selectedProjectId) : []),
+    [tasks, selectedProjectId]
+  );
+
   const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
+    return projectTasks.filter((task) => {
       const matchesPriority =
         selectedPriorities.length === 0 || selectedPriorities.includes(task.priority);
       const matchesTag = selectedTags.length === 0 || (task.tag && selectedTags.includes(task.tag));
       return matchesPriority && matchesTag;
     });
-  }, [tasks, selectedPriorities, selectedTags]);
+  }, [projectTasks, selectedPriorities, selectedTags]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -252,14 +245,14 @@ export function KanbanBoard({
     // Check if dropped on a column
     const targetColumn = columns.find((col) => col.id === overId);
     if (targetColumn) {
-      onMoveTask(taskId, targetColumn.id);
+      moveTask(taskId, targetColumn.id);
       return;
     }
 
     // Check if dropped on another task
     const overTask = filteredTasks.find((t) => t.id === overId);
     if (overTask) {
-      onMoveTask(taskId, overTask.status);
+      moveTask(taskId, overTask.status);
     }
   };
 
@@ -382,12 +375,12 @@ export function KanbanBoard({
               id={column.id}
               title={column.title}
               tasks={filteredTasks.filter((t) => t.status === column.id)}
-              onUpdateTask={onUpdateTask}
-              onDeleteTask={onDeleteTask}
+              onUpdateTask={updateTask}
+              onDeleteTask={deleteTask}
               isHighlighted={activeColumn === column.id}
               onEditTask={onEditTask}
-              onArchiveTask={onArchiveTask}
-              onStartFocus={onStartFocus}
+              onArchiveTask={archiveTask}
+              onStartFocus={startFocusSession}
             />
           ))}
         </div>
