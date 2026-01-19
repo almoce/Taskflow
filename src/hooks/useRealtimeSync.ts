@@ -149,6 +149,7 @@ export const useRealtimeSync = () => {
             completedAt: remote.completed_at,
             updatedAt: remote.updated_at,
             isArchived: remote.is_archived,
+            totalTimeSpent: remote.total_time_spent,
           };
           upsertTask(task);
         } else if (payload.eventType === "DELETE") {
@@ -178,6 +179,7 @@ export const useRealtimeSync = () => {
               completedAt: remote.completed_at,
               updatedAt: remote.updated_at,
               isArchived: remote.is_archived,
+              totalTimeSpent: remote.total_time_spent,
             };
             upsertArchivedTask(task);
           } else if (payload.eventType === "DELETE") {
@@ -199,13 +201,5 @@ export const useRealtimeSync = () => {
     deleteProject,
     deleteTask,
     deleteArchivedTask,
-    // We remove unstable dependencies that might change often but shouldn't trigger re-subscription
-    // pendingDelete arrays might change, but do we want to re-subscribe?
-    // The callback closes over the values?
-    // No, the callback is defined INSIDE the effect.
-    // So if pendingDelete arrays change, we NEED to re-run the effect to update the closure?
-    // OR we use a ref for pendingDeletes.
-    // Re-subscribing on every delete action is bad.
-    // I should use `useStore.getState().pendingDelete...` inside the callback instead of dependency.
   ]);
 };
