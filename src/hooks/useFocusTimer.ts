@@ -80,7 +80,8 @@ export function useFocusTimer({
       setSummaryNote(task.description || "");
       setShowCancelDialog(false);
     }
-  }, [isFocusModeActive, task]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocusModeActive, task?.id]);
 
   // Browser navigation warning
   useEffect(() => {
