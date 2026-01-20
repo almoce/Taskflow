@@ -31,7 +31,6 @@ export interface TaskSlice {
   moveTask: (taskId: string, newStatus: TaskStatus) => void;
   archiveTask: (id: string) => void;
   unarchiveTask: (id: string) => void;
-  checkAutoArchive: () => void;
   setColumnSort: (columnId: string, sort: ColumnSort | null) => void;
 }
 

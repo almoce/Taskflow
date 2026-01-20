@@ -32,12 +32,13 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
       tasks: state.tasks.map((t) => {
         if (t.id !== id) return t;
         const updated = { ...t, ...updates, updatedAt: new Date().toISOString() };
-        if (
-          updates.status === "done" &&
-          t.status !== "done" &&
-          !updates.completedAt // Only set if not provided
-        ) {
-          updated.completedAt = new Date().toISOString();
+        if (updates.status === "done" && t.status !== "done") {
+          if (!updates.completedAt) {
+            updated.completedAt = new Date().toISOString();
+          }
+          if (!t.dueDate && !updates.dueDate) {
+            updated.dueDate = new Date().toISOString();
+          }
         }
         return updated;
       }),
@@ -109,27 +110,6 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
       archivedTasks: state.archivedTasks.filter((t) => t.id !== id),
       tasks: [...state.tasks, unarchivedTask],
     }));
-  },
-
-  checkAutoArchive: () => {
-    const now = new Date();
-    const { tasks } = get();
-    const toArchive: Task[] = [];
-    const remainingTasks = tasks.filter((t) => {
-      if (!t.isArchived && t.status === "done" && t.dueDate && new Date(t.dueDate) < now) {
-        toArchive.push({ ...t, isArchived: true, updatedAt: new Date().toISOString() });
-        get().addToPendingDelete("task", t.id);
-        return false;
-      }
-      return true;
-    });
-
-    if (toArchive.length > 0) {
-      set((state) => ({
-        tasks: remainingTasks,
-        archivedTasks: [...state.archivedTasks, ...toArchive],
-      }));
-    }
   },
 
   setColumnSort: (columnId, sort) => {

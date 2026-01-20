@@ -27,7 +27,6 @@ const DashboardPage = () => {
     selectedProjectId,
   } = useProjects();
 
-  const { checkAutoArchive } = useTasks();
   const { activeView, isPricingModalOpen, setIsPricingModalOpen } = useUI();
 
   // Handle Stripe Checkout Return
@@ -46,10 +45,6 @@ const DashboardPage = () => {
       });
     }
   }, [location.search, navigate, refreshProfile]);
-
-  useEffect(() => {
-    checkAutoArchive();
-  }, [checkAutoArchive]);
 
   // Sync tasks for the selected project immediately
   useEffect(() => {

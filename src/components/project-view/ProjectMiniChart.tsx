@@ -223,22 +223,34 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
               className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center p-4 z-10"
             >
               <div className="grid grid-cols-2 gap-6 w-full max-w-[200px]">
-                <div className="space-y-0.5">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
+                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                  className="space-y-0.5"
+                >
                   <p className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground/80">
                     Total Time
                   </p>
                   <p className="text-lg font-bold tabular-nums text-foreground">
                     {totalTime}h
                   </p>
-                </div>
-                <div className="space-y-0.5">
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
+                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                  className="space-y-0.5"
+                >
                   <p className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground/80">
                     Avg Focus
                   </p>
                   <p className="text-lg font-bold tabular-nums text-amber-500">
                     {avgTime}h
                   </p>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           )}

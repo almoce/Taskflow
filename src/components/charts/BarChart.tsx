@@ -1,12 +1,14 @@
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { formatDurationDetailed } from "@/utils/time";
 
 interface DataPoint {
   date: string;
   fullDate: string;
   completed: number;
   created: number;
+  timeSpent?: number;
 }
 
 interface BarChartProps {
@@ -41,18 +43,16 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
 
     const x1 = d3
       .scaleBand()
-      .domain(["completed", "created"])
+      .domain(["timeSpent"])
       .range([0, x0.bandwidth()])
       .padding(0.1);
 
-    const maxY = Math.max(
-      d3.max(data, (d) => d.completed) || 0,
-      d3.max(data, (d) => d.created) || 0,
-    );
+    const maxTimeMs = d3.max(data, (d) => d.timeSpent || 0) || 0;
+    const maxTimeHours = maxTimeMs / (1000 * 60 * 60);
 
     const y = d3
       .scaleLinear()
-      .domain([0, maxY + 2])
+      .domain([0, Math.max(maxTimeHours, 1) + 1])
       .range([innerHeight, 0])
       .nice();
 
@@ -79,7 +79,7 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
       );
 
     g.append("g")
-      .call(d3.axisLeft(y).ticks(5))
+      .call(d3.axisLeft(y).ticks(5).tickFormat((v) => `${v}h`))
       .call((g) => g.select(".domain").attr("stroke", "var(--border)"))
       .call((g) => g.selectAll(".tick line").attr("stroke", "var(--border)"))
       .call((g) =>
@@ -95,19 +95,20 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
       .attr("class", "bar-group")
       .attr("transform", (d) => `translate(${x0(d.date)},0)`);
 
-    // Completed bars
+    // Time Spent bars
     barGroups
       .append("rect")
-      .attr("class", "bar-completed")
-      .attr("x", x1("completed") || 0)
+      .attr("class", "bar-time")
+      .attr("x", x1("timeSpent") || 0)
       .attr("width", x1.bandwidth())
       .attr("y", innerHeight)
       .attr("height", 0)
-      .attr("fill", "hsl(142 76% 36%)")
+      .attr("fill", "#f59e0b")
+      .attr("opacity", 1)
       .attr("rx", 4)
       .style("cursor", "pointer")
       .on("mouseenter", function (event, d) {
-        d3.select(this).transition().duration(200).attr("fill", "hsl(142 76% 42%)");
+        d3.select(this).transition("hover").duration(200).attr("opacity", 0.8);
 
         tooltip
           .style("opacity", "1")
@@ -118,62 +119,22 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
             `
             <div class="text-xs font-medium mb-1">${d.fullDate}</div>
             <div class="flex items-center gap-2 text-xs">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Completed: ${d.completed}</span>
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span>Time Spent: ${formatDurationDetailed(d.timeSpent || 0)}</span>
             </div>
           `,
           );
       })
       .on("mouseleave", function () {
-        d3.select(this).transition().duration(200).attr("fill", "hsl(142 76% 36%)");
+        d3.select(this).transition("hover").duration(200).attr("opacity", 1);
         tooltip.style("opacity", "0");
       })
       .transition()
       .delay((_, i) => i * 50)
       .duration(600)
       .ease(d3.easeCubicOut)
-      .attr("y", (d) => y(d.completed))
-      .attr("height", (d) => innerHeight - y(d.completed));
-
-    // Created bars
-    barGroups
-      .append("rect")
-      .attr("class", "bar-created")
-      .attr("x", x1("created") || 0)
-      .attr("width", x1.bandwidth())
-      .attr("y", innerHeight)
-      .attr("height", 0)
-      .attr("fill", "var(--primary)")
-      .attr("rx", 4)
-      .style("cursor", "pointer")
-      .on("mouseenter", function (event, d) {
-        d3.select(this).transition().duration(200).attr("opacity", 0.8);
-
-        tooltip
-          .style("opacity", "1")
-          .style("left", `${event.clientX + 16}px`)
-          .style("top", `${event.clientY - 16}px`)
-          .style("transform", "translateY(-100%)")
-          .html(
-            `
-            <div class="text-xs font-medium mb-1">${d.fullDate}</div>
-            <div class="flex items-center gap-2 text-xs">
-              <span class="w-2 h-2 rounded-full" style="background: var(--primary)"></span>
-              <span>Created: ${d.created}</span>
-            </div>
-          `,
-          );
-      })
-      .on("mouseleave", function () {
-        d3.select(this).transition().duration(200).attr("opacity", 1);
-        tooltip.style("opacity", "0");
-      })
-      .transition()
-      .delay((_, i) => i * 50)
-      .duration(600)
-      .ease(d3.easeCubicOut)
-      .attr("y", (d) => y(d.created))
-      .attr("height", (d) => innerHeight - y(d.created));
+      .attr("y", (d) => y((d.timeSpent || 0) / (1000 * 60 * 60)))
+      .attr("height", (d) => innerHeight - y((d.timeSpent || 0) / (1000 * 60 * 60)));
   }, [data, height]);
 
   return (

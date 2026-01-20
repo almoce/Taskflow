@@ -21,6 +21,38 @@ describe("createTaskSlice", () => {
     expect(now - completedAt).toBeLessThan(1000);
   });
 
+  it("should set dueDate to now when marking done if not present", () => {
+    const project = useStore.getState().addProject("Test Project");
+    const task = useStore.getState().addTask(project.id, "Test Task");
+
+    // Initially no dueDate
+    expect(task.dueDate).toBeUndefined();
+
+    useStore.getState().updateTask(task.id, { status: "done" });
+
+    const updatedTask = useStore.getState().tasks.find((t) => t.id === task.id);
+    expect(updatedTask?.status).toBe("done");
+    expect(updatedTask?.dueDate).toBeDefined();
+    
+    // Verify it's recent (within last second)
+    const now = new Date().getTime();
+    const dueDate = new Date(updatedTask!.dueDate!).getTime();
+    expect(now - dueDate).toBeLessThan(1000);
+  });
+
+  it("should NOT overwrite existing dueDate when marking done", () => {
+    const project = useStore.getState().addProject("Test Project");
+    const task = useStore.getState().addTask(project.id, "Test Task");
+    const futureDate = "2099-12-31T23:59:59.000Z";
+    
+    useStore.getState().updateTask(task.id, { dueDate: futureDate });
+    useStore.getState().updateTask(task.id, { status: "done" });
+
+    const updatedTask = useStore.getState().tasks.find((t) => t.id === task.id);
+    expect(updatedTask?.status).toBe("done");
+    expect(updatedTask?.dueDate).toBe(futureDate);
+  });
+
   it("should respect provided completedAt when marking done", () => {
     const project = useStore.getState().addProject("Test Project");
     const task = useStore.getState().addTask(project.id, "Test Task");

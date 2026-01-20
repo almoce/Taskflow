@@ -56,11 +56,17 @@ export function ProductivityCharts({
           return createdDate.getTime() === day.getTime();
         }).length;
 
+        const timeSpent = tasks.reduce((acc, task) => {
+          const dayKey = format(day, "yyyy-MM-dd");
+          return acc + (task.timeSpentPerDay?.[dayKey] || 0);
+        }, 0);
+
         return {
           date: format(day, "EEE"),
           fullDate: format(day, "MMM d"),
           completed,
           created,
+          timeSpent,
         };
       });
     } else {
@@ -83,11 +89,25 @@ export function ProductivityCharts({
           return createdDate >= weekStart && createdDate <= weekEnd;
         }).length;
 
+        const timeSpent = tasks.reduce((acc, task) => {
+          let weekTotal = 0;
+          if (task.timeSpentPerDay) {
+            Object.entries(task.timeSpentPerDay).forEach(([dateStr, ms]) => {
+              const date = new Date(dateStr);
+              if (date >= weekStart && date <= weekEnd) {
+                weekTotal += ms;
+              }
+            });
+          }
+          return acc + weekTotal;
+        }, 0);
+
         return {
           date: format(weekStart, "MMM d"),
           fullDate: `${format(weekStart, "MMM d")} - ${format(weekEnd, "MMM d")}`,
           completed,
           created,
+          timeSpent,
         };
       });
     }

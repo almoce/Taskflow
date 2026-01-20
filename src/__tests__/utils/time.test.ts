@@ -1,7 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { formatDuration, normalizeTime, parseTime } from "@/utils/time";
+import { formatDuration, formatDurationDetailed, normalizeTime, parseTime } from "@/utils/time";
 
 describe("Time Utils", () => {
+  describe("formatDurationDetailed", () => {
+    it("should show minutes if less than 1 hour", () => {
+      expect(formatDurationDetailed(30 * 60 * 1000)).toBe("30m");
+    });
+
+    it("should show hours and minutes if 1 hour or more", () => {
+      expect(formatDurationDetailed(90 * 60 * 1000)).toBe("1h 30m");
+    });
+
+    it("should show only hours if minutes are 0", () => {
+      expect(formatDurationDetailed(60 * 60 * 1000)).toBe("1h 0m");
+    });
+
+    it("should round minutes down", () => {
+      // 1h 30m 45s -> 1h 30m
+      expect(formatDurationDetailed(90 * 60 * 1000 + 45000)).toBe("1h 30m");
+    });
+
+    it("should handle 0", () => {
+      expect(formatDurationDetailed(0)).toBe("0m");
+    });
+  });
+
   describe("formatDuration", () => {
     it("should show seconds if less than 1 minute", () => {
       expect(formatDuration(45000)).toBe("45s");

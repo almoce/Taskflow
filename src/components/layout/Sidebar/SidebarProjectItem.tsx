@@ -30,6 +30,39 @@ export const SidebarProjectItem = ({
   onExport,
   onDelete,
 }: SidebarProjectItemProps) => {
+  const ProjectButton = (
+    <Button
+      variant="ghost"
+      size="sm"
+      className={cn(
+        "flex-1 h-8 px-2 hover:bg-transparent",
+        collapsed ? "justify-center" : "justify-start",
+      )}
+      onClick={onSelect}
+    >
+      <div className={cn("flex items-center", !collapsed && "gap-2 w-full")}>
+        {project.icon ? (
+          <span className="text-sm shrink-0">{project.icon}</span>
+        ) : (
+          <div
+            className="w-2 h-2 rounded-sm shrink-0"
+            style={{ backgroundColor: project.color }}
+          />
+        )}
+        {!collapsed && (
+          <span
+            className={cn(
+              "truncate max-w-36 text-sm",
+              isSelected ? "text-foreground" : "text-muted-foreground",
+            )}
+          >
+            {project.name}
+          </span>
+        )}
+      </div>
+    </Button>
+  );
+
   return (
     <div
       className={cn(
@@ -37,48 +70,19 @@ export const SidebarProjectItem = ({
         isSelected ? "bg-secondary" : "hover:bg-secondary/50",
       )}
     >
-      <Tooltip delayDuration={300}>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "flex-1 h-8 px-2 hover:bg-transparent",
-              collapsed ? "justify-center" : "justify-start",
-            )}
-            onClick={onSelect}
-          >
-            <div className={cn("flex items-center", !collapsed && "gap-2 w-full")}>
-              {project.icon ? (
-                <span className="text-sm shrink-0">{project.icon}</span>
-              ) : (
-                <div
-                  className="w-2 h-2 rounded-sm shrink-0"
-                  style={{ backgroundColor: project.color }}
-                />
-              )}
-              {!collapsed && (
-                <span
-                  className={cn(
-                    "truncate max-w-36 text-sm",
-                    isSelected ? "text-foreground" : "text-muted-foreground",
-                  )}
-                >
-                  {project.name}
-                </span>
-              )}
-            </div>
-          </Button>
-        </TooltipTrigger>
-        {collapsed && (
+      {collapsed ? (
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>{ProjectButton}</TooltipTrigger>
           <TooltipContent
             side="right"
             className="origin-left data-[state=delayed-open]:animate-tooltip-expand data-[state=closed]:animate-tooltip-collapse"
           >
             <p className="whitespace-nowrap">{project.name}</p>
           </TooltipContent>
-        )}
-      </Tooltip>
+        </Tooltip>
+      ) : (
+        ProjectButton
+      )}
       {!collapsed && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

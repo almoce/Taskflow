@@ -74,7 +74,6 @@ export const useTasks = () =>
       moveTask: state.moveTask,
       archiveTask: state.archiveTask,
       unarchiveTask: state.unarchiveTask,
-      checkAutoArchive: state.checkAutoArchive,
       setColumnSort: state.setColumnSort,
     })),
   );

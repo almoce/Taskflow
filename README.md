@@ -17,7 +17,6 @@ A sleek, modern, and highly functional task and project management application b
 - **Smart Features**:
   - **Global Task Search**: Instantly find any task across all projects using a powerful search interface.
   - **Task Portability**: Export your projects to JSON and import them back, making it easy to backup or move your workflow.
-  - **Smart Automation**: Automatically archives completed tasks once they are past their due date to keep your board clutter-free.
   - **Persistent Storage**: Robust data persistence using Zustand and **IndexedDB** for local storage.
 - **Premium UI/UX**:
   - **Glassmorphism Design**: Modern, translucent interfaces with smooth transitions.

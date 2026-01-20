@@ -22,6 +22,23 @@ export const formatDuration = (ms: number): string => {
 };
 
 /**
+ * Formats a duration in milliseconds to a detailed human-readable string.
+ * Format: "Xh Ym" or "Ym" (if < 1h)
+ * Rounds minutes down.
+ */
+export const formatDurationDetailed = (ms: number): string => {
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  if (hours === 0) {
+    return `${minutes}m`;
+  }
+
+  return `${hours}h ${minutes}m`;
+};
+
+/**
  * Normalizes time components into total milliseconds.
  * Handles overflows (e.g., 90 seconds -> 1m 30s).
  */
