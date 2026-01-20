@@ -1,13 +1,16 @@
 /**
  * Formats a duration in milliseconds to a human-readable string.
  * Examples: 
- * - < 1m (less than a minute)
- * - 45m (minutes only)
+ * - 45s (seconds only if < 1m)
+ * - 45m (minutes only if < 1h)
  * - 1h, 1.5h (hours with decimals if >= 1h)
  */
 export const formatDuration = (ms: number): string => {
   const totalSeconds = Math.floor(ms / 1000);
-  if (totalSeconds < 60) return "< 1m";
+  
+  if (totalSeconds < 60) {
+    return `${totalSeconds}s`;
+  }
   
   if (totalSeconds >= 3600) {
     const hours = totalSeconds / 3600;

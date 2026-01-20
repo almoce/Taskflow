@@ -1,7 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { normalizeTime, parseTime } from "@/utils/time";
+import { formatDuration, normalizeTime, parseTime } from "@/utils/time";
 
 describe("Time Utils", () => {
+  describe("formatDuration", () => {
+    it("should show seconds if less than 1 minute", () => {
+      expect(formatDuration(45000)).toBe("45s");
+      expect(formatDuration(500)).toBe("0s");
+    });
+
+    it("should show minutes if less than 1 hour", () => {
+      expect(formatDuration(60000)).toBe("1m");
+      expect(formatDuration(3540000)).toBe("59m");
+    });
+
+    it("should show hours with decimals if 1 hour or more", () => {
+      expect(formatDuration(3600000)).toBe("1h");
+      expect(formatDuration(5400000)).toBe("1.5h");
+      expect(formatDuration(7200000)).toBe("2h");
+    });
+  });
+
   describe("normalizeTime", () => {
     it("should calculate milliseconds correctly for standard inputs", () => {
       expect(normalizeTime(1, 1, 1)).toBe(3661000);

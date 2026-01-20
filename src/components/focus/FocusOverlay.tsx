@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import { FocusSessionSummary } from "./FocusSessionSummary";
 import { FocusTimerView } from "./FocusTimerView";
+import { formatDuration } from "@/utils/time";
 
 export function FocusOverlay() {
   const {
@@ -56,15 +57,6 @@ export function FocusOverlay() {
     cancelFocusSession,
     initialTime: task?.totalTimeSpent || 0,
   });
-
-  const formatDuration = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    
-    if (minutes === 0) return `${seconds}s`;
-    return `${minutes}m ${seconds}s`;
-  };
 
   const handleBreak = () => {
     if (activeFocusTaskId) {
