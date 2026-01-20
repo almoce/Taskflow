@@ -17,3 +17,22 @@ export const formatDuration = (ms: number): string => {
   const minutes = Math.floor(totalSeconds / 60);
   return `${minutes}m`;
 };
+
+/**
+ * Normalizes time components into total milliseconds.
+ * Handles overflows (e.g., 90 seconds -> 1m 30s).
+ */
+export const normalizeTime = (hours: number, minutes: number, seconds: number): number => {
+  return (hours * 3600 + minutes * 60 + seconds) * 1000;
+};
+
+/**
+ * Parses milliseconds into hours, minutes, and seconds.
+ */
+export const parseTime = (ms: number) => {
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return { hours, minutes, seconds };
+};

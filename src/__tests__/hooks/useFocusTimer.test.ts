@@ -42,9 +42,24 @@ describe("useFocusTimer", () => {
       isFocusModeActive: true,
       task: task2,
       cancelFocusSession: vi.fn(),
+      initialTime: 0,
     });
 
     // Check if timer reset (IT SHOULD NOT, but currently it likely does)
     expect(result.current.elapsedTime).toBe(5000);
+  });
+
+  it("should initialize with initialTime", () => {
+    const task = { id: "1", description: "Task 1" };
+    const { result } = renderHook(
+      () => useFocusTimer({
+        isFocusModeActive: true,
+        task,
+        cancelFocusSession: vi.fn(),
+        initialTime: 10000, // 10 seconds
+      })
+    );
+
+    expect(result.current.elapsedTime).toBe(10000);
   });
 });
