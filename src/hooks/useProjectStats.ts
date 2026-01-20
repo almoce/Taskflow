@@ -19,7 +19,6 @@ export function useProjectStats(projectId: string | null) {
     const projectTasks = tasks.filter((t) => t.projectId === projectId);
     const total = projectTasks.length;
     const totalTimeSpent = projectTasks
-      .filter((t) => t.status === "done")
       .reduce((acc, t) => acc + (t.totalTimeSpent || 0), 0);
 
     if (total === 0) {

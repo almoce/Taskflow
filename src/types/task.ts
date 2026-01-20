@@ -24,6 +24,7 @@ export interface Task {
   completedAt?: string;
   isArchived?: boolean;
   totalTimeSpent?: number; // in milliseconds
+  timeSpentPerDay?: Record<string, number>; // date string (ISO) -> milliseconds
 }
 
 export interface Project {

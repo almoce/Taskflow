@@ -25,6 +25,18 @@ export const createFocusSlice: StateCreator<StoreState, [], [], FocusSlice> = (s
     });
   },
 
+  pauseFocusSession: (duration: number) => {
+    const { activeFocusTaskId } = get();
+    if (activeFocusTaskId) {
+      get().updateTaskTime(activeFocusTaskId, duration);
+    }
+    set({
+      activeFocusTaskId: null,
+      isFocusModeActive: false,
+      previousTaskStatus: null,
+    });
+  },
+
   endFocusSession: () => {
     set({
       activeFocusTaskId: null,
@@ -53,8 +65,17 @@ export const createFocusSlice: StateCreator<StoreState, [], [], FocusSlice> = (s
     if (!task) return;
 
     const currentTotal = task.totalTimeSpent || 0;
+    
+    // Track daily time
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const currentDaily = task.timeSpentPerDay?.[today] || 0;
+    
     get().updateTask(taskId, {
       totalTimeSpent: currentTotal + duration,
+      timeSpentPerDay: {
+        ...(task.timeSpentPerDay || {}),
+        [today]: currentDaily + duration,
+      },
     });
   },
 });

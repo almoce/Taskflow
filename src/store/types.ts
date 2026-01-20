@@ -84,6 +84,7 @@ export interface FocusSlice {
   isFocusModeActive: boolean;
   previousTaskStatus: TaskStatus | null;
   startFocusSession: (taskId: string) => void;
+  pauseFocusSession: (duration: number) => void;
   endFocusSession: () => void;
   cancelFocusSession: () => void;
   updateTaskTime: (taskId: string, duration: number) => void;

@@ -22,6 +22,11 @@ vi.mock("framer-motion", () => ({
         {children}
       </div>
     ),
+    span: ({ children, className, ...props }: any) => (
+      <span className={className} {...props}>
+        {children}
+      </span>
+    ),
   },
 }));
 
@@ -63,8 +68,7 @@ describe("FocusOverlay", () => {
   it("renders timer view when active", () => {
     render(<FocusOverlay />);
     expect(screen.getByText("Test Task")).toBeInTheDocument();
-    expect(screen.getByText("Focus Session")).toBeInTheDocument();
-    expect(screen.getByText("00:00:00")).toBeInTheDocument();
+    expect(screen.getAllByText("0")).toHaveLength(6);
   });
 
   it("toggles timer on button click", () => {
@@ -90,6 +94,6 @@ describe("FocusOverlay", () => {
     const completeButton = screen.getByRole("button", { name: "Complete task" });
     fireEvent.click(completeButton);
     
-    expect(screen.getByText("Focus session ended")).toBeInTheDocument();
+    expect(screen.getByText("Session Complete")).toBeInTheDocument();
   });
 });

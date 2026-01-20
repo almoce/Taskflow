@@ -16,6 +16,7 @@ describe("useProjectStats", () => {
       inProgress: 0,
       done: 0,
       progress: 0,
+      totalTimeSpent: 0,
     });
   });
 
@@ -41,6 +42,7 @@ describe("useProjectStats", () => {
       inProgress: 1,
       done: 1,
       progress: 33, // (1/3) * 100 = 33.33 -> 33
+      totalTimeSpent: 0,
     });
   });
 
@@ -63,6 +65,7 @@ describe("useProjectStats", () => {
       inProgress: 0,
       done: 0,
       progress: 0,
+      totalTimeSpent: 0,
     });
   });
 
@@ -75,6 +78,7 @@ describe("useProjectStats", () => {
       inProgress: 0,
       done: 0,
       progress: 0,
+      totalTimeSpent: 0,
     });
   });
 });

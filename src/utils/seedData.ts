@@ -145,9 +145,21 @@ export const generateSeedData = () => {
       // Only for non-todo tasks, or randomly some todo tasks (maybe they started but didn't finish)
       // Let's say only for in-progress and done.
       let totalTimeSpent = 0;
+      const timeSpentPerDay: Record<string, number> = {};
+
       if (status !== "todo") {
         // Random time between 15 mins (900000ms) and 4 hours (14400000ms)
         totalTimeSpent = Math.floor(Math.random() * (14400000 - 900000 + 1)) + 900000;
+        
+        // Attribute to a date
+        let dateStr: string;
+        if (completedAt) {
+            dateStr = completedAt.split("T")[0];
+        } else {
+            // For in-progress, use today or recent
+            dateStr = new Date().toISOString().split("T")[0];
+        }
+        timeSpentPerDay[dateStr] = totalTimeSpent;
       }
 
       const updates: Partial<Task> = {
@@ -156,6 +168,7 @@ export const generateSeedData = () => {
         dueDate,
         createdAt, // Overwrite with historical date
         totalTimeSpent,
+        timeSpentPerDay,
       };
 
       if (status === "done") {

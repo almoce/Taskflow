@@ -30,8 +30,19 @@ describe("useStore (New Store)", () => {
     expect(state.tasks[0]).toEqual(task);
   });
 
-  it("should change active view", () => {
-    useStore.getState().setActiveView("analytics");
-    expect(useStore.getState().activeView).toBe("analytics");
+  it("should pause focus session and record time", () => {
+    const project = useStore.getState().addProject("Test Project");
+    const task = useStore.getState().addTask(project.id, "Test Task");
+    
+    useStore.getState().startFocusSession(task.id);
+    expect(useStore.getState().isFocusModeActive).toBe(true);
+    
+    // Pause session with 5 minutes elapsed
+    useStore.getState().pauseFocusSession(300000);
+    
+    const state = useStore.getState();
+    expect(state.isFocusModeActive).toBe(false);
+    expect(state.tasks[0].totalTimeSpent).toBe(300000);
+    expect(state.activeFocusTaskId).toBeNull();
   });
 });

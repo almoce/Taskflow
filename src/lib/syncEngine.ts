@@ -96,6 +96,8 @@ export const syncTasks = async (projectId?: string) => {
   remoteTasks
     .filter((remote) => !pendingDeleteTaskIds.includes(remote.id))
     .forEach((remote) => {
+      const local = localTasks.find((t) => t.id === remote.id);
+      
       const mappedRemote: Task = {
         id: remote.id,
         projectId: remote.project_id,
@@ -111,9 +113,10 @@ export const syncTasks = async (projectId?: string) => {
         updatedAt: remote.updated_at,
         isArchived: remote.is_archived,
         totalTimeSpent: remote.total_time_spent,
+        // Merge local and remote time tracking to prevent data loss if remote is empty
+        timeSpentPerDay: { ...local?.timeSpentPerDay, ...(remote.time_spent_per_day || {}) },
       };
 
-      const local = localTasks.find((t) => t.id === remote.id);
       if (!local) {
         upserts.push(mappedRemote);
       } else {
@@ -164,6 +167,7 @@ export const syncTasks = async (projectId?: string) => {
         updated_at: t.updatedAt || new Date().toISOString(),
         is_archived: t.isArchived || false,
         total_time_spent: t.totalTimeSpent || 0,
+        time_spent_per_day: t.timeSpentPerDay || {},
       })),
     );
     if (uploadError) console.error("Error uploading tasks:", uploadError);
@@ -197,6 +201,8 @@ export const syncArchivedTasks = async (projectId?: string) => {
   remoteTasks
     .filter((remote) => !pendingDeleteArchivedTaskIds.includes(remote.id))
     .forEach((remote) => {
+      const local = localTasks.find((t) => t.id === remote.id);
+      
       const mappedRemote: Task = {
         id: remote.id,
         projectId: remote.project_id,
@@ -212,9 +218,10 @@ export const syncArchivedTasks = async (projectId?: string) => {
         updatedAt: remote.updated_at,
         isArchived: remote.is_archived,
         totalTimeSpent: remote.total_time_spent,
+        // Merge local and remote time tracking to prevent data loss
+        timeSpentPerDay: { ...local?.timeSpentPerDay, ...(remote.time_spent_per_day || {}) },
       };
 
-      const local = localTasks.find((t) => t.id === remote.id);
       if (!local) {
         upserts.push(mappedRemote);
       } else {
@@ -262,6 +269,7 @@ export const syncArchivedTasks = async (projectId?: string) => {
         updated_at: t.updatedAt || new Date().toISOString(),
         is_archived: t.isArchived || true,
         total_time_spent: t.totalTimeSpent || 0,
+        time_spent_per_day: t.timeSpentPerDay || {},
       })),
     );
     if (uploadError) console.error("Error uploading archived tasks:", uploadError);

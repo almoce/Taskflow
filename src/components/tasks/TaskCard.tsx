@@ -81,7 +81,12 @@ export function TaskCard({
                   variant="ghost"
                   size="icon"
                   onClick={onStartFocus}
-                  className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-primary shrink-0"
+                  className={cn(
+                    "h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0",
+                    task.totalTimeSpent && task.totalTimeSpent > 0
+                      ? "text-yellow-500 hover:text-yellow-600"
+                      : "text-primary hover:text-primary",
+                  )}
                 >
                   <Zap className="h-3.5 w-3.5 fill-current" />
                 </Button>
@@ -178,7 +183,7 @@ export function TaskCard({
             </TooltipContent>
           </Tooltip>
         )}
-        {isDone && task.totalTimeSpent && task.totalTimeSpent > 0 ? (
+        {task.totalTimeSpent && task.totalTimeSpent > 0 ? (
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <div className="flex items-center gap-1.5">

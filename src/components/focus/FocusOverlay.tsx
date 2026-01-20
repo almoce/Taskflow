@@ -19,6 +19,7 @@ export function FocusOverlay() {
   const {
     isFocusModeActive,
     activeFocusTaskId,
+    pauseFocusSession,
     endFocusSession,
     cancelFocusSession,
     updateTaskTime,
@@ -31,6 +32,7 @@ export function FocusOverlay() {
     elapsedTime,
     isRunning,
     setIsRunning,
+    toggleTimer,
     showSummary,
     setShowSummary,
     summaryNote,
@@ -39,25 +41,48 @@ export function FocusOverlay() {
     setShowCancelDialog,
     handleCloseAttempt,
     handleConfirmCancel,
+    
+    // Editing props
+    isEditing,
+    editedTime,
+    handleTimeEdit,
+    isDirty,
+    showConfirmResume,
+    confirmTimeUpdate,
+    cancelTimeUpdate,
   } = useFocusTimer({
     isFocusModeActive,
     task,
     cancelFocusSession,
+    initialTime: task?.totalTimeSpent || 0,
   });
 
-  const formatTime = (ms: number) => {
-    const seconds = Math.floor((ms / 1000) % 60);
-    const minutes = Math.floor((ms / (1000 * 60)) % 60);
-    const hours = Math.floor(ms / (1000 * 60 * 60));
+  const formatDuration = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    if (minutes === 0) return `${seconds}s`;
+    return `${minutes}m ${seconds}s`;
+  };
 
-    const pad = (num: number) => num.toString().padStart(2, "0");
-    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  const handleBreak = () => {
+    if (activeFocusTaskId) {
+      const finalTime = isDirty ? editedTime : elapsedTime;
+      const sessionDuration = finalTime - (task?.totalTimeSpent || 0);
+      pauseFocusSession(sessionDuration);
+      toast.info("Session paused", {
+        description: `Recorded ${formatDuration(sessionDuration)} of focus time.`,
+      });
+    }
   };
 
   const handleFinish = () => {
     if (activeFocusTaskId) {
+      const finalTime = isDirty ? editedTime : elapsedTime;
+      const sessionDuration = finalTime - (task?.totalTimeSpent || 0);
       // Record time
-      updateTaskTime(activeFocusTaskId, elapsedTime);
+      updateTaskTime(activeFocusTaskId, sessionDuration);
 
       // Update status and description
       const updates: any = { status: "done" };
@@ -67,7 +92,7 @@ export function FocusOverlay() {
       updateTask(activeFocusTaskId, updates);
 
       toast.success("Task completed!", {
-        description: `Focused for ${formatTime(elapsedTime)}`,
+        description: `Total time focused: ${formatDuration(finalTime)}`,
       });
     }
     endFocusSession();
@@ -90,12 +115,21 @@ export function FocusOverlay() {
               taskDescription={task.description}
               elapsedTime={elapsedTime}
               isRunning={isRunning}
-              onToggleTimer={() => setIsRunning(!isRunning)}
+              onToggleTimer={toggleTimer}
+              onBreak={handleBreak}
               onEndSession={() => {
                 setIsRunning(false);
                 setShowSummary(true);
               }}
               onClose={handleCloseAttempt}
+              
+              // Editing props
+              isEditing={!isRunning} // Always allow editing when paused
+              editedTime={editedTime}
+              onTimeEdit={handleTimeEdit}
+              showConfirmResume={showConfirmResume}
+              onConfirmResume={confirmTimeUpdate}
+              onCancelResume={cancelTimeUpdate}
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center max-w-2xl mx-auto">

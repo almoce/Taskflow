@@ -125,6 +125,7 @@ export const useFocus = () =>
       endFocusSession: state.endFocusSession,
       cancelFocusSession: state.cancelFocusSession,
       updateTaskTime: state.updateTaskTime,
+      pauseFocusSession: state.pauseFocusSession,
     })),
   );
 

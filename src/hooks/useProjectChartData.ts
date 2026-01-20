@@ -32,6 +32,8 @@ export function useProjectChartData(
       });
 
       return days.map((day) => {
+        const dayStr = format(day, "yyyy-MM-dd");
+        
         const completed = projectTasks.filter((task) => {
           if (!task.completedAt) return false;
           const completedDate = startOfDay(new Date(task.completedAt));
@@ -43,11 +45,16 @@ export function useProjectChartData(
           return createdDate.getTime() === day.getTime();
         }).length;
 
+        const timeSpentMs = projectTasks.reduce((acc, task) => {
+          return acc + (task.timeSpentPerDay?.[dayStr] || 0);
+        }, 0);
+
         return {
           date: format(day, "EEE"),
           fullDate: format(day, "MMM d"),
           completed,
           created,
+          timeSpent: Number((timeSpentMs / (1000 * 60 * 60)).toFixed(2)), // to hours
         };
       });
     } else {
@@ -70,11 +77,22 @@ export function useProjectChartData(
           return createdDate >= weekStart && createdDate <= weekEnd;
         }).length;
 
+        const timeSpentMs = projectTasks.reduce((acc, task) => {
+          if (!task.timeSpentPerDay) return acc;
+          const weekTotal = Object.entries(task.timeSpentPerDay).reduce((sum, [date, ms]) => {
+            const d = new Date(date);
+            if (d >= weekStart && d <= weekEnd) return sum + ms;
+            return sum;
+          }, 0);
+          return acc + weekTotal;
+        }, 0);
+
         return {
           date: format(weekStart, "MMM d"),
           fullDate: `${format(weekStart, "MMM d")} - ${format(weekEnd, "MMM d")}`,
           completed,
           created,
+          timeSpent: Number((timeSpentMs / (1000 * 60 * 60)).toFixed(2)),
         };
       });
     }
