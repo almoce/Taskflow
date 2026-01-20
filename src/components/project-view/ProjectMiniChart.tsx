@@ -101,16 +101,16 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
     g.append("path")
       .datum(data)
       .attr("fill", "none")
-      .attr("stroke", "hsl(142 76% 36%)")
+      .attr("stroke", "#f59e0b") // Amber
       .attr("stroke-width", 2)
-      .attr("d", line);
+      .attr("d", timeLine);
 
     g.append("path")
       .datum(data)
       .attr("fill", "none")
-      .attr("stroke", "#f59e0b") // Amber
+      .attr("stroke", "hsl(142 76% 36%)")
       .attr("stroke-width", 2)
-      .attr("d", timeLine);
+      .attr("d", line);
 
     // Gradient
     const defs = svg.append("defs");

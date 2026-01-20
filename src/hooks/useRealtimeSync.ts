@@ -132,8 +132,17 @@ export const useRealtimeSync = () => {
       .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, (payload) => {
         if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
           const remote = payload.new as any;
-          const { pendingDeleteTaskIds } = useStore.getState();
+          const { pendingDeleteTaskIds, tasks } = useStore.getState();
           if (pendingDeleteTaskIds.includes(remote.id)) return;
+
+          const local = tasks.find((t) => t.id === remote.id);
+
+          if (local) {
+            const remoteTime = new Date(remote.updated_at).getTime();
+            const localTime = new Date(local.updatedAt || local.createdAt).getTime();
+            // If local is newer or same, ignore remote update to prevent overwriting local work
+            if (localTime >= remoteTime) return;
+          }
 
           const task: Task = {
             id: remote.id,
@@ -150,6 +159,7 @@ export const useRealtimeSync = () => {
             updatedAt: remote.updated_at,
             isArchived: remote.is_archived,
             totalTimeSpent: remote.total_time_spent,
+            timeSpentPerDay: remote.time_spent_per_day || {},
           };
           upsertTask(task);
         } else if (payload.eventType === "DELETE") {
@@ -162,8 +172,16 @@ export const useRealtimeSync = () => {
         (payload) => {
           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
             const remote = payload.new as any;
-            const { pendingDeleteArchivedTaskIds } = useStore.getState();
+            const { pendingDeleteArchivedTaskIds, archivedTasks } = useStore.getState();
             if (pendingDeleteArchivedTaskIds.includes(remote.id)) return;
+
+            const local = archivedTasks.find((t) => t.id === remote.id);
+
+            if (local) {
+              const remoteTime = new Date(remote.updated_at).getTime();
+              const localTime = new Date(local.updatedAt || local.createdAt).getTime();
+              if (localTime >= remoteTime) return;
+            }
 
             const task: Task = {
               id: remote.id,
@@ -180,6 +198,7 @@ export const useRealtimeSync = () => {
               updatedAt: remote.updated_at,
               isArchived: remote.is_archived,
               totalTimeSpent: remote.total_time_spent,
+              timeSpentPerDay: remote.time_spent_per_day || {},
             };
             upsertArchivedTask(task);
           } else if (payload.eventType === "DELETE") {

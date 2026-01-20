@@ -126,7 +126,7 @@ export function FocusOverlay() {
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center max-w-2xl mx-auto">
               <FocusSessionSummary
-                elapsedTime={elapsedTime}
+                elapsedTime={isDirty ? editedTime : elapsedTime}
                 summaryNote={summaryNote}
                 setSummaryNote={setSummaryNote}
                 onBack={() => setShowSummary(false)}
