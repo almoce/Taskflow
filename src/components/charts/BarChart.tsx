@@ -3,12 +3,20 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { formatDurationDetailed } from "@/utils/time";
 
+interface ProjectBreakdown {
+  id: string;
+  name: string;
+  color: string;
+  timeSpent: number;
+}
+
 interface DataPoint {
   date: string;
   fullDate: string;
   completed: number;
   created: number;
   timeSpent?: number;
+  projectBreakdown?: ProjectBreakdown[];
 }
 
 interface BarChartProps {
@@ -68,7 +76,6 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
       )
       .call((g) => g.select(".domain").remove());
 
-    // Axes
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(d3.axisBottom(x0))
@@ -95,46 +102,105 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
       .attr("class", "bar-group")
       .attr("transform", (d) => `translate(${x0(d.date)},0)`);
 
-    // Time Spent bars
-    barGroups
-      .append("rect")
-      .attr("class", "bar-time")
-      .attr("x", x1("timeSpent") || 0)
-      .attr("width", x1.bandwidth())
-      .attr("y", innerHeight)
-      .attr("height", 0)
-      .attr("fill", "#f59e0b")
-      .attr("opacity", 1)
-      .attr("rx", 4)
-      .style("cursor", "pointer")
-      .on("mouseenter", function (event, d) {
-        d3.select(this).transition("hover").duration(200).attr("opacity", 0.8);
+    // Helper to render bars (single or stacked)
+    barGroups.each(function (d) {
+      const group = d3.select(this);
+      const breakdown = d.projectBreakdown || [];
 
-        tooltip
-          .style("opacity", "1")
-          .style("left", `${event.clientX + 16}px`)
-          .style("top", `${event.clientY - 16}px`)
-          .style("transform", "translateY(-100%)")
-          .html(
-            `
-            <div class="text-xs font-medium mb-1">${d.fullDate}</div>
-            <div class="flex items-center gap-2 text-xs">
-              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Time Spent: ${formatDurationDetailed(d.timeSpent || 0)}</span>
-            </div>
-          `,
-          );
-      })
-      .on("mouseleave", function () {
-        d3.select(this).transition("hover").duration(200).attr("opacity", 1);
-        tooltip.style("opacity", "0");
-      })
-      .transition()
-      .delay((_, i) => i * 50)
-      .duration(600)
-      .ease(d3.easeCubicOut)
-      .attr("y", (d) => y((d.timeSpent || 0) / (1000 * 60 * 60)))
-      .attr("height", (d) => innerHeight - y((d.timeSpent || 0) / (1000 * 60 * 60)));
+      if (breakdown.length > 0) {
+        let currentY = innerHeight;
+        
+        breakdown.forEach((p, i) => {
+          const barHeight = innerHeight - y(p.timeSpent / (1000 * 60 * 60));
+          const targetY = currentY - barHeight;
+
+          group
+            .append("rect")
+            .attr("class", `bar-project-${p.id}`)
+            .attr("x", x1("timeSpent") || 0)
+            .attr("width", x1.bandwidth())
+            .attr("y", innerHeight)
+            .attr("height", 0)
+            .attr("fill", p.color || "#f59e0b")
+            .attr("opacity", 1)
+            // Removed rx for consistency in stacked bars
+            .style("cursor", "pointer")
+            .on("mouseenter", function (event) {
+              d3.select(this).transition("hover").duration(200).attr("opacity", 0.8);
+
+              tooltip
+                .style("opacity", "1")
+                .style("left", `${event.clientX + 16}px`)
+                .style("top", `${event.clientY - 16}px`)
+                .style("transform", "translateY(-100%)")
+                .html(
+                  `
+                  <div class="text-xs font-medium mb-1">${d.fullDate}</div>
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="w-2 h-2 rounded-full" style="background-color: ${p.color}"></span>
+                    <span>${p.name}: ${formatDurationDetailed(p.timeSpent)}</span>
+                  </div>
+                  <div class="mt-1 pt-1 border-t border-border/50 text-[10px] text-muted-foreground">
+                    Total: ${formatDurationDetailed(d.timeSpent || 0)}
+                  </div>
+                `,
+                );
+            })
+            .on("mouseleave", function () {
+              d3.select(this).transition("hover").duration(200).attr("opacity", 1);
+              tooltip.style("opacity", "0");
+            })
+            .transition()
+            .delay((_, i) => i * 50)
+            .duration(600)
+            .ease(d3.easeCubicOut)
+            .attr("y", targetY)
+            .attr("height", barHeight);
+          
+          currentY = targetY;
+        });
+      } else {
+        // Fallback for single project or no breakdown
+        group
+          .append("rect")
+          .attr("class", "bar-time")
+          .attr("x", x1("timeSpent") || 0)
+          .attr("width", x1.bandwidth())
+          .attr("y", innerHeight)
+          .attr("height", 0)
+          .attr("fill", "#f59e0b")
+          .attr("opacity", 1)
+          .style("cursor", "pointer")
+          .on("mouseenter", function (event) {
+            d3.select(this).transition("hover").duration(200).attr("opacity", 0.8);
+
+            tooltip
+              .style("opacity", "1")
+              .style("left", `${event.clientX + 16}px`)
+              .style("top", `${event.clientY - 16}px`)
+              .style("transform", "translateY(-100%)")
+              .html(
+                `
+                <div class="text-xs font-medium mb-1">${d.fullDate}</div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span>Time Spent: ${formatDurationDetailed(d.timeSpent || 0)}</span>
+                </div>
+              `,
+              );
+          })
+          .on("mouseleave", function () {
+            d3.select(this).transition("hover").duration(200).attr("opacity", 1);
+            tooltip.style("opacity", "0");
+          })
+          .transition()
+          .delay((_, i) => i * 50)
+          .duration(600)
+          .ease(d3.easeCubicOut)
+          .attr("y", y((d.timeSpent || 0) / (1000 * 60 * 60)))
+          .attr("height", innerHeight - y((d.timeSpent || 0) / (1000 * 60 * 60)));
+      }
+    });
   }, [data, height]);
 
   return (

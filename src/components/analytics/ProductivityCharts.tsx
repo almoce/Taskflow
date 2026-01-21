@@ -56,10 +56,21 @@ export function ProductivityCharts({
           return createdDate.getTime() === day.getTime();
         }).length;
 
-        const timeSpent = tasks.reduce((acc, task) => {
-          const dayKey = format(day, "yyyy-MM-dd");
-          return acc + (task.timeSpentPerDay?.[dayKey] || 0);
-        }, 0);
+        const projectBreakdown = projects?.map(project => {
+          const projectTasks = tasks.filter(t => t.projectId === project.id);
+          const timeSpent = projectTasks.reduce((acc, task) => {
+            const dayKey = format(day, "yyyy-MM-dd");
+            return acc + (task.timeSpentPerDay?.[dayKey] || 0);
+          }, 0);
+          return {
+            id: project.id,
+            name: project.name,
+            color: project.color,
+            timeSpent
+          };
+        }).filter(p => p.timeSpent > 0) || [];
+
+        const timeSpent = projectBreakdown.reduce((acc, p) => acc + p.timeSpent, 0);
 
         return {
           date: format(day, "EEE"),
@@ -67,6 +78,7 @@ export function ProductivityCharts({
           completed,
           created,
           timeSpent,
+          projectBreakdown
         };
       });
     } else {
@@ -89,18 +101,29 @@ export function ProductivityCharts({
           return createdDate >= weekStart && createdDate <= weekEnd;
         }).length;
 
-        const timeSpent = tasks.reduce((acc, task) => {
-          let weekTotal = 0;
-          if (task.timeSpentPerDay) {
-            Object.entries(task.timeSpentPerDay).forEach(([dateStr, ms]) => {
-              const date = new Date(dateStr);
-              if (date >= weekStart && date <= weekEnd) {
-                weekTotal += ms;
-              }
-            });
-          }
-          return acc + weekTotal;
-        }, 0);
+        const projectBreakdown = projects?.map(project => {
+          const projectTasks = tasks.filter(t => t.projectId === project.id);
+          const timeSpent = projectTasks.reduce((acc, task) => {
+            let weekTotal = 0;
+            if (task.timeSpentPerDay) {
+              Object.entries(task.timeSpentPerDay).forEach(([dateStr, ms]) => {
+                const date = new Date(dateStr);
+                if (date >= weekStart && date <= weekEnd) {
+                  weekTotal += ms;
+                }
+              });
+            }
+            return acc + weekTotal;
+          }, 0);
+          return {
+            id: project.id,
+            name: project.name,
+            color: project.color,
+            timeSpent
+          };
+        }).filter(p => p.timeSpent > 0) || [];
+
+        const timeSpent = projectBreakdown.reduce((acc, p) => acc + p.timeSpent, 0);
 
         return {
           date: format(weekStart, "MMM d"),
@@ -108,10 +131,11 @@ export function ProductivityCharts({
           completed,
           created,
           timeSpent,
+          projectBreakdown
         };
       });
     }
-  }, [tasks, timeRange]);
+  }, [tasks, timeRange, projects]);
 
   const activeTasks = useMemo(() => {
     return tasks.filter((t) => !t.isArchived);
