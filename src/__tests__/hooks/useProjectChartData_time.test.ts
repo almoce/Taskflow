@@ -24,7 +24,7 @@ describe("useProjectChartData Time Aggregation", () => {
     useStore.getState().updateTaskTime(task1.id, 3600000);
 
     // Verify task state directly
-    const t1 = useStore.getState().tasks.find(t => t.id === task1.id);
+    const t1 = useStore.getState().tasks.find((t) => t.id === task1.id);
     expect(t1?.timeSpentPerDay?.["2026-01-11"]).toBe(3600000);
 
     // Jan 10 (Sat): 30m on task1, 30m on task2
@@ -38,15 +38,15 @@ describe("useProjectChartData Time Aggregation", () => {
     const { result } = renderHook(() => useProjectChartData(project.id, "week"));
 
     // Verify Sun (Jan 11)
-    const sunData = result.current.find(d => d.date === "Sun");
+    const sunData = result.current.find((d) => d.date === "Sun");
     expect(sunData?.timeSpent).toBe(1); // 1 hour
 
     // Verify Sat (Jan 10)
-    const satData = result.current.find(d => d.date === "Sat");
+    const satData = result.current.find((d) => d.date === "Sat");
     expect(satData?.timeSpent).toBe(1); // 30m + 30m = 1 hour
 
     // Verify Fri (Jan 09)
-    const friData = result.current.find(d => d.date === "Fri");
+    const friData = result.current.find((d) => d.date === "Fri");
     expect(friData?.timeSpent).toBe(0);
   });
 });

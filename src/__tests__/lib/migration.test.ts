@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { del, get, set } from "idb-keyval";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { migrateStorage, STORAGE_KEYS } from "@/lib/storage";
-import { get, set, del } from "idb-keyval";
 
 vi.mock("idb-keyval");
 
@@ -45,22 +45,22 @@ describe("migrateStorage", () => {
     // 1. Projects
     expect(set).toHaveBeenCalledWith(
       STORAGE_KEYS.PROJECTS,
-      expect.stringContaining('"projects":[{"id":"p1","name":"Project 1"}]')
+      expect.stringContaining('"projects":[{"id":"p1","name":"Project 1"}]'),
     );
     // 2. Tasks
     expect(set).toHaveBeenCalledWith(
       STORAGE_KEYS.TASKS,
-      expect.stringContaining('"tasks":[{"id":"t1","title":"Task 1"}]')
+      expect.stringContaining('"tasks":[{"id":"t1","title":"Task 1"}]'),
     );
     // 3. Archive
     expect(set).toHaveBeenCalledWith(
       STORAGE_KEYS.ARCHIVE,
-      expect.stringContaining('"archivedTasks":[{"id":"at1","title":"Archived Task 1"}]')
+      expect.stringContaining('"archivedTasks":[{"id":"at1","title":"Archived Task 1"}]'),
     );
     // 4. Auth
     expect(set).toHaveBeenCalledWith(
       STORAGE_KEYS.AUTH,
-      expect.stringContaining('"session":{"user":{"id":"u1"}}')
+      expect.stringContaining('"session":{"user":{"id":"u1"}}'),
     );
 
     // Verify cleanup

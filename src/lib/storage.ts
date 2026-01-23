@@ -1,5 +1,4 @@
 import { del, get, set } from "idb-keyval";
-import type { StateStorage } from "zustand/middleware";
 
 export const STORAGE_KEYS = {
   PROJECTS: "storage-projects",

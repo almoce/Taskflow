@@ -2,10 +2,10 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useProjects, useUI } from "@/store/useStore";
-import { cn } from "@/lib/utils";
-import { downloadJson } from "@/utils/exportUtils";
 import { useUmami } from "@/hooks/useUmami";
+import { cn } from "@/lib/utils";
+import { useProjects, useUI } from "@/store/useStore";
+import { downloadJson } from "@/utils/exportUtils";
 import { SidebarProjectItem } from "./SidebarProjectItem";
 
 interface SidebarProjectListProps {
@@ -13,14 +13,9 @@ interface SidebarProjectListProps {
 }
 
 export const SidebarProjectList = ({ collapsed }: SidebarProjectListProps) => {
-  const {
-    projects,
-    selectedProjectId,
-    selectProject,
-    deleteProject,
-    getProjectExportData,
-  } = useProjects();
-  
+  const { projects, selectedProjectId, selectProject, deleteProject, getProjectExportData } =
+    useProjects();
+
   const { activeView, setEditingProject, setIsProjectDialogOpen } = useUI();
   const { track } = useUmami();
 

@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { supabase } from "@/lib/supabase";
 import { syncTasks } from "@/lib/syncEngine";
 import { useStore } from "@/store/useStore";
-import { supabase } from "@/lib/supabase";
 
 // Mock Supabase
 vi.mock("@/lib/supabase", () => ({

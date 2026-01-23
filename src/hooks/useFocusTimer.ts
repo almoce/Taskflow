@@ -18,11 +18,11 @@ export function useFocusTimer({
   const [showSummary, setShowSummary] = useState(false);
   const [summaryNote, setSummaryNote] = useState("");
   const [showCancelDialog, setShowCancelDialog] = useState(false);
-  
+
   // Timer Refs for accurate tracking
   const startTimeRef = useRef<number | null>(null);
   const accumulatedTimeRef = useRef<number>(initialTime);
-  
+
   // Editing state
   const [isEditing, setIsEditing] = useState(false);
   const [editedTime, setEditedTime] = useState(initialTime);
@@ -32,12 +32,12 @@ export function useFocusTimer({
   // Timer logic
   useEffect(() => {
     let interval: number | undefined;
-    
+
     if (isRunning && isFocusModeActive) {
       if (!startTimeRef.current) {
         startTimeRef.current = Date.now();
       }
-      
+
       interval = window.setInterval(() => {
         const now = Date.now();
         const total = accumulatedTimeRef.current + (now - (startTimeRef.current || now));
@@ -52,7 +52,7 @@ export function useFocusTimer({
         startTimeRef.current = null;
       }
     }
-    
+
     return () => {
       clearInterval(interval);
       // Cleanup handled by pause logic above if unmounting while running?
@@ -91,10 +91,10 @@ export function useFocusTimer({
     // Update accumulated time to the new edited time
     accumulatedTimeRef.current = editedTime;
     setElapsedTime(editedTime);
-    
+
     // Resume
-    startTimeRef.current = Date.now(); 
-    
+    startTimeRef.current = Date.now();
+
     setIsDirty(false);
     setIsEditing(false);
     setShowConfirmResume(false);
@@ -118,7 +118,8 @@ export function useFocusTimer({
 
       // Don't intercept global keys if we are editing text (like inputs)
       // Exception: We might want Escape to cancel editing
-      const isInput = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
+      const isInput =
+        e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
 
       if (e.key === "Escape") {
         if (showSummary) {
@@ -128,16 +129,22 @@ export function useFocusTimer({
         } else if (showConfirmResume) {
           setShowConfirmResume(false);
         } else if (isEditing) {
-           setIsEditing(false);
-           // Optional: Reset edited time?
+          setIsEditing(false);
+          // Optional: Reset edited time?
         } else {
           handleCloseAttempt();
         }
       }
 
-      if (e.code === "Space" && !showSummary && !showCancelDialog && !showConfirmResume && !isEditing) {
+      if (
+        e.code === "Space" &&
+        !showSummary &&
+        !showCancelDialog &&
+        !showConfirmResume &&
+        !isEditing
+      ) {
         if (isInput) return;
-        
+
         e.preventDefault();
         toggleTimer();
       }
@@ -145,7 +152,15 @@ export function useFocusTimer({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isFocusModeActive, showSummary, showCancelDialog, elapsedTime, isRunning, isDirty, showConfirmResume, isEditing]);
+  }, [
+    isFocusModeActive,
+    showSummary,
+    showCancelDialog,
+    showConfirmResume,
+    isEditing,
+    handleCloseAttempt,
+    toggleTimer,
+  ]);
 
   // Auto-start timer when focus mode starts
   useEffect(() => {
@@ -154,7 +169,7 @@ export function useFocusTimer({
       setElapsedTime(initialTime);
       accumulatedTimeRef.current = initialTime; // Reset accumulator
       startTimeRef.current = null; // Will be set by timer effect
-      
+
       setEditedTime(initialTime);
       setIsDirty(false);
       setShowSummary(false);
@@ -162,13 +177,13 @@ export function useFocusTimer({
       setShowCancelDialog(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFocusModeActive, task?.id]);
+  }, [isFocusModeActive, task?.id, task, initialTime]);
 
   // Sync editedTime with elapsedTime when running
   useEffect(() => {
     if (isRunning) {
-        setEditedTime(elapsedTime);
-        setIsDirty(false);
+      setEditedTime(elapsedTime);
+      setIsDirty(false);
     }
   }, [elapsedTime, isRunning]);
 
@@ -198,7 +213,7 @@ export function useFocusTimer({
     setShowCancelDialog,
     handleCloseAttempt,
     handleConfirmCancel,
-    
+
     // New Editing Props
     isEditing,
     setIsEditing,

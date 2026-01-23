@@ -74,7 +74,7 @@ export function TaskCard({
           {task.title}
         </p>
         <div className="flex items-center gap-0.5">
-          {!isDone && onStartFocus && (
+          {!isDone && onStartFocus ? (
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
                 <Button
@@ -95,7 +95,23 @@ export function TaskCard({
                 <p className="text-xs font-semibold">Start Focus</p>
               </TooltipContent>
             </Tooltip>
-          )}
+          ) : isDone && onArchive ? (
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onArchive}
+                  className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 text-muted-foreground hover:text-foreground"
+                >
+                  <Archive className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="text-xs font-semibold">Archive Task</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -199,7 +215,7 @@ export function TaskCard({
               <p className="text-xs">Total time spent</p>
             </TooltipContent>
           </Tooltip>
-        ) : null }
+        ) : null}
 
         {hasDescription && (
           <Tooltip delayDuration={300}>

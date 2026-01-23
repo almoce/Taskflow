@@ -29,15 +29,17 @@ describe("Sync Engine - syncTasks (Time Tracking)", () => {
   it("should merge local timeSpentPerDay when remote is empty but newer", async () => {
     const mockSession = { user: { id: "user1" } };
     const mockUpsertTask = vi.fn();
-    
+
     // Local task has time data
-    const mockLocalTasks = [{ 
-      id: "t1", 
-      updatedAt: "2023-01-01T00:00:00Z", 
-      title: "Local Task",
-      timeSpentPerDay: { "2023-01-01": 3600 } 
-    }];
-    
+    const mockLocalTasks = [
+      {
+        id: "t1",
+        updatedAt: "2023-01-01T00:00:00Z",
+        title: "Local Task",
+        timeSpentPerDay: { "2023-01-01": 3600 },
+      },
+    ];
+
     // Remote task is newer but has empty time data (simulating migration gap)
     const mockRemoteTasks = [
       {
@@ -45,7 +47,7 @@ describe("Sync Engine - syncTasks (Time Tracking)", () => {
         updated_at: "2023-01-02T00:00:00Z",
         title: "Remote Task Updated",
         created_at: "2023-01-01",
-        time_spent_per_day: null // or {}
+        time_spent_per_day: null, // or {}
       },
     ];
 
@@ -60,7 +62,7 @@ describe("Sync Engine - syncTasks (Time Tracking)", () => {
 
     (supabase.from as any).mockReturnValue({
       select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({ data: mockRemoteTasks, error: null })
+        eq: vi.fn().mockResolvedValue({ data: mockRemoteTasks, error: null }),
       }),
       upsert: vi.fn().mockResolvedValue({ error: null }),
     });

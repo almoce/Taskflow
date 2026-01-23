@@ -1,21 +1,16 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { FocusOverlay } from "@/components/focus/FocusOverlay";
-import { PricingModal } from "@/components/modals/PricingModal";
-import { ProjectDialog } from "@/components/project-view/ProjectDialog";
-import { ProjectSidebar } from "@/components/layout/Sidebar";
 import { AnalyticsView } from "@/components/dashboard/AnalyticsView";
 import { DashboardHome } from "@/components/dashboard/DashboardHome";
 import { ProjectDetailView } from "@/components/dashboard/ProjectDetailView";
+import { FocusOverlay } from "@/components/focus/FocusOverlay";
+import { ProjectSidebar } from "@/components/layout/Sidebar";
+import { PricingModal } from "@/components/modals/PricingModal";
+import { ProjectDialog } from "@/components/project-view/ProjectDialog";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 import { syncArchivedTasks, syncTasks } from "@/lib/syncEngine";
-import {
-  useAuth,
-  useProjects,
-  useTasks,
-  useUI,
-} from "@/store/useStore";
+import { useAuth, useProjects, useUI } from "@/store/useStore";
 
 const DashboardPage = () => {
   useRealtimeSync();
@@ -23,9 +18,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { fetchProfile: refreshProfile } = useAuth();
 
-  const {
-    selectedProjectId,
-  } = useProjects();
+  const { selectedProjectId } = useProjects();
 
   const { activeView, isPricingModalOpen, setIsPricingModalOpen } = useUI();
 
@@ -63,9 +56,9 @@ const DashboardPage = () => {
           {activeView === "analytics" ? (
             <AnalyticsView />
           ) : selectedProjectId ? (
-              <ProjectDetailView />
+            <ProjectDetailView />
           ) : (
-              <DashboardHome />
+            <DashboardHome />
           )}
         </div>
       </main>

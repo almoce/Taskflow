@@ -7,13 +7,15 @@ import {
   startOfWeek,
   subDays,
   subMonths,
+  subWeeks,
 } from "date-fns";
 import { useMemo } from "react";
 import { useStore } from "@/store/useStore";
 
 export function useProjectChartData(
   projectId: string | null,
-  timeRange: "week" | "month" = "week",
+  timeRange: "week" | "month" | "last_7_days" = "week",
+  weekOffset: number = 0,
 ) {
   const tasks = useStore((state) => state.tasks);
   const archivedTasks = useStore((state) => state.archivedTasks);
@@ -25,15 +27,26 @@ export function useProjectChartData(
     const projectTasks = allTasks.filter((t) => t.projectId === projectId);
     const today = startOfDay(new Date());
 
-    if (timeRange === "week") {
-      const days = eachDayOfInterval({
-        start: subDays(today, 6),
-        end: today,
-      });
+    if (timeRange === "week" || timeRange === "last_7_days") {
+      let start: Date;
+      let end: Date;
+
+      if (timeRange === "last_7_days") {
+        start = subDays(today, 6);
+        end = today;
+      } else {
+        // "week" - Monday based
+        const currentWeekStart = startOfWeek(today, { weekStartsOn: 1 });
+        const targetWeekStart = subWeeks(currentWeekStart, weekOffset);
+        start = targetWeekStart;
+        end = subDays(targetWeekStart, -6);
+      }
+      
+      const days = eachDayOfInterval({ start, end });
 
       return days.map((day) => {
         const dayStr = format(day, "yyyy-MM-dd");
-        
+
         const completed = projectTasks.filter((task) => {
           if (!task.completedAt) return false;
           const completedDate = startOfDay(new Date(task.completedAt));
@@ -58,6 +71,7 @@ export function useProjectChartData(
         };
       });
     } else {
+      // month view
       const weeks = eachWeekOfInterval({
         start: subMonths(today, 1),
         end: today,
@@ -96,5 +110,5 @@ export function useProjectChartData(
         };
       });
     }
-  }, [tasks, archivedTasks, projectId, timeRange]);
+  }, [tasks, archivedTasks, projectId, timeRange, weekOffset]);
 }

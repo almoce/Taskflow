@@ -1,3 +1,5 @@
+import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,11 +12,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useFocusTimer } from "@/hooks/useFocusTimer";
 import { useFocus, useTasks } from "@/store/useStore";
-import { AnimatePresence, motion } from "framer-motion";
-import { toast } from "sonner";
+import { formatDuration } from "@/utils/time";
 import { FocusSessionSummary } from "./FocusSessionSummary";
 import { FocusTimerView } from "./FocusTimerView";
-import { formatDuration } from "@/utils/time";
 
 export function FocusOverlay() {
   const {
@@ -42,7 +42,7 @@ export function FocusOverlay() {
     setShowCancelDialog,
     handleCloseAttempt,
     handleConfirmCancel,
-    
+
     // Editing props
     isEditing,
     editedTime,
@@ -114,7 +114,6 @@ export function FocusOverlay() {
                 setShowSummary(true);
               }}
               onClose={handleCloseAttempt}
-              
               // Editing props
               isEditing={!isRunning} // Always allow editing when paused
               editedTime={editedTime}
@@ -142,12 +141,18 @@ export function FocusOverlay() {
             <AlertDialogHeader>
               <AlertDialogTitle>End Focus Session?</AlertDialogTitle>
               <AlertDialogDescription>
-                The elapsed time for this session will be discarded, and the task status will revert to its previous state.
+                The elapsed time for this session will be discarded, and the task status will revert
+                to its previous state.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setIsRunning(true)}>Continue Session</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmCancel} className="bg-destructive hover:bg-destructive/90">
+              <AlertDialogCancel onClick={() => setIsRunning(true)}>
+                Continue Session
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmCancel}
+                className="bg-destructive hover:bg-destructive/90"
+              >
                 Discard Session
               </AlertDialogAction>
             </AlertDialogFooter>

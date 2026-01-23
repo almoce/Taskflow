@@ -3,25 +3,16 @@ import { toast } from "sonner";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { ProjectOverview } from "@/components/dashboard/ProjectOverview";
 import { TaskSearch } from "@/components/tasks/TaskSearch";
-import { useArchivedTasks, useFocus, useProjects, useTasks, useUI } from "@/store/useStore";
 import { useUmami } from "@/hooks/useUmami";
+import { useArchivedTasks, useFocus, useProjects, useTasks, useUI } from "@/store/useStore";
 import type { Task } from "@/types/task";
 import { downloadJson } from "@/utils/exportUtils";
 
 export function DashboardHome() {
   const { track } = useUmami();
-  const {
-    projects,
-    selectProject,
-    deleteProject,
-    getProjectExportData,
-  } = useProjects();
-  
-  const {
-    tasks,
-    updateTask,
-    deleteTask,
-  } = useTasks();
+  const { projects, selectProject, deleteProject, getProjectExportData } = useProjects();
+
+  const { tasks, updateTask, deleteTask } = useTasks();
 
   const { archivedTasks, deleteArchivedTask } = useArchivedTasks();
   const { startFocusSession } = useFocus();
@@ -37,19 +28,22 @@ export function DashboardHome() {
     setIsProjectDialogOpen(true);
   };
 
-  const stats = useMemo(() => ({
-    totalProjects: projects.length,
-    totalTasks: tasks.length + archivedTasks.length,
-    completedToday: [...tasks, ...archivedTasks].filter((t) => {
-      if (!t.completedAt) return false;
-      const today = new Date().toDateString();
-      return new Date(t.completedAt).toDateString() === today;
-    }).length,
-    overdue: tasks.filter((t) => {
-      if (!t.dueDate || t.status === "done") return false;
-      return new Date(t.dueDate) < new Date();
-    }).length,
-  }), [projects.length, tasks, archivedTasks]);
+  const stats = useMemo(
+    () => ({
+      totalProjects: projects.length,
+      totalTasks: tasks.length + archivedTasks.length,
+      completedToday: [...tasks, ...archivedTasks].filter((t) => {
+        if (!t.completedAt) return false;
+        const today = new Date().toDateString();
+        return new Date(t.completedAt).toDateString() === today;
+      }).length,
+      overdue: tasks.filter((t) => {
+        if (!t.dueDate || t.status === "done") return false;
+        return new Date(t.dueDate) < new Date();
+      }).length,
+    }),
+    [projects.length, tasks, archivedTasks],
+  );
 
   const handleUnifiedDeleteTask = (id: string) => {
     if (tasks.some((t) => t.id === id)) {

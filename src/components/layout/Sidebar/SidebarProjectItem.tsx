@@ -44,10 +44,7 @@ export const SidebarProjectItem = ({
         {project.icon ? (
           <span className="text-sm shrink-0">{project.icon}</span>
         ) : (
-          <div
-            className="w-2 h-2 rounded-sm shrink-0"
-            style={{ backgroundColor: project.color }}
-          />
+          <div className="w-2 h-2 rounded-sm shrink-0" style={{ backgroundColor: project.color }} />
         )}
         {!collapsed && (
           <span

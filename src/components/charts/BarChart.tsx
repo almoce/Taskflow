@@ -49,11 +49,7 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
       .range([0, innerWidth])
       .padding(0.3);
 
-    const x1 = d3
-      .scaleBand()
-      .domain(["timeSpent"])
-      .range([0, x0.bandwidth()])
-      .padding(0.1);
+    const x1 = d3.scaleBand().domain(["timeSpent"]).range([0, x0.bandwidth()]).padding(0.1);
 
     const maxTimeMs = d3.max(data, (d) => d.timeSpent || 0) || 0;
     const maxTimeHours = maxTimeMs / (1000 * 60 * 60);
@@ -86,7 +82,12 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
       );
 
     g.append("g")
-      .call(d3.axisLeft(y).ticks(5).tickFormat((v) => `${v}h`))
+      .call(
+        d3
+          .axisLeft(y)
+          .ticks(5)
+          .tickFormat((v) => `${v}h`),
+      )
       .call((g) => g.select(".domain").attr("stroke", "var(--border)"))
       .call((g) => g.selectAll(".tick line").attr("stroke", "var(--border)"))
       .call((g) =>
@@ -109,8 +110,8 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
 
       if (breakdown.length > 0) {
         let currentY = innerHeight;
-        
-        breakdown.forEach((p, i) => {
+
+        breakdown.forEach((p, _i) => {
           const barHeight = innerHeight - y(p.timeSpent / (1000 * 60 * 60));
           const targetY = currentY - barHeight;
 
@@ -156,7 +157,7 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
             .ease(d3.easeCubicOut)
             .attr("y", targetY)
             .attr("height", barHeight);
-          
+
           currentY = targetY;
         });
       } else {

@@ -1,18 +1,15 @@
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowLeft, Ghost } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
     // Log the error but don't disrupt the user experience
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname,
-    );
+    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 
   return (
@@ -37,7 +34,7 @@ const NotFound = () => {
             }}
             className="absolute inset-0 rounded-full bg-primary/20 blur-3xl"
           />
-          
+
           <motion.div
             animate={{
               y: [0, -20, 0],
@@ -73,14 +70,12 @@ const NotFound = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h1 className="mb-4 text-4xl font-bold tracking-tight lg:text-5xl">
-            Page Not Found
-          </h1>
+          <h1 className="mb-4 text-4xl font-bold tracking-tight lg:text-5xl">Page Not Found</h1>
           <p className="mb-8 text-xl text-muted-foreground">
             Oops! It seems this task has slipped into the void. <br />
             The page you're looking for doesn't exist or has been moved.
           </p>
-          
+
           <Button asChild size="lg" className="group">
             <Link to="/">
               <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />

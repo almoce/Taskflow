@@ -20,14 +20,10 @@ import { useProjects, useUI } from "@/store/useStore";
 import { PROJECT_COLORS } from "@/types/task";
 
 export function ProjectDialog() {
-  const {
-    isProjectDialogOpen,
-    setIsProjectDialogOpen,
-    editingProject,
-    setEditingProject,
-  } = useUI();
+  const { isProjectDialogOpen, setIsProjectDialogOpen, editingProject, setEditingProject } =
+    useUI();
   const { addProject, updateProject, importProject } = useProjects();
-  
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState(PROJECT_COLORS[0]);

@@ -82,7 +82,7 @@ export function ChangePasswordModal({ open, onOpenChange }: ChangePasswordModalP
         onOpenChange(false);
         form.reset();
       }
-    } catch (e) {
+    } catch (_e) {
       toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);

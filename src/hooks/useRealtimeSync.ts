@@ -220,5 +220,6 @@ export const useRealtimeSync = () => {
     deleteProject,
     deleteTask,
     deleteArchivedTask,
+    session?.user,
   ]);
 };

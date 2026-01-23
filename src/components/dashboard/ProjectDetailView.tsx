@@ -5,11 +5,9 @@ import { KanbanBoard } from "@/components/project-view/kanban/KanbanBoard";
 import { ProjectHeader, type ViewMode } from "@/components/project-view/ProjectHeader";
 import { ProjectSummary } from "@/components/project-view/ProjectSummary";
 import { NewTaskDialog } from "@/components/tasks/NewTaskDialog";
+import { useUmami } from "@/hooks/useUmami";
 import { useFocus, useProjects, useTasks } from "@/store/useStore";
 import type { Priority, Task } from "@/types/task";
-import { useUmami } from "@/hooks/useUmami";
-
-
 
 export function ProjectDetailView() {
   const { track } = useUmami();
@@ -18,16 +16,11 @@ export function ProjectDetailView() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const { projects, selectedProjectId: projectId } = useProjects();
-  const {
-    addTask,
-    updateTask,
-  } = useTasks();
+  const { addTask, updateTask } = useTasks();
   const { startFocusSession } = useFocus();
 
   const project = useMemo(() => projects.find((p) => p.id === projectId), [projects, projectId]);
-  
 
-  
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
     track("view_mode_change", { mode });
@@ -37,7 +30,7 @@ export function ProjectDetailView() {
     setEditingTask(task);
     setShowNewTask(true);
   };
-  
+
   const handleAddTask = (
     title: string,
     description?: string,
@@ -61,24 +54,15 @@ export function ProjectDetailView() {
 
   return (
     <div className="space-y-6">
-      <ProjectHeader
-        project={project}
-        currentView={viewMode}
-        onViewChange={handleViewModeChange}
-      />
+      <ProjectHeader project={project} currentView={viewMode} onViewChange={handleViewModeChange} />
 
       <ProjectSummary projectId={project.id} projectColor={project.color} />
 
       <div className="pt-2">
         {viewMode === "kanban" ? (
-          <KanbanBoard
-            onAddTask={() => setShowNewTask(true)}
-            onEditTask={handleEditTask}
-          />
+          <KanbanBoard onAddTask={() => setShowNewTask(true)} onEditTask={handleEditTask} />
         ) : viewMode === "calendar" ? (
-          <CalendarView
-            onAddTask={() => setShowNewTask(true)}
-          />
+          <CalendarView onAddTask={() => setShowNewTask(true)} />
         ) : (
           <ArchivedView />
         )}
@@ -87,8 +71,8 @@ export function ProjectDetailView() {
       <NewTaskDialog
         open={showNewTask}
         onOpenChange={(open) => {
-            setShowNewTask(open);
-            if (!open) setEditingTask(null);
+          setShowNewTask(open);
+          if (!open) setEditingTask(null);
         }}
         onSubmit={handleAddTask}
         editTask={editingTask}

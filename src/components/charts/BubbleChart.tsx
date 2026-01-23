@@ -101,7 +101,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
         radius: 8,
       } as TaskNode;
     });
-  }, [tasks, groupBy]);
+  }, [tasks, groupBy, projects?.find]);
 
   useEffect(() => {
     if (!svgRef.current || !nodes.length) return;
@@ -273,7 +273,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
       .on("mousemove", (event) => {
         setTooltipData((prev) => ({ ...prev, x: event.clientX, y: event.clientY }));
       })
-      .on("mouseleave", function (event, d) {
+      .on("mouseleave", function (_event, d) {
         d3.select(this)
           .select("circle")
           .transition()
@@ -289,7 +289,7 @@ export function BubbleChart({ tasks, projects, groupBy, height = 400 }: BubbleCh
     simulation.on("tick", () => {
       bubblesMerged.attr("transform", (d) => `translate(${d.x},${d.y})`);
     });
-  }, [nodes, height]);
+  }, [nodes, height, groupBy]);
 
   useEffect(() => {
     return () => {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ProductivityCharts } from "@/components/analytics/ProductivityCharts";
 import {
   Select,
   SelectContent,
@@ -6,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ProductivityCharts } from "@/components/analytics/ProductivityCharts";
 import { useArchivedTasks, useProjects, useTasks } from "@/store/useStore";
 
 export function AnalyticsView() {

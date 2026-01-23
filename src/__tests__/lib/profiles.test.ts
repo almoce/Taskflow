@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { supabase } from "@/lib/supabase";
 
 vi.mock("@/lib/supabase", () => ({
   supabase: {
-    from: vi.fn((table: string) => ({
+    from: vi.fn((_table: string) => ({
       select: vi.fn(() => ({
         limit: vi.fn(() => Promise.resolve({ data: [], error: null })),
       })),

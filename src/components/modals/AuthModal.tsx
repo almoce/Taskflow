@@ -94,7 +94,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       if (error) {
         toast.error(error.message);
       }
-    } catch (e) {
+    } catch (_e) {
       toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -118,7 +118,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       } else {
         toast.success("Password reset email sent! Check your inbox.");
       }
-    } catch (e) {
+    } catch (_e) {
       toast.error("An unexpected error occurred");
     }
   };

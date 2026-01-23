@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import { Clock, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 interface FocusSessionSummaryProps {
   elapsedTime: number;
@@ -49,11 +49,12 @@ export function FocusSessionSummary({
       >
         <div className="space-y-4">
           <div className="flex justify-center mb-6">
-             <Clock className="h-12 w-12 text-muted-foreground/50" />
+            <Clock className="h-12 w-12 text-muted-foreground/50" />
           </div>
           <h3 className="text-2xl font-medium tracking-tight">Session Complete</h3>
           <p className="text-muted-foreground text-lg">
-            Time focused: <span className="text-foreground font-semibold">{formatTime(elapsedTime)}</span>
+            Time focused:{" "}
+            <span className="text-foreground font-semibold">{formatTime(elapsedTime)}</span>
           </p>
         </div>
 

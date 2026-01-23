@@ -24,12 +24,12 @@ import {
 } from "date-fns";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
+import { TaskCard } from "@/components/tasks/TaskCard";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useFocus, useProjects, useTasks } from "@/store/useStore";
 import type { Task } from "@/types/task";
-import { TaskCard } from "@/components/tasks/TaskCard";
 
 interface CalendarViewProps {
   onAddTask?: () => void;
@@ -99,9 +99,9 @@ export function CalendarView({ onAddTask }: CalendarViewProps) {
 
   const tasks = useMemo(
     () => (selectedProjectId ? allTasks.filter((t) => t.projectId === selectedProjectId) : []),
-    [allTasks, selectedProjectId]
+    [allTasks, selectedProjectId],
   );
-  
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -338,7 +338,9 @@ export function CalendarView({ onAddTask }: CalendarViewProps) {
                             onUpdate={(updates) => updateTask(task.id, updates)}
                             onDelete={() => deleteTask(task.id)}
                             onArchive={() => archiveTask(task.id)}
-                            onStartFocus={startFocusSession ? () => startFocusSession(task.id) : undefined}
+                            onStartFocus={
+                              startFocusSession ? () => startFocusSession(task.id) : undefined
+                            }
                           />
                         </DraggableTask>
                       ))}

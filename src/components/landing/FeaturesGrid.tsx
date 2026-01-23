@@ -1,4 +1,4 @@
-import { ArrowUpRight, Cloud, Database, Layout, Lock, Plus, Shield, Zap } from "lucide-react";
+import { Cloud, Database, Layout, Lock, Shield, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const FeatureCard = ({

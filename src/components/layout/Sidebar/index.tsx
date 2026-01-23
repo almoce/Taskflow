@@ -10,7 +10,7 @@ import { SidebarProjectList } from "./SidebarProjectList";
 export const ProjectSidebar = () => {
   const { selectedProjectId, selectProject } = useProjects();
   const { activeView, setActiveView } = useUI();
-  
+
   const [collapsed, setCollapsed] = useState(() => {
     const stored = localStorage.getItem("sidebar-collapsed");
     return stored ? JSON.parse(stored) : false;

@@ -12,8 +12,6 @@ import { createTaskSlice } from "./slices/createTaskSlice";
 import { createUISlice } from "./slices/createUISlice";
 import type { StoreState } from "./types";
 
-
-
 export const useStore = create<StoreState>()(
   persist(
     (set, get, api) => ({

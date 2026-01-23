@@ -1,5 +1,5 @@
-import { useMemo } from "react";
 import { BarChart3 } from "lucide-react";
+import { useMemo } from "react";
 import { BarChart } from "@/components/charts/BarChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -11,7 +11,7 @@ interface CompletionBreakdownChartProps {
 export function CompletionBreakdownChart({ data, timeRange }: CompletionBreakdownChartProps) {
   const allProjects = useMemo(() => {
     const projectMap = new Map();
-    data.forEach(d => {
+    data.forEach((d) => {
       d.projectBreakdown?.forEach((p: any) => {
         if (!projectMap.has(p.id)) {
           projectMap.set(p.id, { name: p.name, color: p.color });
@@ -37,9 +37,9 @@ export function CompletionBreakdownChart({ data, timeRange }: CompletionBreakdow
               {allProjects.length > 0 ? (
                 allProjects.map((project, i) => (
                   <div key={i} className="flex items-center gap-2 flex-shrink-0">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: project.color || "#f59e0b" }} 
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: project.color || "#f59e0b" }}
                     />
                     <span className="text-muted-foreground whitespace-nowrap">{project.name}</span>
                   </div>

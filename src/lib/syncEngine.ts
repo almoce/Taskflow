@@ -56,7 +56,7 @@ export const syncProjects = async () => {
   if (toUpload.length > 0) {
     const payload = toUpload.map((p) => ({
       id: p.id,
-      user_id: session.user!.id,
+      user_id: session.user?.id,
       name: p.name,
       description: p.description,
       color: p.color,
@@ -66,7 +66,7 @@ export const syncProjects = async () => {
     }));
 
     console.log("DEBUG: Uploading projects payload:", payload);
-    console.log("DEBUG: Current User ID:", session.user!.id);
+    console.log("DEBUG: Current User ID:", session.user?.id);
 
     const { error: uploadError } = await supabase.from("projects").upsert(payload);
     if (uploadError) console.error("Error uploading projects:", uploadError);
@@ -97,7 +97,7 @@ export const syncTasks = async (projectId?: string) => {
     .filter((remote) => !pendingDeleteTaskIds.includes(remote.id))
     .forEach((remote) => {
       const local = localTasks.find((t) => t.id === remote.id);
-      
+
       const mappedRemote: Task = {
         id: remote.id,
         projectId: remote.project_id,
@@ -153,7 +153,7 @@ export const syncTasks = async (projectId?: string) => {
     const { error: uploadError } = await supabase.from("tasks").upsert(
       toUpload.map((t) => ({
         id: t.id,
-        user_id: session.user!.id,
+        user_id: session.user?.id,
         project_id: t.projectId,
         title: t.title,
         description: t.description,
@@ -202,7 +202,7 @@ export const syncArchivedTasks = async (projectId?: string) => {
     .filter((remote) => !pendingDeleteArchivedTaskIds.includes(remote.id))
     .forEach((remote) => {
       const local = localTasks.find((t) => t.id === remote.id);
-      
+
       const mappedRemote: Task = {
         id: remote.id,
         projectId: remote.project_id,
@@ -255,7 +255,7 @@ export const syncArchivedTasks = async (projectId?: string) => {
     const { error: uploadError } = await supabase.from("archived_tasks").upsert(
       toUpload.map((t) => ({
         id: t.id,
-        user_id: session.user!.id,
+        user_id: session.user?.id,
         project_id: t.projectId,
         title: t.title,
         description: t.description,

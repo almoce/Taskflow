@@ -57,8 +57,6 @@ const DESCRIPTIONS = [
   "Make sure to handle edge cases.",
 ];
 
-
-
 const TAGS: TaskTag[] = ["Feature", "Bug", "Improvement"];
 const PRIORITIES: Priority[] = ["high", "medium", "low"];
 
@@ -77,7 +75,6 @@ function subDays(date: Date, days: number) {
   result.setDate(result.getDate() - days);
   return result;
 }
-
 
 export const generateSeedData = () => {
   const store = useStore.getState();
@@ -150,14 +147,14 @@ export const generateSeedData = () => {
       if (status !== "todo") {
         // Random time between 15 mins (900000ms) and 4 hours (14400000ms)
         totalTimeSpent = Math.floor(Math.random() * (14400000 - 900000 + 1)) + 900000;
-        
+
         // Attribute to a date
         let dateStr: string;
         if (completedAt) {
-            dateStr = completedAt.split("T")[0];
+          dateStr = completedAt.split("T")[0];
         } else {
-            // For in-progress, use today or recent
-            dateStr = new Date().toISOString().split("T")[0];
+          // For in-progress, use today or recent
+          dateStr = new Date().toISOString().split("T")[0];
         }
         timeSpentPerDay[dateStr] = totalTimeSpent;
       }

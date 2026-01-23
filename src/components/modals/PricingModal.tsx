@@ -43,7 +43,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
     setLoading(true);
     track("checkout_start");
     try {
-      const returnUrl = window.location.origin + import.meta.env.BASE_URL + "#/app";
+      const returnUrl = `${window.location.origin + import.meta.env.BASE_URL}#/app`;
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: { priceId: PRICE_ID, returnUrl },
       });

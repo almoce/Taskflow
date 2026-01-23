@@ -12,10 +12,10 @@ export function ArchivedView() {
 
   const filteredTasks = useMemo(() => {
     let tasks = archivedTasks;
-    
+
     // Filter by project if one is selected
     if (selectedProjectId) {
-      tasks = tasks.filter(t => t.projectId === selectedProjectId);
+      tasks = tasks.filter((t) => t.projectId === selectedProjectId);
     }
 
     // Filter by search query
@@ -24,10 +24,10 @@ export function ArchivedView() {
       tasks = tasks.filter(
         (task) =>
           task.title.toLowerCase().includes(query) ||
-          task.description?.toLowerCase().includes(query)
+          task.description?.toLowerCase().includes(query),
       );
     }
-    
+
     return tasks;
   }, [archivedTasks, selectedProjectId, searchQuery]);
 

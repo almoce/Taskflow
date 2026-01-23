@@ -1,6 +1,6 @@
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useFocusTimer } from "@/hooks/useFocusTimer";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 describe("useFocusTimer", () => {
   beforeEach(() => {
@@ -15,16 +15,13 @@ describe("useFocusTimer", () => {
     const task1 = { id: "1", description: "Task 1" };
     const task2 = { id: "1", description: "Task 1 Updated" }; // Same ID, different object
 
-    const { result, rerender } = renderHook(
-      (props) => useFocusTimer(props),
-      {
-        initialProps: {
-          isFocusModeActive: true,
-          task: task1,
-          cancelFocusSession: vi.fn(),
-        },
-      }
-    );
+    const { result, rerender } = renderHook((props) => useFocusTimer(props), {
+      initialProps: {
+        isFocusModeActive: true,
+        task: task1,
+        cancelFocusSession: vi.fn(),
+      },
+    });
 
     // Initial state
     expect(result.current.isRunning).toBe(true);
@@ -51,13 +48,13 @@ describe("useFocusTimer", () => {
 
   it("should initialize with initialTime", () => {
     const task = { id: "1", description: "Task 1" };
-    const { result } = renderHook(
-      () => useFocusTimer({
+    const { result } = renderHook(() =>
+      useFocusTimer({
         isFocusModeActive: true,
         task,
         cancelFocusSession: vi.fn(),
         initialTime: 10000, // 10 seconds
-      })
+      }),
     );
 
     expect(result.current.elapsedTime).toBe(10000);

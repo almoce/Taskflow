@@ -21,12 +21,13 @@ describe("ProjectMiniChart", () => {
     render(<ProjectMiniChart projectId="p1" />);
 
     expect(screen.getByText("Week Activity")).toBeInTheDocument();
-    
+
     // Wait for D3 to render
     await waitFor(() => {
-        const svg = screen.getByTestId("mini-chart-svg");
-        expect(svg).toBeInTheDocument();
-        expect(svg.querySelectorAll("path").length).toBe(4);
+      const svg = screen.getByTestId("mini-chart-svg");
+      expect(svg).toBeInTheDocument();
+      // 2 Area paths + 2 Line paths = 4 paths total
+      expect(svg.querySelectorAll("path").length).toBe(4);
     });
   });
 });

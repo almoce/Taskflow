@@ -1,5 +1,5 @@
 import type { StateCreator } from "zustand";
-import type { StoreState, FocusSlice } from "../types";
+import type { FocusSlice, StoreState } from "../types";
 
 export const createFocusSlice: StateCreator<StoreState, [], [], FocusSlice> = (set, get) => ({
   activeFocusTaskId: null,
@@ -10,7 +10,7 @@ export const createFocusSlice: StateCreator<StoreState, [], [], FocusSlice> = (s
     // Also move task to in-progress if it's not already
     const task = get().tasks.find((t) => t.id === taskId);
     let previousStatus = null;
-    
+
     if (task) {
       previousStatus = task.status;
       if (task.status !== "in-progress") {
@@ -47,7 +47,7 @@ export const createFocusSlice: StateCreator<StoreState, [], [], FocusSlice> = (s
 
   cancelFocusSession: () => {
     const { activeFocusTaskId, previousTaskStatus } = get();
-    
+
     if (activeFocusTaskId && previousTaskStatus) {
       // Revert task status
       get().updateTask(activeFocusTaskId, { status: previousTaskStatus });
@@ -65,11 +65,11 @@ export const createFocusSlice: StateCreator<StoreState, [], [], FocusSlice> = (s
     if (!task) return;
 
     const currentTotal = task.totalTimeSpent || 0;
-    
+
     // Track daily time
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     const currentDaily = task.timeSpentPerDay?.[today] || 0;
-    
+
     get().updateTask(taskId, {
       totalTimeSpent: currentTotal + duration,
       timeSpentPerDay: {

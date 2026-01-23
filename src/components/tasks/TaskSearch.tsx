@@ -1,11 +1,11 @@
 import { ChevronDown, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { FilterDropdown, type FilterOption } from "./FilterDropdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Priority, Project, Task, TaskStatus, TaskTag } from "@/types/task";
+import { FilterDropdown, type FilterOption } from "./FilterDropdown";
 import { TaskCard } from "./TaskCard";
 
 interface TaskSearchProps {

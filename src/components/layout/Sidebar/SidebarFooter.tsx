@@ -72,8 +72,7 @@ export const SidebarFooter = ({ collapsed, toggleCollapsed }: SidebarFooterProps
                   variant={isPro ? "default" : "secondary"}
                   className={cn(
                     "absolute -bottom-2 left-1/2 -translate-x-1/2 text-[8px] h-3.5 px-1 py-0 pointer-events-none shadow-sm z-10 whitespace-nowrap",
-                    isPro &&
-                      "bg-gradient-to-r from-purple-500 to-blue-500 border-none text-white",
+                    isPro && "bg-gradient-to-r from-purple-500 to-blue-500 border-none text-white",
                     !isPro && "bg-background border border-border text-muted-foreground",
                   )}
                 >

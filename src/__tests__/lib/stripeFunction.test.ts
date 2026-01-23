@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 vi.mock("@/lib/supabase", () => ({
   supabase: {
     functions: {
-      invoke: vi.fn((name: string, options?: any) => {
+      invoke: vi.fn((name: string, _options?: any) => {
         if (name === "create-checkout-session") {
           return Promise.resolve({ data: { url: "https://checkout.stripe.com/..." }, error: null });
         }

@@ -1,4 +1,4 @@
-import { Check, Minus, Zap } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

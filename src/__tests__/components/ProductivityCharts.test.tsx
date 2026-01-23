@@ -6,16 +6,12 @@ vi.mock("@/components/analytics/charts/CompletionSummary", () => ({
 }));
 vi.mock("@/components/analytics/charts/CompletionTrendChart", () => ({
   CompletionTrendChart: vi.fn(({ data }: any) => (
-    <div data-testid="completion-trend-chart">
-      {JSON.stringify(data)}
-    </div>
+    <div data-testid="completion-trend-chart">{JSON.stringify(data)}</div>
   )),
 }));
 vi.mock("@/components/analytics/charts/CompletionBreakdownChart", () => ({
   CompletionBreakdownChart: vi.fn(({ data }: any) => (
-    <div data-testid="completion-breakdown-chart">
-      {JSON.stringify(data)}
-    </div>
+    <div data-testid="completion-breakdown-chart">{JSON.stringify(data)}</div>
   )),
 }));
 vi.mock("@/components/analytics/charts/TaskDistributionChart", () => ({
@@ -23,9 +19,9 @@ vi.mock("@/components/analytics/charts/TaskDistributionChart", () => ({
 }));
 
 import { render, screen } from "@testing-library/react";
+import { format, startOfDay, subDays } from "date-fns";
 import { ProductivityCharts } from "@/components/analytics/ProductivityCharts";
 import type { Task } from "@/types/task";
-import { format, subDays, startOfDay } from "date-fns";
 
 describe("ProductivityCharts", () => {
   const today = startOfDay(new Date());
@@ -53,17 +49,17 @@ describe("ProductivityCharts", () => {
 
   it("should calculate timeSpent correctly in completionData", () => {
     render(<ProductivityCharts tasks={mockTasks} projects={[]} />);
-    
+
     const trendChart = screen.getByTestId("completion-trend-chart");
     const data = JSON.parse(trendChart.textContent || "[]");
-    
+
     // Find today's and yesterday's data in the week view (default)
     const todayData = data.find((d: any) => d.fullDate === format(today, "MMM d"));
     const yesterdayData = data.find((d: any) => d.fullDate === format(yesterday, "MMM d"));
-    
+
     expect(yesterdayData).toBeDefined();
     expect(yesterdayData.timeSpent).toBe(3600000); // 1h
-    
+
     expect(todayData).toBeDefined();
     expect(todayData.timeSpent).toBe(1800000); // 30m
   });

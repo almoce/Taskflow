@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Activity } from "lucide-react";
+import { useState } from "react";
 import { BubbleChart } from "@/components/charts/BubbleChart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Project, Task } from "@/types/task";
@@ -43,12 +43,7 @@ export function TaskDistributionChart({ tasks, projects }: TaskDistributionChart
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">
-          <BubbleChart
-            tasks={tasks}
-            projects={projects}
-            groupBy={distributionMode}
-            height={400}
-          />
+          <BubbleChart tasks={tasks} projects={projects} groupBy={distributionMode} height={400} />
         </div>
       </CardContent>
     </Card>

@@ -1,6 +1,6 @@
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useFocusTimer } from "@/hooks/useFocusTimer";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 describe("useFocusTimer Editing Logic", () => {
   beforeEach(() => {
@@ -12,12 +12,14 @@ describe("useFocusTimer Editing Logic", () => {
   });
 
   it("should track dirty state when time is edited", () => {
-    const { result } = renderHook(() => useFocusTimer({
-      isFocusModeActive: true,
-      task: { id: "1" },
-      cancelFocusSession: vi.fn(),
-      initialTime: 0,
-    }));
+    const { result } = renderHook(() =>
+      useFocusTimer({
+        isFocusModeActive: true,
+        task: { id: "1" },
+        cancelFocusSession: vi.fn(),
+        initialTime: 0,
+      }),
+    );
 
     // Initially not dirty
     expect(result.current.isDirty).toBe(false);
@@ -32,12 +34,14 @@ describe("useFocusTimer Editing Logic", () => {
   });
 
   it("should show confirmation when resuming with dirty state", () => {
-    const { result } = renderHook(() => useFocusTimer({
-      isFocusModeActive: true,
-      task: { id: "1" },
-      cancelFocusSession: vi.fn(),
-      initialTime: 0,
-    }));
+    const { result } = renderHook(() =>
+      useFocusTimer({
+        isFocusModeActive: true,
+        task: { id: "1" },
+        cancelFocusSession: vi.fn(),
+        initialTime: 0,
+      }),
+    );
 
     // Pause timer
     act(() => {
@@ -59,12 +63,14 @@ describe("useFocusTimer Editing Logic", () => {
   });
 
   it("should update elapsed time and resume on confirm", () => {
-    const { result } = renderHook(() => useFocusTimer({
-      isFocusModeActive: true,
-      task: { id: "1" },
-      cancelFocusSession: vi.fn(),
-      initialTime: 0,
-    }));
+    const { result } = renderHook(() =>
+      useFocusTimer({
+        isFocusModeActive: true,
+        task: { id: "1" },
+        cancelFocusSession: vi.fn(),
+        initialTime: 0,
+      }),
+    );
 
     // Edit time
     act(() => {

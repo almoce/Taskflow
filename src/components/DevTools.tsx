@@ -33,7 +33,7 @@ export const DevTools = () => {
 
     if (error) {
       console.error("Test Insert Error:", error);
-      toast.error("Insert Failed: " + error.message);
+      toast.error(`Insert Failed: ${error.message}`);
     } else {
       toast.success("Insert Success!");
     }
@@ -61,7 +61,7 @@ export const DevTools = () => {
       .single();
     if (error) {
       console.error("Test Read Error:", error);
-      toast.error("Read Profile Failed: " + error.message);
+      toast.error(`Read Profile Failed: ${error.message}`);
     } else {
       console.log("Profile Read:", data);
       toast.success("Read Profile Success!");

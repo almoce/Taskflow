@@ -13,6 +13,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-
 import { CSS } from "@dnd-kit/utilities";
 import { Filter, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { TaskCard } from "@/components/tasks/TaskCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +29,6 @@ import { cn } from "@/lib/utils";
 import { useFocus, useProjects, useStore, useTasks } from "@/store/useStore";
 import type { Priority, Task, TaskStatus, TaskTag } from "@/types/task";
 import { ColumnSortControls } from "./ColumnSortControls";
-import { TaskCard } from "@/components/tasks/TaskCard";
 
 interface KanbanBoardProps {
   onAddTask: () => void;
@@ -170,7 +170,7 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
 
   const projectTasks = useMemo(
     () => (selectedProjectId ? tasks.filter((t) => t.projectId === selectedProjectId) : []),
-    [tasks, selectedProjectId]
+    [tasks, selectedProjectId],
   );
 
   const filteredTasks = useMemo(() => {

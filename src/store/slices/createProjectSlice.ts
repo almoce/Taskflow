@@ -55,7 +55,7 @@ export const createProjectSlice: StateCreator<StoreState, [], [], ProjectSlice> 
 
   selectProject: (id) => {
     // Cross-slice state update: resetting active view to 'tasks'
-    set((state) => ({ selectedProjectId: id, activeView: "tasks" }));
+    set((_state) => ({ selectedProjectId: id, activeView: "tasks" }));
   },
 
   importProject: (data) => {
