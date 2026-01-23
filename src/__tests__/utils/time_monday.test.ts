@@ -7,7 +7,7 @@ describe("Monday Week Utilities", () => {
       // Mock date: Wednesday, Jan 22, 2026
       const date = new Date("2026-01-22T12:00:00Z");
       const monday = getStartOfMondayWeek(date, 0);
-      
+
       expect(monday.toISOString()).toContain("2026-01-19"); // Monday Jan 19
     });
 
@@ -15,7 +15,7 @@ describe("Monday Week Utilities", () => {
       // Mock date: Wednesday, Jan 22, 2026
       const date = new Date("2026-01-22T12:00:00Z");
       const lastMonday = getStartOfMondayWeek(date, 1);
-      
+
       expect(lastMonday.toISOString()).toContain("2026-01-12"); // Monday Jan 12
     });
 
@@ -23,7 +23,7 @@ describe("Monday Week Utilities", () => {
       // Mock date: Sunday, Jan 25, 2026
       const date = new Date("2026-01-25T12:00:00Z");
       const monday = getStartOfMondayWeek(date, 0);
-      
+
       expect(monday.toISOString()).toContain("2026-01-19"); // Monday Jan 19
     });
 
@@ -31,7 +31,7 @@ describe("Monday Week Utilities", () => {
       // Mock date: Monday, Jan 19, 2026
       const date = new Date("2026-01-19T12:00:00Z");
       const monday = getStartOfMondayWeek(date, 0);
-      
+
       expect(monday.toISOString()).toContain("2026-01-19"); // Monday Jan 19
     });
   });
@@ -41,7 +41,7 @@ describe("Monday Week Utilities", () => {
       // Mock date: Wednesday, Jan 22, 2026
       const date = new Date("2026-01-22T12:00:00Z");
       const label = getWeekRangeLabel(date, 0);
-      
+
       // Week is Mon Jan 19 - Sun Jan 25
       expect(label).toBe("Jan 19 - Jan 25");
     });
@@ -50,7 +50,7 @@ describe("Monday Week Utilities", () => {
       // Mock date: Wednesday, Jan 22, 2026
       const date = new Date("2026-01-22T12:00:00Z");
       const label = getWeekRangeLabel(date, 1);
-      
+
       // Week is Mon Jan 12 - Sun Jan 18
       expect(label).toBe("Jan 12 - Jan 18");
     });

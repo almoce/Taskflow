@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ProductivityCharts } from "@/components/analytics/ProductivityCharts";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -43,7 +43,7 @@ describe("ProductivityCharts Toggle", () => {
     render(
       <TooltipProvider>
         <ProductivityCharts tasks={mockTasks} projects={[]} />
-      </TooltipProvider>
+      </TooltipProvider>,
     );
     expect(screen.getByText(/Productivity Overview/i)).toBeInTheDocument();
   });
@@ -52,31 +52,31 @@ describe("ProductivityCharts Toggle", () => {
     render(
       <TooltipProvider>
         <ProductivityCharts tasks={mockTasks} projects={[]} />
-      </TooltipProvider>
+      </TooltipProvider>,
     );
-    
+
     // Check for the toggle buttons
     const prevButton = screen.getByRole("button", { name: /Previous Week/i });
     const nextButton = screen.getByRole("button", { name: /Next Week/i });
-    
+
     expect(nextButton).toBeDisabled(); // Initially on current week (offset 0)
     expect(prevButton).not.toBeDisabled();
-    
+
     fireEvent.click(prevButton);
-    
+
     // Offset 1
     expect(nextButton).not.toBeDisabled();
     expect(prevButton).not.toBeDisabled(); // Can go back further now
-    
+
     // Go back again -> Offset 2
     fireEvent.click(prevButton);
     expect(prevButton).not.toBeDisabled();
     expect(nextButton).not.toBeDisabled();
-    
+
     // Go forward -> Offset 1
     fireEvent.click(nextButton);
     expect(nextButton).not.toBeDisabled();
-    
+
     // Go forward -> Offset 0
     fireEvent.click(nextButton);
     expect(nextButton).toBeDisabled();

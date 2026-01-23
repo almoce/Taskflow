@@ -56,7 +56,7 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
 
     const svg = d3.select(svgRef.current);
     const tooltipSelection = d3.select(tooltipRef.current);
-    
+
     // Do not clear SVG to allow transitions
     // svg.selectAll("*").remove();
 
@@ -70,16 +70,19 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
     // Layer Areas: Bottom, Clipped (Reveal Gradient)
     let gAreas = svg.select<SVGGElement>(".layer-areas");
     if (gAreas.empty()) {
-      gAreas = svg.append("g")
+      gAreas = svg
+        .append("g")
         .attr("class", "layer-areas")
-        .attr("transform", `translate(${margin.left},${margin.top})`)
-        .attr("clip-path", `url(#clip-${projectId})`);
+        .attr("transform", `translate(${margin.left},${margin.top})`);
     }
+    // Always update clip-path to match current project
+    gAreas.attr("clip-path", `url(#clip-${projectId})`);
 
     // Layer Lines: Top, Always Visible (Colored Lines)
     let gLines = svg.select<SVGGElement>(".layer-lines");
     if (gLines.empty()) {
-      gLines = svg.append("g")
+      gLines = svg
+        .append("g")
         .attr("class", "layer-lines")
         .attr("transform", `translate(${margin.left},${margin.top})`);
     }
@@ -88,7 +91,7 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
     let defs = svg.select<SVGDefsElement>("defs");
     if (defs.empty()) {
       defs = svg.append("defs");
-      
+
       const gradient = defs
         .append("linearGradient")
         .attr("id", "miniGradient")
@@ -97,23 +100,45 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
         .attr("x2", "0%")
         .attr("y2", "100%");
 
-      gradient.append("stop").attr("offset", "0%").attr("stop-color", "hsl(142 76% 36%)").attr("stop-opacity", 0.3);
-      gradient.append("stop").attr("offset", "100%").attr("stop-color", "hsl(142 76% 36%)").attr("stop-opacity", 0);
+      gradient
+        .append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "hsl(142 76% 36%)")
+        .attr("stop-opacity", 0.3);
+      gradient
+        .append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "hsl(142 76% 36%)")
+        .attr("stop-opacity", 0);
 
-      const timeGradient = defs.append("linearGradient").attr("id", "timeGradient").attr("x1", "0%").attr("y1", "0%").attr("x2", "0%").attr("y2", "100%");
-      timeGradient.append("stop").attr("offset", "0%").attr("stop-color", "#f59e0b").attr("stop-opacity", 0.3);
-      timeGradient.append("stop").attr("offset", "100%").attr("stop-color", "#f59e0b").attr("stop-opacity", 0.3);
-
-      // Clip Path
-      defs.append("clipPath")
-        .attr("id", `clip-${projectId}`)
-        .append("rect")
-        .attr("class", "clip-rect")
-        .attr("width", innerWidth) // Default to full width
-        .attr("height", innerHeight);
-    } else {
-        defs.select(".clip-rect").attr("width", innerWidth).attr("height", innerHeight);
+      const timeGradient = defs
+        .append("linearGradient")
+        .attr("id", "timeGradient")
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", "100%");
+      timeGradient
+        .append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "#f59e0b")
+        .attr("stop-opacity", 0.3);
+      timeGradient
+        .append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "#f59e0b")
+        .attr("stop-opacity", 0.3);
     }
+
+    // Ensure Clip Path exists and has correct ID
+    let clipPath = defs.select<SVGClipPathElement>("clipPath");
+    if (clipPath.empty()) {
+      clipPath = defs.append("clipPath");
+      clipPath.append("rect").attr("class", "clip-rect");
+    }
+
+    clipPath.attr("id", `clip-${projectId}`);
+    clipPath.select(".clip-rect").attr("width", innerWidth).attr("height", innerHeight);
 
     // Scales
     const x = d3
@@ -169,56 +194,71 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
 
     // Update Paths
     // Draw Areas into gAreas (Clipped)
-    gAreas.selectAll(".area-tasks")
+    gAreas
+      .selectAll(".area-tasks")
       .data([data])
       .join(
-        enter => enter.append("path")
-          .attr("class", "area-tasks")
-          .attr("fill", "url(#miniGradient)")
-          .attr("d", area),
-        update => update.call(u => u.transition(t).attr("d", area))
+        (enter) =>
+          enter
+            .append("path")
+            .attr("class", "area-tasks")
+            .attr("fill", "url(#miniGradient)")
+            .attr("d", area),
+        (update) => update.call((u) => u.transition(t).attr("d", area)),
       );
 
-    gAreas.selectAll(".area-time")
+    gAreas
+      .selectAll(".area-time")
       .data([data])
       .join(
-        enter => enter.append("path")
-          .attr("class", "area-time")
-          .attr("fill", "url(#timeGradient)")
-          .attr("d", timeArea),
-        update => update.call(u => u.transition(t).attr("d", timeArea))
+        (enter) =>
+          enter
+            .append("path")
+            .attr("class", "area-time")
+            .attr("fill", "url(#timeGradient)")
+            .attr("d", timeArea),
+        (update) => update.call((u) => u.transition(t).attr("d", timeArea)),
       );
 
     // Draw Lines into gLines (Unclipped, always visible)
-    gLines.selectAll(".line-time")
+    gLines
+      .selectAll(".line-time")
       .data([data])
       .join(
-        enter => enter.append("path")
-          .attr("class", "line-time")
-          .attr("fill", "none")
-          .attr("stroke", "#f59e0b")
-          .attr("stroke-width", 2)
-          .attr("d", timeLine),
-        update => update.call(u => u.transition(t).attr("d", timeLine))
+        (enter) =>
+          enter
+            .append("path")
+            .attr("class", "line-time")
+            .attr("fill", "none")
+            .attr("stroke", "#f59e0b")
+            .attr("stroke-width", 2)
+            .attr("d", timeLine),
+        (update) => update.call((u) => u.transition(t).attr("d", timeLine)),
       );
 
-    gLines.selectAll(".line-tasks")
+    gLines
+      .selectAll(".line-tasks")
       .data([data])
       .join(
-        enter => enter.append("path")
-          .attr("class", "line-tasks")
-          .attr("fill", "none")
-          .attr("stroke", "hsl(142 76% 36%)")
-          .attr("stroke-width", 2)
-          .attr("d", line),
-        update => update.call(u => u.transition(t).attr("d", line))
+        (enter) =>
+          enter
+            .append("path")
+            .attr("class", "line-tasks")
+            .attr("fill", "none")
+            .attr("stroke", "hsl(142 76% 36%)")
+            .attr("stroke-width", 2)
+            .attr("d", line),
+        (update) => update.call((u) => u.transition(t).attr("d", line)),
       );
 
     // Interactive Overlay (Ensure it's always on top)
-    
+
     let overlayGroup = svg.select(".overlay-group");
     if (overlayGroup.empty()) {
-        overlayGroup = svg.append("g").attr("class", "overlay-group").attr("transform", `translate(${margin.left},${margin.top})`);
+      overlayGroup = svg
+        .append("g")
+        .attr("class", "overlay-group")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
     }
 
     overlayGroup.selectAll(".overlay-rect").remove();
@@ -237,9 +277,10 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
         if (closestIndex !== undefined) {
           const d = data[closestIndex];
           const snappedX = xValues[closestIndex];
-          
+
           // Update Clip Path width to snap to the nearest data point with transition
-          defs.select(`#clip-${projectId} .clip-rect`)
+          defs
+            .select(`#clip-${projectId} .clip-rect`)
             .transition()
             .duration(200)
             .ease(d3.easeCubicOut)
@@ -270,7 +311,8 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
       .on("mouseleave", () => {
         tooltipSelection.style("opacity", "0");
         // Reset clip path to full width on leave with transition
-        defs.select(`#clip-${projectId} .clip-rect`)
+        defs
+          .select(`#clip-${projectId} .clip-rect`)
           .transition()
           .duration(300)
           .ease(d3.easeCubicOut)

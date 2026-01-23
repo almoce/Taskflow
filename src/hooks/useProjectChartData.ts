@@ -41,7 +41,7 @@ export function useProjectChartData(
         start = targetWeekStart;
         end = subDays(targetWeekStart, -6);
       }
-      
+
       const days = eachDayOfInterval({ start, end });
 
       return days.map((day) => {

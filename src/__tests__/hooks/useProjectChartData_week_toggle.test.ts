@@ -27,18 +27,16 @@ describe("useProjectChartData Week Toggle", () => {
       selector({
         tasks: mockTasks,
         archivedTasks: [],
-      })
+      }),
     );
   });
 
   it("should return data for the current week starting Monday by default (offset 0)", () => {
-    const { result } = renderHook(() =>
-      useProjectChartData("p1", "week", 0)
-    );
+    const { result } = renderHook(() => useProjectChartData("p1", "week", 0));
 
     const data = result.current;
     expect(data).toHaveLength(7);
-    
+
     // Check if the first day is a Monday
     // This is a rough check, logic needs to be verified against the implementation
     // We expect 7 days ending with Sunday or starting Monday depending on implementation
@@ -47,25 +45,21 @@ describe("useProjectChartData Week Toggle", () => {
   });
 
   it("should return data for the last week (offset 1)", () => {
-     const { result } = renderHook(() =>
-      useProjectChartData("p1", "week", 1)
-    );
+    const { result } = renderHook(() => useProjectChartData("p1", "week", 1));
 
     const data = result.current;
     expect(data).toHaveLength(7);
-    
+
     // Should be different range than offset 0
-    const currentWeekResult = renderHook(() =>
-        useProjectChartData("p1", "week", 0)
-    ).result.current;
-    
+    const currentWeekResult = renderHook(() => useProjectChartData("p1", "week", 0)).result.current;
+
     expect(data[0].fullDate).not.toBe(currentWeekResult[0].fullDate);
   });
 
   it("should correctly attribute completed tasks to the corresponding week", () => {
     const today = new Date();
     const lastWeekDate = subDays(today, 7);
-    
+
     const tasks = [
       {
         id: "current",
@@ -78,14 +72,14 @@ describe("useProjectChartData Week Toggle", () => {
         projectId: "p1",
         createdAt: lastWeekDate.toISOString(),
         completedAt: lastWeekDate.toISOString(),
-      }
+      },
     ];
 
     vi.mocked(useStore).mockImplementation((selector) =>
       selector({
         tasks: tasks,
         archivedTasks: [],
-      })
+      }),
     );
 
     const currentWeek = renderHook(() => useProjectChartData("p1", "week", 0)).result.current;
@@ -100,13 +94,11 @@ describe("useProjectChartData Week Toggle", () => {
 
   it("should return data for the last 7 days (rolling window)", () => {
     const today = new Date();
-    const { result } = renderHook(() =>
-      useProjectChartData("p1", "last_7_days")
-    );
+    const { result } = renderHook(() => useProjectChartData("p1", "last_7_days"));
 
     const data = result.current;
     expect(data).toHaveLength(7);
-    
+
     // The last element should be today
     const lastDay = data[data.length - 1];
     expect(lastDay.fullDate).toBe(format(today, "MMM d"));

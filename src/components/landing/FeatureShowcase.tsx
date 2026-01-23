@@ -1,10 +1,10 @@
-import { InstantSearchFeature } from "./features/InstantSearchFeature";
-import { KanbanFeature } from "./features/KanbanFeature";
-import { InsightsFeature } from "./features/InsightsFeature";
 import { CalendarFeature } from "./features/CalendarFeature";
-import { ProjectHubFeature } from "./features/ProjectHubFeature";
 import { DataFreedomFeature } from "./features/DataFreedomFeature";
 import { FocusModeFeature } from "./features/FocusModeFeature";
+import { InsightsFeature } from "./features/InsightsFeature";
+import { InstantSearchFeature } from "./features/InstantSearchFeature";
+import { KanbanFeature } from "./features/KanbanFeature";
+import { ProjectHubFeature } from "./features/ProjectHubFeature";
 
 export const FeatureShowcase = () => {
   return (
@@ -23,25 +23,25 @@ export const FeatureShowcase = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto perspective-[2000px]">
           <div className="md:col-span-2 h-[400px] hover:scale-[1.02] transition-transform duration-500">
-             <InstantSearchFeature />
+            <InstantSearchFeature />
           </div>
           <div className="md:col-span-1 h-[400px] hover:scale-[1.02] transition-transform duration-500">
-             <KanbanFeature />
+            <KanbanFeature />
           </div>
           <div className="md:col-span-1 h-[400px] hover:scale-[1.02] transition-transform duration-500">
-             <CalendarFeature />
+            <CalendarFeature />
           </div>
           <div className="md:col-span-2 h-[400px] hover:scale-[1.02] transition-transform duration-500">
-             <InsightsFeature />
+            <InsightsFeature />
           </div>
           <div className="md:col-span-1 h-[400px] hover:scale-[1.02] transition-transform duration-500">
-             <ProjectHubFeature />
+            <ProjectHubFeature />
           </div>
           <div className="md:col-span-1 h-[400px] hover:scale-[1.02] transition-transform duration-500">
-             <DataFreedomFeature />
+            <DataFreedomFeature />
           </div>
           <div className="md:col-span-1 h-[400px] hover:scale-[1.02] transition-transform duration-500">
-             <FocusModeFeature />
+            <FocusModeFeature />
           </div>
         </div>
       </div>
