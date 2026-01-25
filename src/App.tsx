@@ -1,8 +1,8 @@
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { RouteTracker } from "./components/analytics/RouteTracker";
 import { DevTools } from "./components/DevTools";
 import { supabase } from "./lib/supabase";
@@ -34,7 +34,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Sonner />
+        <Sonner richColors theme="dark" />
         <HashRouter>
           <RouteTracker />
           <Routes>
