@@ -1,4 +1,14 @@
 import { endOfWeek, format, startOfWeek, subWeeks } from "date-fns";
+import type { Task } from "@/types/task";
+
+/**
+ * Checks if a task was completed before the start of the current week (Monday).
+ */
+export const isTaskFromPreviousWeeks = (task: Task, referenceDate: Date = new Date()): boolean => {
+  if (!task.completedAt || task.status !== "done") return false;
+  const mondayThisWeek = startOfWeek(referenceDate, { weekStartsOn: 1 });
+  return new Date(task.completedAt) < mondayThisWeek;
+};
 
 /**
  * Formats a duration in milliseconds to a human-readable string.

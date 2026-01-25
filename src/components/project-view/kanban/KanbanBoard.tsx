@@ -11,7 +11,8 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Filter, Plus, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Archive, Filter, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +30,8 @@ import { cn } from "@/lib/utils";
 import { useFocus, useProjects, useStore, useTasks } from "@/store/useStore";
 import type { Priority, Task, TaskStatus, TaskTag } from "@/types/task";
 import { ColumnSortControls } from "./ColumnSortControls";
+import { ArchiveOldTasksDialog } from "./ArchiveOldTasksDialog";
+import { isTaskFromPreviousWeeks } from "@/utils/time";
 
 interface KanbanBoardProps {
   onAddTask: () => void;
@@ -162,15 +165,22 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
   const [activeColumn, setActiveColumn] = useState<TaskStatus | null>(null);
   const [selectedPriorities, setSelectedPriorities] = useState<Priority[]>([]);
   const [selectedTags, setSelectedTags] = useState<TaskTag[]>([]);
+  const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
+  const [isArchiveHovered, setIsArchiveHovered] = useState(false);
 
   // Store Hooks
   const { selectedProjectId } = useProjects();
-  const { tasks, updateTask, deleteTask, moveTask, archiveTask } = useTasks();
+  const { tasks, updateTask, deleteTask, moveTask, archiveTask, bulkArchiveTasks } = useTasks();
   const { startFocusSession } = useFocus();
 
   const projectTasks = useMemo(
     () => (selectedProjectId ? tasks.filter((t) => t.projectId === selectedProjectId) : []),
     [tasks, selectedProjectId],
+  );
+
+  const oldDoneTasks = useMemo(
+    () => projectTasks.filter((t) => t.status === "done" && isTaskFromPreviousWeeks(t)),
+    [projectTasks],
   );
 
   const filteredTasks = useMemo(() => {
@@ -181,6 +191,11 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
       return matchesPriority && matchesTag;
     });
   }, [projectTasks, selectedPriorities, selectedTags]);
+
+  const handleArchiveOldTasks = (selectedIds: string[]) => {
+    bulkArchiveTasks(selectedIds);
+    setIsArchiveDialogOpen(false);
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -362,10 +377,42 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
             )}
           </div>
 
-          <Button onClick={onAddTask} size="sm" className="h-8">
-            <Plus className="h-3.5 w-3.5 mr-1.5" />
-            Add Task
-          </Button>
+          <div className="flex items-center gap-2">
+            {oldDoneTasks.length > 0 && (
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-primary hover:border-primary transition-colors duration-200 relative"
+                onClick={() => setIsArchiveDialogOpen(true)}
+                onMouseEnter={() => setIsArchiveHovered(true)}
+                onMouseLeave={() => setIsArchiveHovered(false)}
+              >
+                <Archive className="h-4 w-4" />
+                <AnimatePresence>
+                  {isArchiveHovered && (
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute -top-1.5 -right-1.5"
+                    >
+                      <Badge 
+                        className="h-4 min-w-4 px-1 flex items-center justify-center text-[9px] font-bold bg-primary text-primary-foreground border-2 border-background pointer-events-none"
+                      >
+                        {oldDoneTasks.length}
+                      </Badge>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Button>
+            )}
+
+            <Button onClick={onAddTask} size="sm" className="h-8">
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              Add Task
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
@@ -393,6 +440,13 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
           </div>
         ) : null}
       </DragOverlay>
+
+      <ArchiveOldTasksDialog
+        open={isArchiveDialogOpen}
+        onOpenChange={setIsArchiveDialogOpen}
+        tasks={oldDoneTasks}
+        onConfirm={handleArchiveOldTasks}
+      />
     </DndContext>
   );
 }

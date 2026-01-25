@@ -28,4 +28,26 @@ describe("Deletion Tracking", () => {
     expect(state.pendingDeleteTaskIds).toContain(taskId);
     expect(state.tasks.find((t) => t.id === taskId)).toBeUndefined();
   });
+
+  it("should add archived task ID to pendingDeleteArchivedTaskIds when an archived task is deleted", () => {
+    const mockArchivedTask = {
+      id: "archived-t1",
+      projectId: "p1",
+      title: "Archived Task",
+      status: "done" as const,
+      priority: "medium" as const,
+      subtasks: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isArchived: true,
+    };
+
+    useStore.getState().upsertArchivedTask(mockArchivedTask);
+    useStore.getState().deleteArchivedTask(mockArchivedTask.id);
+
+    const state = useStore.getState();
+    expect(state.pendingDeleteArchivedTaskIds).toContain(mockArchivedTask.id);
+    expect(state.pendingDeleteTaskIds).not.toContain(mockArchivedTask.id);
+    expect(state.archivedTasks).toHaveLength(0);
+  });
 });

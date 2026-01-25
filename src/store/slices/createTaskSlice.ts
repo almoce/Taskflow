@@ -74,7 +74,7 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
     get().updateTask(taskId, { status: newStatus });
   },
 
-  archiveTask: (id) => {
+  archiveTask: (id: string) => {
     const task = get().tasks.find((t) => t.id === id);
     if (!task) return;
 
@@ -90,6 +90,28 @@ export const createTaskSlice: StateCreator<StoreState, [], [], TaskSlice> = (set
     set((state) => ({
       tasks: state.tasks.filter((t) => t.id !== id),
       archivedTasks: [...state.archivedTasks, archivedTask],
+    }));
+  },
+
+  bulkArchiveTasks: (ids) => {
+    const tasksToArchive = get().tasks.filter((t) => ids.includes(t.id));
+    if (tasksToArchive.length === 0) return;
+
+    const now = new Date().toISOString();
+    const newlyArchived = tasksToArchive.map((task) => ({
+      ...task,
+      isArchived: true,
+      updatedAt: now,
+    }));
+
+    // Mark all for deletion from active table on server
+    for (const id of ids) {
+      get().addToPendingDelete("task", id);
+    }
+
+    set((state) => ({
+      tasks: state.tasks.filter((t) => !ids.includes(t.id)),
+      archivedTasks: [...state.archivedTasks, ...newlyArchived],
     }));
   },
 

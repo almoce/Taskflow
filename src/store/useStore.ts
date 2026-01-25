@@ -71,6 +71,7 @@ export const useTasks = () =>
       deleteTask: state.deleteTask,
       moveTask: state.moveTask,
       archiveTask: state.archiveTask,
+      bulkArchiveTasks: state.bulkArchiveTasks,
       unarchiveTask: state.unarchiveTask,
       setColumnSort: state.setColumnSort,
     })),

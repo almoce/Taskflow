@@ -328,60 +328,59 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
             <TrendingUp className="w-3 h-3 text-emerald-500/70" />
             Week Activity
           </CardTitle>
-          <div className="flex items-center gap-0.5">
-            <TooltipProvider>
-              {VIEW_MODES.map(({ id, icon: Icon, label }) => {
-                const isActive = viewMode === id;
-                return (
-                  <Tooltip key={id} delayDuration={300}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className={cn(
-                          "h-6 w-6 rounded-full transition-colors",
-                          isActive
-                            ? "text-primary bg-primary/10"
-                            : "text-muted-foreground/50 hover:text-foreground",
-                        )}
-                        onClick={() => setViewMode(id)}
-                        aria-label={label}
-                      >
-                        <Icon className="h-3! w-3!" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="text-[10px] px-2 py-1">
-                      {label}
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
-            </TooltipProvider>
-          </div>
         </div>
-        <TooltipProvider>
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "h-6 w-6 rounded-full transition-colors",
-                  showOverlay
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground/50 hover:text-foreground",
-                )}
-                onClick={() => setShowOverlay(!showOverlay)}
-                aria-label="Toggle Stats"
-              >
-                <Calculator className="h-3! w-3!" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="text-[10px] px-2 py-1">
-              Toggle Stats
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="flex items-center gap-0.5">
+          <TooltipProvider>
+            {VIEW_MODES.map(({ id, icon: Icon, label }) => {
+              const isActive = viewMode === id;
+              return (
+                <Tooltip key={id} delayDuration={300}>
+                  <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className={cn(
+                                              "h-6 w-6 rounded-md transition-colors",
+                                              isActive
+                                                ? "text-primary bg-primary/10"
+                                                : "text-muted-foreground/50 hover:text-foreground",
+                                            )}
+                                            onClick={() => setViewMode(id)}
+                                            aria-label={label}
+                                          >
+                                            <Icon className="h-3! w-3!" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top" className="text-[10px] px-2 py-1">
+                                          {label}
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    );
+                                  })}
+                                  <Tooltip delayDuration={300}>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className={cn(
+                                          "h-6 w-6 rounded-md transition-colors",
+                                          showOverlay
+                                            ? "text-primary bg-primary/10"
+                                            : "text-muted-foreground/50 hover:text-foreground",
+                                        )}
+                                        onClick={() => setShowOverlay(!showOverlay)}
+                                        aria-label="Toggle Stats"
+                                      >
+                                        <Calculator className="h-3! w-3!" />
+                                      </Button>
+                    
+              </TooltipTrigger>
+              <TooltipContent side="top" className="text-[10px] px-2 py-1">
+                Toggle Stats
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent className="p-0 pt-1 relative">
         <div className="h-[80px] w-full">

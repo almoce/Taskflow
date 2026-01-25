@@ -30,6 +30,7 @@ export interface TaskSlice {
   deleteTask: (id: string) => void;
   moveTask: (taskId: string, newStatus: TaskStatus) => void;
   archiveTask: (id: string) => void;
+  bulkArchiveTasks: (ids: string[]) => void;
   unarchiveTask: (id: string) => void;
   setColumnSort: (columnId: string, sort: ColumnSort | null) => void;
 }

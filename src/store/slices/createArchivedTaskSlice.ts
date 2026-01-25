@@ -28,7 +28,7 @@ export const createArchivedTaskSlice: StateCreator<StoreState, [], [], ArchivedT
     // be shared between active and archived.
     // Let's assume they share the deletion queue.
     if ("addToPendingDelete" in get()) {
-      (get() as any).addToPendingDelete("task", id);
+      (get() as any).addToPendingDelete("archived_task", id);
     }
 
     set((state) => ({

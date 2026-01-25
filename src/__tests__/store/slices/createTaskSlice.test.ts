@@ -87,4 +87,25 @@ describe("createTaskSlice", () => {
     expect(useStore.getState().tasks.find((t) => t.id === task.id)).toBeDefined();
     expect(useStore.getState().tasks.find((t) => t.id === task.id)?.isArchived).toBe(false);
   });
+
+  it("should bulk archive multiple tasks", () => {
+    const project = useStore.getState().addProject("Test Project");
+    const t1 = useStore.getState().addTask(project.id, "T1");
+    const t2 = useStore.getState().addTask(project.id, "T2");
+    const t3 = useStore.getState().addTask(project.id, "T3");
+
+    useStore.getState().bulkArchiveTasks([t1.id, t2.id]);
+
+    const state = useStore.getState();
+    expect(state.tasks.length).toBe(1);
+    expect(state.tasks[0].id).toBe(t3.id);
+    expect(state.archivedTasks.length).toBe(2);
+    expect(state.archivedTasks.some((t) => t.id === t1.id)).toBe(true);
+    expect(state.archivedTasks.some((t) => t.id === t2.id)).toBe(true);
+    expect(state.archivedTasks.every((t) => t.isArchived)).toBe(true);
+    
+    // Check pending deletes
+    expect(state.pendingDeleteTaskIds).toContain(t1.id);
+    expect(state.pendingDeleteTaskIds).toContain(t2.id);
+  });
 });
