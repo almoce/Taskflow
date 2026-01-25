@@ -1,19 +1,3 @@
-import {
-  DndContext,
-  type DragEndEvent,
-  type DragOverEvent,
-  DragOverlay,
-  type DragStartEvent,
-  PointerSensor,
-  useDroppable,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { AnimatePresence, motion } from "framer-motion";
-import { Archive, Filter, Plus, X } from "lucide-react";
-import { useMemo, useState } from "react";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,9 +13,25 @@ import { useTaskSorter } from "@/hooks/useTaskSorter";
 import { cn } from "@/lib/utils";
 import { useFocus, useProjects, useStore, useTasks } from "@/store/useStore";
 import type { Priority, Task, TaskStatus, TaskTag } from "@/types/task";
-import { ColumnSortControls } from "./ColumnSortControls";
-import { ArchiveOldTasksDialog } from "./ArchiveOldTasksDialog";
 import { isTaskFromPreviousWeeks } from "@/utils/time";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useDroppable,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { AnimatePresence, motion } from "framer-motion";
+import { Archive, Filter, Plus, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArchiveOldTasksDialog } from "./ArchiveOldTasksDialog";
+import { ColumnSortControls } from "./ColumnSortControls";
 
 interface KanbanBoardProps {
   onAddTask: () => void;
@@ -382,7 +382,7 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-primary hover:border-primary transition-colors duration-200 relative"
+                className="h-8 w-8 text-muted-foreground hover:text-primary hover:border-primary transition-all duration-400 relative"
                 onClick={() => setIsArchiveDialogOpen(true)}
                 onMouseEnter={() => setIsArchiveHovered(true)}
                 onMouseLeave={() => setIsArchiveHovered(false)}
@@ -392,14 +392,13 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
                   {isArchiveHovered && (
                     <motion.div
                       initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
+                      animate={{ scale: 1.1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      // transition={{ duration: 0.2 }}
+                      transition={{ type: "spring", stiffness: 460, damping: 20 }}
                       className="absolute -top-1.5 -right-1.5"
                     >
-                      <Badge 
-                        className="h-4 min-w-4 px-1 flex items-center justify-center text-[9px] font-bold bg-primary text-primary-foreground border-2 border-background pointer-events-none"
-                      >
+                      <Badge className="h-4 min-w-4 px-1 flex items-center justify-center text-[9px] font-bold bg-primary text-primary-foreground border-2 border-background pointer-events-none">
                         {oldDoneTasks.length}
                       </Badge>
                     </motion.div>
