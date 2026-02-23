@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Circle, CircleCheck, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Command, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
@@ -49,7 +49,7 @@ export const InstantSearchFeature = () => {
             <CommandList className="max-h-[300px] overflow-hidden py-2 absolute top-0 left-0 w-full bg-zinc-950/90 border-x border-b border-white/10 rounded-b-xl shadow-2xl z-50">
               <CommandGroup heading="Tasks" className="text-zinc-400">
                 {searchQuery.length > 2 && (
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     transition={{ duration: 0.3 }}
@@ -66,7 +66,7 @@ export const InstantSearchFeature = () => {
                       <Circle className="mr-2 h-4 w-4 text-blue-400" />
                       <span>Update documentation</span>
                     </CommandItem>
-                  </motion.div>
+                  </m.div>
                 )}
               </CommandGroup>
             </CommandList>

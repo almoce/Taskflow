@@ -11,7 +11,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Task } from "@/types/task";
 import { format } from "date-fns";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Archive } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -106,7 +106,7 @@ export function ArchiveOldTasksDialog({
               {tasks.map((task) => {
                 const isSelected = selectedIds.includes(task.id);
                 return (
-                  <motion.div 
+                  <m.div 
                     key={task.id} 
                     layout
                     initial={false}
@@ -123,7 +123,7 @@ export function ArchiveOldTasksDialog({
                       ${isSelected ? "border-primary" : "border-muted-foreground/40"}
                     `}>
                       {/* Expanding Circle Background */}
-                      <motion.div
+                      <m.div
                         className="absolute inset-0 bg-primary"
                         initial={false}
                         animate={{
@@ -134,7 +134,7 @@ export function ArchiveOldTasksDialog({
                       />
                       
                       <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10">
-                        <motion.path
+                        <m.path
                           d="M1 4L3.5 6.5L9 1"
                           stroke="currentColor"
                           strokeWidth="1.5"
@@ -158,7 +158,7 @@ export function ArchiveOldTasksDialog({
                           : ""}
                       </span>
                     </div>
-                  </motion.div>
+                  </m.div>
                 );
               })}
             </div>

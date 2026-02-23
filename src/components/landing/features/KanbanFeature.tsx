@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Bug, RotateCcw, Zap } from "lucide-react";
 
 export const KanbanFeature = () => {
@@ -26,7 +26,7 @@ export const KanbanFeature = () => {
             </div>
 
             {/* Animated Card - Moving from Todo to Done */}
-            <motion.div
+            <m.div
               initial={{ x: 0, y: 0, scale: 1, rotate: 0 }}
               whileInView={{
                 x: 140, // Move horizontally to next column
@@ -53,7 +53,7 @@ export const KanbanFeature = () => {
                   <Zap className="h-2.5 w-2.5" />
                 </span>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </div>
 
@@ -81,7 +81,7 @@ export const KanbanFeature = () => {
             </div>
 
             {/* Ghost Card for Drop Target */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: [0, 0.2, 0] }}
               transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5 }}

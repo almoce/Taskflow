@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { CheckCircle2, Coffee, FileText, Play, Square, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ function TimerDigit({ value, isEditable }: { value: string; isEditable?: boolean
     >
       {isNumber ? (
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span
+          <m.span
             key={value}
             initial={{ y: "100%", opacity: 0, filter: "blur(5px)" }}
             animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
@@ -52,7 +52,7 @@ function TimerDigit({ value, isEditable }: { value: string; isEditable?: boolean
             className="absolute inset-0 flex items-center justify-center text-foreground/80"
           >
             {value}
-          </motion.span>
+          </m.span>
         </AnimatePresence>
       ) : (
         <span className="flex items-center justify-center text-foreground/80 pb-[0.1em]">
@@ -82,7 +82,7 @@ function EditableGroup({
   onExitNext,
   onExitPrev,
 }: EditableGroupProps) {
-  const [digits, setDigits] = useState(value.toString().padStart(2, "0").split(""));
+  const [digits, setDigits] = useState(() => value.toString().padStart(2, "0").split(""));
 
   // Sync with prop value if not editing active digit in THIS group
   useEffect(() => {
@@ -156,13 +156,16 @@ function EditableGroup({
     <div className="flex items-center justify-center cursor-default">
       {digits.map((d, i) => (
         <div
-          key={i}
+          key={i === 0 ? "tens" : "ones"}
+          role="button"
+          tabIndex={0}
           onClick={(e) => {
             if (isEditable) {
               e.stopPropagation();
               onActiveIndexChange(i);
             }
           }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (isEditable) { onActiveIndexChange(i); } } }}
           className={cn(
             "relative transition-colors rounded-sm",
             activeIndex === i && "bg-muted/30",
@@ -170,7 +173,7 @@ function EditableGroup({
         >
           <TimerDigit value={d} isEditable={isEditable} />
           {isEditable && activeIndex === i && (
-            <motion.div
+            <m.div
               layoutId="active-digit-indicator"
               className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
             />
@@ -230,7 +233,10 @@ export function FocusTimerView({
   return (
     <div
       className="relative w-full h-full flex flex-col animate-in fade-in zoom-in duration-500"
+      role="button"
+      tabIndex={0}
       onClick={() => setActiveFocus(null)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveFocus(null); } }}
     >
       <div className="absolute top-0 left-0 max-w-md text-left z-20">
         <TooltipProvider>

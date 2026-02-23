@@ -262,7 +262,6 @@ export function ProjectDialog() {
                 placeholder="Enter project name..."
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                autoFocus
                 className="bg-muted/50"
               />
             </div>

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Clock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,7 +42,7 @@ export function FocusSessionSummary({
         </Button>
       </div>
 
-      <motion.div
+      <m.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="space-y-8 w-full py-4 animate-in fade-in duration-300"
@@ -65,7 +65,6 @@ export function FocusSessionSummary({
             value={summaryNote}
             onChange={(e) => setSummaryNote(e.target.value)}
             className="bg-transparent border-border/50 min-h-[100px] rounded-xl focus:ring-0 focus:border-foreground/30 resize-none text-base p-4"
-            autoFocus
           />
         </div>
 
@@ -84,7 +83,7 @@ export function FocusSessionSummary({
             Finish
           </Button>
         </div>
-      </motion.div>
+      </m.div>
     </>
   );
 }

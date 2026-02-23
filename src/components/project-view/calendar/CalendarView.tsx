@@ -88,6 +88,38 @@ function DroppableDay({ day, children, className, isActive }: DroppableDayProps)
   );
 }
 
+function UnscheduledDropZone({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: "unscheduled",
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        "rounded-xl transition-all duration-200 border-2 border-transparent",
+        className,
+        isOver && "border-primary/30 bg-primary/5 shadow-inner",
+      )}
+    >
+      <div
+        className={cn(
+          "h-full w-full transition-transform duration-200",
+          isOver && "scale-[0.98]",
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export function CalendarView({ onAddTask }: CalendarViewProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -150,39 +182,6 @@ export function CalendarView({ onAddTask }: CalendarViewProps) {
   };
 
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  // Droppable Unscheduled Area
-  function UnscheduledDropZone({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) {
-    const { setNodeRef, isOver } = useDroppable({
-      id: "unscheduled",
-    });
-
-    return (
-      <div
-        ref={setNodeRef}
-        className={cn(
-          "rounded-xl transition-all duration-200 border-2 border-transparent",
-          className,
-          isOver && "border-primary/30 bg-primary/5 shadow-inner",
-        )}
-      >
-        <div
-          className={cn(
-            "h-full w-full transition-transform duration-200",
-            isOver && "scale-[0.98]",
-          )}
-        >
-          {children}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

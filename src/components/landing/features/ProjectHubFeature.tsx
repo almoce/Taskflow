@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Folder, MoreHorizontal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -49,7 +49,7 @@ export const ProjectHubFeature = () => {
           </CardHeader>
           <CardContent className="p-3 h-[160px] grid grid-cols-2 gap-2">
             {projects.map((project, i) => (
-              <motion.div
+              <m.div
                 key={project.name}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -62,7 +62,7 @@ export const ProjectHubFeature = () => {
                 <p className="text-[10px] font-medium text-zinc-200 leading-tight group-hover/item:text-white transition-colors">
                   {project.name}
                 </p>
-              </motion.div>
+              </m.div>
             ))}
           </CardContent>
         </Card>

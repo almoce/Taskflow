@@ -122,7 +122,6 @@ export function NewTaskDialog({
               placeholder="What needs to be done?"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              autoFocus
             />
           </div>
 

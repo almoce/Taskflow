@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -37,7 +37,7 @@ export const DataFreedomFeature = () => {
             {/* Import Line (Left -> Center) */}
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[50%] h-[1px] bg-white/5 overflow-hidden pr-7">
               {/* The Green Line */}
-              <motion.div
+              <m.div
                 className="w-full h-full bg-linear-to-r from-transparent via-emerald-500 to-transparent"
                 initial={{ x: "-100%" }}
                 animate={{ x: "100%" }}
@@ -53,7 +53,7 @@ export const DataFreedomFeature = () => {
             {/* Export Line (Center -> Right) */}
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[50%] h-[1px] bg-white/5 overflow-hidden pl-7">
               {/* The Blue Line */}
-              <motion.div
+              <m.div
                 className="w-full h-full bg-linear-to-r from-transparent via-sky-500 to-transparent"
                 initial={{ x: "-100%" }}
                 animate={{ x: "100%" }}
@@ -68,21 +68,21 @@ export const DataFreedomFeature = () => {
             </div>
 
             {/* Icons for context (Static/Fading per cycle) */}
-            <motion.div
+            <m.div
               className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-zinc-800/80 border border-white/10"
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-zinc-800/80 border border-white/10"
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
             >
               <FileJson className="w-4 h-4 text-sky-400" />
-            </motion.div>
+            </m.div>
           </CardContent>
         </Card>
       </div>

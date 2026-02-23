@@ -41,7 +41,10 @@ export function ProjectCard({
       className={`w-full text-left p-4 rounded-lg border bg-card cursor-pointer transition-colors group ${
         isSelected ? "border-primary" : "border-border hover:border-muted-foreground/30"
       }`}
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">

@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/task";
 
-export interface SidebarProjectItemProps {
+interface SidebarProjectItemProps {
   project: Project;
   isSelected: boolean;
   collapsed: boolean;

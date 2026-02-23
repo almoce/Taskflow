@@ -295,7 +295,10 @@ export function TaskSearch({
                   <div
                     key={task.id}
                     className="relative cursor-pointer"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => onSelectProject(task.projectId)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectProject(task.projectId); } }}
                   >
                     <TaskCard
                       task={task}

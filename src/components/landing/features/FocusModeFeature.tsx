@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Bell, BellOff, Moon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -21,12 +21,12 @@ export const FocusModeFeature = () => {
           <CardContent className="p-6 flex flex-col items-center justify-center min-h-[120px]">
             <div className="relative w-16 h-16 flex items-center justify-center mb-2">
               {/* Ripples */}
-              <motion.div
+              <m.div
                 animate={{ scale: [1, 1.5, 2], opacity: [0.5, 0.1, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
                 className="absolute inset-0 bg-indigo-500/10 rounded-full"
               />
-              <motion.div
+              <m.div
                 animate={{ scale: [1, 1.5, 2], opacity: [0.5, 0.3, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 1 }}
                 className="absolute inset-0 bg-indigo-500/10 rounded-full"

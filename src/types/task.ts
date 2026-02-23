@@ -37,13 +37,6 @@ export interface Project {
   updatedAt?: string;
 }
 
-export interface AppState {
-  projects: Project[];
-  tasks: Task[];
-  selectedProjectId: string | null;
-  activeView: "tasks" | "analytics";
-}
-
 export const PROJECT_COLORS = [
   "#8B5CF6", // Purple
   "#06B6D4", // Cyan

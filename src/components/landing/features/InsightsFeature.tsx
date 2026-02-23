@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -35,7 +35,7 @@ export const InsightsFeature = () => {
               viewBox="0 0 100 100"
             >
               <title>Analytics Chart</title>
-              <motion.path
+              <m.path
                 initial={{ d: "M0,100 L20,100 L40,100 L60,100 L80,100 L100,100" }}
                 whileInView={{
                   d: "M0,60 L20,30 L40,50 L60,10 L80,40 L100,20",
@@ -52,22 +52,22 @@ export const InsightsFeature = () => {
 
             {/* Overlay Stats */}
             <div className="absolute bottom-4 right-4 flex flex-col items-end">
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1 }}
                 className="text-lg font-bold text-white tabular-nums"
               >
                 +24.5%
-              </motion.div>
-              <motion.div
+              </m.div>
+              <m.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ delay: 1.2 }}
                 className="text-[9px] text-emerald-400 font-medium"
               >
                 vs. last week
-              </motion.div>
+              </m.div>
             </div>
           </CardContent>
         </Card>

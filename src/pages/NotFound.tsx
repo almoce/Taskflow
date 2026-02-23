@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ArrowLeft, Ghost } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -15,14 +15,14 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="text-center">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="relative mx-auto mb-8 flex h-64 w-64 items-center justify-center"
         >
           {/* Floating blobs for atmosphere */}
-          <motion.div
+          <m.div
             animate={{
               scale: [1, 1.2, 1],
               opacity: [0.3, 0.5, 0.3],
@@ -35,7 +35,7 @@ const NotFound = () => {
             className="absolute inset-0 rounded-full bg-primary/20 blur-3xl"
           />
 
-          <motion.div
+          <m.div
             animate={{
               y: [0, -20, 0],
               rotate: [0, 5, -5, 0],
@@ -48,7 +48,7 @@ const NotFound = () => {
             className="relative z-10"
           >
             <Ghost className="h-32 w-32 text-primary" />
-            <motion.div
+            <m.div
               animate={{
                 scale: [1, 1.1, 1],
                 opacity: [0.5, 1, 0.5],
@@ -61,11 +61,11 @@ const NotFound = () => {
               className="absolute -right-2 top-0 text-4xl font-bold text-primary"
             >
               ?
-            </motion.div>
-          </motion.div>
-        </motion.div>
+            </m.div>
+          </m.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -82,7 +82,7 @@ const NotFound = () => {
               Return to Home
             </Link>
           </Button>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

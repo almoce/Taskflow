@@ -1,6 +1,7 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LazyMotion, domAnimation } from "framer-motion";
 import { useEffect } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { RouteTracker } from "./components/analytics/RouteTracker";
@@ -33,23 +34,25 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Sonner richColors theme="dark" />
-        <HashRouter>
-          <RouteTracker />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/app" element={<DashboardPage />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <DevTools />
-        </HashRouter>
-      </TooltipProvider>
+      <LazyMotion features={domAnimation}>
+        <TooltipProvider>
+          <Sonner richColors theme="dark" />
+          <HashRouter>
+            <RouteTracker />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/app" element={<DashboardPage />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <DevTools />
+          </HashRouter>
+        </TooltipProvider>
+      </LazyMotion>
     </QueryClientProvider>
   );
 };

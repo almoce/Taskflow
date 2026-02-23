@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -32,8 +32,8 @@ export const CalendarFeature = () => {
                 >
                   {day}
                   {[12, 18, 24].includes(day) && (
-                    <motion.div
-                      initial={{ scale: 0 }}
+                    <m.div
+                      initial={{ scale: 0.95 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.5 + day * 0.05 }}
                       className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0.5 h-0.5 rounded-full ${day === 24 ? "bg-white" : "bg-purple-500"}`}
@@ -44,7 +44,7 @@ export const CalendarFeature = () => {
             </div>
 
             {/* Populating Event Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.5, duration: 0.5 }}
@@ -57,7 +57,7 @@ export const CalendarFeature = () => {
                   <p className="text-[9px] text-zinc-500">10:00 AM - 11:30 AM</p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </CardContent>
         </Card>
       </div>

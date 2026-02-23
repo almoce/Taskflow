@@ -35,8 +35,8 @@ export function CompletionBreakdownChart({ data, timeRange }: CompletionBreakdow
           <div className="text-sm overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1 [mask-image:linear-gradient(to_right,black_calc(100%-48px),transparent)]">
             <div className="flex items-center gap-6 w-fit mx-auto px-12">
               {allProjects.length > 0 ? (
-                allProjects.map((project, i) => (
-                  <div key={i} className="flex items-center gap-2 flex-shrink-0">
+                allProjects.map((project) => (
+                  <div key={project.name} className="flex items-center gap-2 flex-shrink-0">
                     <div
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: project.color || "#f59e0b" }}

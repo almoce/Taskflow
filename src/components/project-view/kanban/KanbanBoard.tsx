@@ -27,7 +27,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Archive, Filter, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ArchiveOldTasksDialog } from "./ArchiveOldTasksDialog";
@@ -390,10 +390,10 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
                 <Archive className="h-4 w-4" />
                 <AnimatePresence>
                   {isArchiveHovered && (
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
+                    <m.div
+                      initial={{ scale: 0.95, opacity: 0 }}
                       animate={{ scale: 1.1, opacity: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
                       // transition={{ duration: 0.2 }}
                       transition={{ type: "spring", stiffness: 460, damping: 20 }}
                       className="absolute -top-1.5 -right-1.5"
@@ -401,7 +401,7 @@ export function KanbanBoard({ onAddTask, onEditTask }: KanbanBoardProps) {
                       <Badge className="h-4 min-w-4 px-1 flex items-center justify-center text-[9px] font-bold bg-primary text-primary-foreground border-2 border-background pointer-events-none">
                         {oldDoneTasks.length}
                       </Badge>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
               </Button>

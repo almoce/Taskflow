@@ -127,9 +127,3 @@ export const useFocus = () =>
     })),
   );
 
-export const useStoreActions = () =>
-  useStore(
-    useShallow((state) => ({
-      reset: state.reset,
-    })),
-  );

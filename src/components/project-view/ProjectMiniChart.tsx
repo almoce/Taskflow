@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Calculator, Calendar, Clock, History, TrendingUp } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -388,14 +388,14 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
         </div>
         <AnimatePresence>
           {showOverlay && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center p-4 z-10"
             >
               <div className="grid grid-cols-2 gap-6 w-full max-w-[200px]">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
                   animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                   exit={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
@@ -406,8 +406,8 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
                     Total Time
                   </p>
                   <p className="text-lg font-bold tabular-nums text-foreground">{totalTime}h</p>
-                </motion.div>
-                <motion.div
+                </m.div>
+                <m.div
                   initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
                   animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                   exit={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
@@ -418,9 +418,9 @@ export function ProjectMiniChart({ projectId }: ProjectMiniChartProps) {
                     Avg Focus
                   </p>
                   <p className="text-lg font-bold tabular-nums text-amber-500">{avgTime}h</p>
-                </motion.div>
+                </m.div>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </CardContent>
