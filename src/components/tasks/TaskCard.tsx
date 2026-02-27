@@ -5,6 +5,7 @@ import {
   Bug,
   Calendar,
   CheckCircle2,
+  Coffee,
   Clock,
   FileText,
   MoreHorizontal,
@@ -88,7 +89,7 @@ export function TaskCard({
                       : "text-primary hover:text-primary",
                   )}
                 >
-                  <Zap className="h-3.5 w-3.5 fill-current" />
+                  <Coffee className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
