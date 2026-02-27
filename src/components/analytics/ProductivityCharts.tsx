@@ -181,6 +181,9 @@ export function ProductivityCharts({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-semibold whitespace-nowrap">Productivity Overview</h2>
+        </div>
+
+        <div className="flex items-center gap-3 sm:ml-auto">
           {timeRange === "week" && (
             <div className="flex items-center gap-2 px-3 py-1 bg-muted/30 rounded-full border border-border/50">
               <span className="text-xs font-medium text-muted-foreground min-w-[180px] text-center">
@@ -219,14 +222,14 @@ export function ProductivityCharts({
               </div>
             </div>
           )}
-        </div>
 
-        <Tabs value={timeRange} onValueChange={(v) => setTimeRange(v as "week" | "month")}>
-          <TabsList className="bg-muted/50">
-            <TabsTrigger value="week">Week</TabsTrigger>
-            <TabsTrigger value="month">Month</TabsTrigger>
-          </TabsList>
-        </Tabs>
+          <Tabs value={timeRange} onValueChange={(v) => setTimeRange(v as "week" | "month")}>
+            <TabsList className="bg-muted/50">
+              <TabsTrigger value="week">Week</TabsTrigger>
+              <TabsTrigger value="month">Month</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
