@@ -97,14 +97,15 @@ graph TD
 
 ## 🛠 Tech Stack
 
-- **Core**: [React 19](https://reactjs.org/) & [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool**: [Vite 7](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Core**: [React 19](https://reactjs.org/) & [TypeScript 5.9](https://www.typescriptlang.org/)
+- **Build Tool**: [Vite 8](https://vite.dev/) (powered by **Rolldown** and **Oxc**)
+- **Styling**: [Tailwind CSS 4.2](https://tailwindcss.com/)
 - **Routing**: [React Router 7](https://reactrouter.com/)
 - **State Management**: [Zustand](https://zustand.js.org/) with **IndexedDB** Persistence (via `idb-keyval`)
 - **UI Architecture**: [Shadcn UI](https://ui.shadcn.com/) (Radix UI Adaptations)
 - **Data Visualization**: [D3.js](https://d3js.org/) for custom, high-performance charts
 - **Async State**: [TanStack Query](https://tanstack.com/query/latest)
+- **Testing**: [Vitest 4.1](https://vitest.dev/)
 - **Utility Libraries**:
   - [date-fns](https://date-fns.org/) for precise time manipulation
   - [lucide-react](https://lucide.dev/) for high-quality iconography
