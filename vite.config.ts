@@ -22,10 +22,23 @@ export default defineConfig(() => ({
         codeSplitting: {
           groups: [
             {
+              name: "vendor-react",
+              test: /node_modules[\\/]react/,
+              priority: 50,
+            },
+            {
+              name: "vendor-d3",
+              test: /node_modules[\\/]d3/,
+              priority: 45,
+            },
+            {
+              name: "vendor-motion",
+              test: /node_modules[\\/](framer-motion|@dnd-kit)/,
+              priority: 40,
+            },
+            {
               name: "vendor",
               test: /node_modules/,
-              minSize: 100000, 
-              maxSize: 500000,
               priority: 30,
             },
             {
